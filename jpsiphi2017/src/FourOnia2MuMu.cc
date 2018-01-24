@@ -168,8 +168,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       TLorentzVector mu1, mu2,mumu;
       mu1.SetXYZM(it->track()->px(),it->track()->py(),it->track()->pz(),muon_mass);
       mu2.SetXYZM(it2->track()->px(),it2->track()->py(),it2->track()->pz(),muon_mass);
-      LorentzVector mumu;
-      mumu.SetPtEtaPhiM();
+      // LorentzVector mumu;
+
       mumu=mu1+mu2;
       mumucand.setP4(mumu);
       mumucand.setCharge(it->charge()+it2->charge());
