@@ -57,6 +57,8 @@ class xMuMuKKRootupler:public edm::EDAnalyzer {
 
 	bool isMC_;
 
+  UInt_t trigger;
+
   TTree *x_tree;
 
   Double_t kkM;
@@ -82,6 +84,7 @@ isMC_(iConfig.getParameter < bool > ("isMC"))
 
     //bkg tree
     x_tree->Branch("kkM", &kkM, "kkM/i");
+    x_tree->Branch("trigger", &trigger, "trigger/i");
 
 
 }
