@@ -272,6 +272,7 @@ isMC_(iConfig.getParameter < bool > ("isMC"))
     j_tree->Branch("j_triggerMatch", &j_triggerMatch, "j_triggerMatch/I");
     // j_tree->Branch("j_dz", &j_dz, "j_dz/D");
     j_tree->Branch("j_vNChi2", &j_vNChi2, "j_vNChi2/D");
+    j_tree->Branch("j_refit",&j_refit,"j_refit/D");
 
     j_tree->Branch("j_cosAlpha", &j_cosAlpha, "j_cosAlpha/D");
     j_tree->Branch("j_cosAlphaBS", &j_cosAlphaBS, "j_cosAlphaBS/D");
@@ -486,6 +487,8 @@ void x4MuRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
         j_vProb           = j_.userFloat("vProb");
         j_vNChi2          = j_.userFloat("vNChi2");
 
+        j_refit           = j_.userFloat("refittedMass");
+
         j_ctauBS          = j_.userFloat("ctauBS");
         j_ctauErrBS       = j_.userFloat("ctauErrBS");
 
@@ -567,7 +570,7 @@ void x4MuRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
         p_vNChi2          = p_.userFloat("vNChi2");
         p_vProb           = p_.userFloat("vProb");
 
-        p_vProb           = p_.userFloat("refittedMass");
+        p_refit           = p_.userFloat("refittedMass");
         p_ctauBS          = p_.userFloat("ctauBS");
         p_ctauErrBS       = p_.userFloat("ctauErrBS");
 
