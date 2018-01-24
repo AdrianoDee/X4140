@@ -135,6 +135,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(!lowerPuritySelection_(*it)) continue;
     //std::cout << "First muon quality flag" << std::endl;
     for(View<pat::Muon>::const_iterator it2 = it+1; it2 != itend;++it2){
+
+      if(it == it2) continue;
       // both must pass low quality
       if(!lowerPuritySelection_(*it2)) continue;
       //std::cout << "Second muon quality flag" << std::endl;
@@ -196,24 +198,21 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
           float refittedMass = -1.0;
 
-          try {
-      	    muonParticles.push_back(pFactory.particle(muon1TT,muon_mass,chi,ndf,muon_sigma));
-      	    muonParticles.push_back(pFactory.particle(muon2TT,muon_mass,chi,ndf,muon_sigma));
+      	    muonParticles.push_back(pFactory.particle(*it->track(),muon_mass,kinChi,kinNdf,muon_sigma));
+      	    muonParticles.push_back(pFactory.particle(*it2->track(),muon_mass,kinChi,kinNdf,muon_sigma));
 
             KinematicParticleVertexFitter fitter;
 
         	  RefCountedKinematicTree psiVertexFitTree;
-        	  try {
-        	    psiVertexFitTree = fitter.fit(muonParticles);
-        	  }
+
+      	    psiVertexFitTree = fitter.fit(muonParticles);
+
 
             psiVertexFitTree->movePointerToTheTop();
 
         	  RefCountedKinematicParticle psi_vFit_noMC = psiVertexFitTree->currentParticle();
 
             refittedMass = psi_vFit_noMC->currentState().mass();
-
-      	  }
 
           float vChi2 = myVertex.totalChiSquared();
           float vNDF  = myVertex.degreesOfFreedom();
