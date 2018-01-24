@@ -27,9 +27,10 @@
 #include "TrackingTools/PatternTools/interface/ClosestApproachInRPhi.h"
 
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
+#include "DataFormats/PatCandidates/interface/GenericParticle.h"
 
 FourOnia2KKPAT::FourOnia2KKPAT(const edm::ParameterSet& iConfig):
-trakCollection_(consumes<edm::View<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("tracks"))),
+trakCollection_(consumes<edm::View<pat::GenericParticle>>(iConfig.getParameter<edm::InputTag>("tracks"))),
 thebeamspot_(consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpotTag"))),
 thePVs_(consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("primaryVertexTag"))),
 higherPuritySelection_(iConfig.getParameter<std::string>("higherPuritySelection")),
@@ -91,10 +92,10 @@ FourOnia2KKPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   kMasses.push_back( 0.493677 );
 
   const ParticleMass kaon_mass(0.493677);
-  float kaon_sigma = 1E-6 * kaon_mass;
+  float kaon_sigma = 1E-6;
 
   const ParticleMass phi_mass(1.019461);
-  float phi_sigma = 1E-6 * phi_mass;
+  float phi_sigma = 1E-6;
 
   std::unique_ptr<pat::CompositeCandidateCollection> phiOutput(new pat::CompositeCandidateCollection);
   //std::cout<<"Four muonia producer"<<std::endl;
@@ -119,12 +120,14 @@ FourOnia2KKPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     thePrimaryV = Vertex(bs.position(), bs.covariance3D());
   }
 
-  edm::Handle< View<pat::PackedCandidate> > thePATTrackHandle;
+  edm::Handle< View<pat::GenericParticle> > thePATTrackHandle;
   iEvent.getByToken(trakCollection_,thePATTrackHandle);
 
   edm::ESHandle<TransientTrackBuilder> theTTBuilder;
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theTTBuilder);
   KalmanVertexFitter vtxFitter(true);
+
+  // JPsi candidates only from muons
 
   double TrMaxNormChi2 = 10.0;
   double TrMinPt = 0.0;
@@ -132,28 +135,28 @@ FourOnia2KKPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   std::cout<<"M"<< std::endl;
 
-  for(edm::View<pat::PackedCandidate>::const_iterator kTrack1 = thePATTrackHandle->begin();kTrack1 != thePATTrackHandle->end(); ++kTrack1 )
+  for(View<pat::GenericParticle>::const_iterator kTrack1 = thePATTrackHandle->begin();kTrack1 != thePATTrackHandle->end(); ++kTrack1 )
   {
     if(kTrack1->charge()==0) continue;
 
-    // if ((kTrack1 ==  nullptr)) continue;
-    // if ((kTrack1->chi2() / kTrack1->ndof() > TrMaxNormChi2)  ||  kTrack1->pt() < TrMinPt) continue;
+    // if ((kTrack1->track() ==  nullptr)) continue;
+    if ((kTrack1->track()->chi2() / kTrack1->track()->ndof() > TrMaxNormChi2)  ||  kTrack1->pt() < TrMinPt) continue;
 
-    std::cout << kTrack1->pt() << " - " << kTrack1->pt() << std::endl;
+    std::cout << kTrack1->track()->pt() << " - " << kTrack1->pt() << std::endl;
 
-    for(edm::View<pat::PackedCandidate>::const_iterator kTrack2 = kTrack1+1; kTrack2 != thePATTrackHandle->end(); ++kTrack2 )
+    for(View<pat::GenericParticle>::const_iterator kTrack2 = kTrack1+1; kTrack2 != thePATTrackHandle->end(); ++kTrack2 )
     {
-      // if ((kTrack2 ==  nullptr)) continue;
+      // if ((kTrack2->track() ==  nullptr)) continue;
       if(kTrack1==kTrack2) continue;
       if(kTrack2->charge()==0) continue;
 
-      // if ((kTrack2->chi2() / kTrack2->ndof() > TrMaxNormChi2)  ||  kTrack2->pt() < TrMinPt) continue;
+      if ((kTrack2->track()->chi2() / kTrack2->track()->ndof() > TrMaxNormChi2)  ||  kTrack2->pt() < TrMinPt) continue;
 
       if (kTrack1->charge() * kTrack2->charge() > 0) continue;//TODO CHECK IF phi->K0K0 ... ?
 
       std::vector<reco::TransientTrack> phiTracks;
-      phiTracks.push_back((*theTTBuilder).build(&(*kTrack1)));
-      phiTracks.push_back((*theTTBuilder).build(*kTrack2));
+      phiTracks.push_back((*theTTBuilder).build(kTrack1->track()));
+      phiTracks.push_back((*theTTBuilder).build(kTrack2->track()));
 
       KinematicParticleFactoryFromTransientTrack pFactory;
       std::vector<RefCountedKinematicParticle> PhiParticles;
