@@ -28,6 +28,7 @@
 #include "Math/VectorUtil.h"
 #include "TVector3.h"
 #include "../interface/FourOniaVtxReProducer.h"
+#include "TLorentzVector.h"
 
 #include "MagneticField/Engine/interface/MagneticField.h"
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
@@ -164,9 +165,11 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       // ---- define and set candidate's 4momentum  ----
       // LorentzVector mumu = it->p4() + it2->p4();
-      LorentzVector mu1, mu2,mumu;
+      TLorentzVector mu1, mu2,mumu;
       mu1.SetXYZM(it->track()->px(),it->track()->py(),it->track()->pz(),muon_mass);
       mu2.SetXYZM(it2->track()->px(),it2->track()->py(),it2->track()->pz(),muon_mass);
+      LorentzVector mumu;
+      mumu.SetPtEtaPhiM();
       mumu=mu1+mu2;
       mumucand.setP4(mumu);
       mumucand.setCharge(it->charge()+it2->charge());
