@@ -212,8 +212,6 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
           mumucand.addUserFloat("vNChi2",vChi2/vNDF);
           mumucand.addUserFloat("vProb",vProb);
 
-          mumucand.addUserFloat("refittedMass",refittedMass);
-
           TVector3 vtx,vtx3D;
           TVector3 pvtx,pvtx3D;
           VertexDistanceXY vdistXY;
@@ -479,7 +477,6 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             }
 
             //Muon mass Vertex Refit
-
             float refittedMass = -1.0, mumuVtxCL = -1.0;
 
             KinematicParticleFactoryFromTransientTrack pFactory;
