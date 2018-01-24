@@ -164,7 +164,7 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       // ---- define and set candidate's 4momentum  ----
       // LorentzVector mumu = it->p4() + it2->p4();
-      TLorentzVector mu1, mu2,mumu;
+      LorentzVector mu1, mu2,mumu;
       mu1.SetXYZM(it->track()->px(),it->track()->py(),it->track()->pz(),muon_mass);
       mu2.SetXYZM(it2->track()->px(),it2->track()->py(),it2->track()->pz(),muon_mass);
       mumu=mu1+mu2;
@@ -496,12 +496,12 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             {
               mumuVertexFitTree->movePointerToTheTop();
               RefCountedKinematicVertex mumu_KV = mumuVertexFitTree->currentDecayVertex();
-              if (mumu_KV->isValid())
+              if (mumu_KV->vertexIsValid())
               {
                 RefCountedKinematicParticle mumu_vFit = mumuVertexFitTree->currentParticle();
                 refittedMass = mumu_vFit->currentState().mass();
 
-                mumuVtxCL = TMath::Prob((double)mumu_KV.chiSquared(),int(rint(mumu_KV->degreesOfFreedom())));
+                mumuVtxCL = TMath::Prob((double)mumu_KV->chiSquared(),int(rint(mumu_KV->degreesOfFreedom())));
               }
             }
 
