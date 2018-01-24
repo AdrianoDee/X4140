@@ -151,8 +151,6 @@ void xMuMuKKRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup 
         TLorentzVector kkP4;
         kkP4.SetPtEtaPhiM(p_.pt(), p_.eta(), p_.phi(), p_.mass());
         kkM = kkP4.M();
-
-
         x_tree->Fill();
 
       }
