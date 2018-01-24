@@ -113,7 +113,7 @@ class x4MuRootupler:public edm::EDAnalyzer {
 
   Double_t pM;
   Double_t p_cosAlpha, p_cosAlphaBS, p_cosAlphaBS3D, p_cosAlpha3D;
-  Double_t p_ctauErrPV, p_ctauPV, p_ctauErrBS, p_ctauBS, p_vNChi2, p_vProb, p_dz;
+  Double_t p_ctauErrPV, p_ctauPV, p_ctauErrBS, p_ctauBS, p_vNChi2, p_vProb, p_dz, p_refit;
   Double_t p_l_xy, p_l_xyBS, p_l_xyz, p_l_xyzBS, p_deltaR;
   Double_t p_lErr_xy, p_lErr_xyBS, p_lErr_xyz, p_lErr_xyzBS;
   UInt_t p_rank, p_muonM_type, p_muonP_type, p_triggerMatch;
@@ -316,7 +316,7 @@ isMC_(iConfig.getParameter < bool > ("isMC"))
     p_tree->Branch("p_muonM_isTracker", &p_muonM_isTracker, "p_muonM_isTracker/I");
     p_tree->Branch("p_muonP_isTracker", &p_muonP_isTracker, "p_muonP_isTracker/I");
 
-
+    p_tree->Branch("p_refit",&p_refit,"p_refit/D");
     p_tree->Branch("p_vProb", &p_vProb, "p_vProb/D");
     p_tree->Branch("p_triggerMatch", &p_triggerMatch, "p_triggerMatch/I");
     // p_tree->Branch("p_dz", &p_dz, "p_dz/D");
@@ -567,6 +567,7 @@ void x4MuRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
         p_vNChi2          = p_.userFloat("vNChi2");
         p_vProb           = p_.userFloat("vProb");
 
+        p_vProb           = p_.userFloat("refittedMass");
         p_ctauBS          = p_.userFloat("ctauBS");
         p_ctauErrBS       = p_.userFloat("ctauErrBS");
 
