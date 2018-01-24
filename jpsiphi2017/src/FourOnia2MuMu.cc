@@ -198,8 +198,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
           float refittedMass = -1.0;
 
-      	    muonParticles.push_back(pFactory.particle(*it->track(),muon_mass,kinChi,kinNdf,muon_sigma));
-      	    muonParticles.push_back(pFactory.particle(*it2->track(),muon_mass,kinChi,kinNdf,muon_sigma));
+      	    muonParticles.push_back(pFactory.particle(t_tks[0],muon_mass,kinChi,kinNdf,muon_sigma));
+      	    muonParticles.push_back(pFactory.particle(t_tks[1],muon_mass,kinChi,kinNdf,muon_sigma));
 
             KinematicParticleVertexFitter fitter;
 
