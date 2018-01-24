@@ -100,7 +100,7 @@ class x4MuRootupler:public edm::EDAnalyzer {
   TLorentzVector j_muonM_p4, j_muonP_p4, j_p4;
 
   Double_t jM;
-  Double_t j_cosAlpha,j_cosAlphaBS, j_cosAlphaBS3D, j_cosAlpha3D, j_vNChi2, j_vProb, j_dz;
+  Double_t j_cosAlpha,j_cosAlphaBS, j_cosAlphaBS3D, j_cosAlpha3D, j_vNChi2, j_vProb, j_dz,j_refit;
   Double_t j_l_xy, j_l_xyBS, j_l_xyz, j_l_xyzBS, j_deltaR;
   Double_t j_lErr_xy, j_lErr_xyBS, j_lErr_xyz, j_lErr_xyzBS;
   Double_t j_ctauErrPV, j_ctauPV, j_ctauErrBS, j_ctauBS;

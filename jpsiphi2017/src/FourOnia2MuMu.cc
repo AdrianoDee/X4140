@@ -129,6 +129,10 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   KalmanVertexFitter vtxFitter(true);
   TrackCollection muonLess;
 
+  ParticleMass muon_mass = 0.10565837; //pdg mass
+  //ParticleMass psi_mass = 3.096916;
+  float muon_sigma = muon_mass*1.e-6;
+
   // MuMu candidates only from muons
   for(View<pat::Muon>::const_iterator it = muons->begin(), itend = muons->end(); it != itend; ++it){
     // both must pass low quality
@@ -147,76 +151,59 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       vector<TransientVertex> pvs;
 
       // ---- no explicit order defined ----
-      mumucand.addDaughter(*it, "muon1");
-      mumucand.addDaughter(*it2,"muon2");
+      if(it->charge() > 0)
+      {
+        mumucand.addDaughter(*it, "muon1");
+        mumucand.addDaughter(*it2,"muon2");
+      } else
+      {
+        mumucand.addDaughter(*it, "muon2");
+        mumucand.addDaughter(*it2,"muon1");
+      }
+
 
       // ---- define and set candidate's 4momentum  ----
-      LorentzVector mumu = it->p4() + it2->p4();
+      // LorentzVector mumu = it->p4() + it2->p4();
+      TLorentzVector mu1, mu2,mumu;
+      mu1.SetXYZM(it->track()->px(),it->track()->py(),it->track()->pz(),muon_mass);
+      mu2.SetXYZM(it2->track()->px(),it2->track()->py(),it2->track()->pz(),muon_mass);
+      mumu=mu1+mu2;
       mumucand.setP4(mumu);
       mumucand.setCharge(it->charge()+it2->charge());
 
       float deltaRMuMu = reco::deltaR2(it->eta(),it->phi(),it2->eta(),it2->phi());
-
       mumucand.addUserFloat("deltaR",deltaRMuMu);
 
       // ---- apply the dimuon cut ----
 
       if(!dimuonSelection_(mumucand)) continue;
-      // std::cout << mumu.M() << " - ";
+
       // ---- fit vertex using Tracker tracks (if they have tracks) ----
-      if (it->track().isNonnull() && it2->track().isNonnull()) {
-        //std::cout << "Tracker tracks: they exist !" << std::endl;
-        //build the dimuon secondary vertex
-        vector<TransientTrack> t_tks;
-        t_tks.push_back(theTTBuilder->build(*it->track()));  // pass the reco::Track, not  the reco::TrackRef (which can be transient)
-        t_tks.push_back(theTTBuilder->build(*it2->track())); // otherwise the vertex will have transient refs inside.
-        TransientVertex myVertex = vtxFitter.vertex(t_tks);
+      if (!(it->track().isNonnull() || it2->track().isNonnull())) continue;
 
-        CachingVertex<5> VtxForInvMass = vtxFitter.vertex( t_tks );
+      vector<TransientTrack> muon_ttks;
+      muon_ttks.push_back(theTTBuilder->build(*it->track()));  // pass the reco::Track, not  the reco::TrackRef (which can be transient)
+      muon_ttks.push_back(theTTBuilder->build(*it2->track())); // otherwise the vertex will have transient refs inside.
 
-        Measurement1D MassWErr(mumu.M(),-9999.);
-        if ( field->nominalValue() > 0 ) {
+      //Vertex Fit W/O mass constrain
+
+      TransientVertex mumuVertex = vtxFitter.vertex(muon_ttks);
+      CachingVertex<5> VtxForInvMass = vtxFitter.vertex( muon_ttks );
+
+      Measurement1D MassWErr(mumu.M(),-9999.);
+      if ( field->nominalValue() > 0 ) {
           MassWErr = massCalculator.invariantMass( VtxForInvMass, muMasses );
-        } else {
-          myVertex = TransientVertex();                      // with no arguments it is invalid
+      } else {
+          mumuVertex = TransientVertex();                      // with no arguments it is invalid
         }
 
-        mumucand.addUserFloat("MassErr",MassWErr.error());
-        float refittedMass = -1.0;
-
-        if (myVertex.isValid()) {
-
-          KinematicParticleFactoryFromTransientTrack pFactory;
-
-          vector<RefCountedKinematicParticle> muonParticles;
-
-          float kinChi = 0.;
-      	  float kinNdf = 0.;
-
-          ParticleMass muon_mass = 0.10565837; //pdg mass
-      	  //ParticleMass psi_mass = 3.096916;
-      	  float muon_sigma = muon_mass*1.e-6;
+      mumucand.addUserFloat("MassErr",MassWErr.error());
 
 
+      if (mumuVertex.isValid()) {
 
-      	    muonParticles.push_back(pFactory.particle(t_tks[0],muon_mass,kinChi,kinNdf,muon_sigma));
-      	    muonParticles.push_back(pFactory.particle(t_tks[1],muon_mass,kinChi,kinNdf,muon_sigma));
-
-            KinematicParticleVertexFitter fitter;
-
-        	  RefCountedKinematicTree psiVertexFitTree;
-
-      	    psiVertexFitTree = fitter.fit(muonParticles);
-
-
-            psiVertexFitTree->movePointerToTheTop();
-
-        	  RefCountedKinematicParticle psi_vFit_noMC = psiVertexFitTree->currentParticle();
-
-            refittedMass = psi_vFit_noMC->currentState().mass();
-
-          float vChi2 = myVertex.totalChiSquared();
-          float vNDF  = myVertex.degreesOfFreedom();
+          float vChi2 = mumuVertex.totalChiSquared();
+          float vNDF  = mumuVertex.degreesOfFreedom();
           float vProb(TMath::Prob(vChi2,(int)vNDF));
 
           mumucand.addUserFloat("vNChi2",vChi2/vNDF);
@@ -228,8 +215,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
           TVector3 pvtx,pvtx3D;
           VertexDistanceXY vdistXY;
 
-          vtx.SetXYZ(myVertex.position().x(),myVertex.position().y(),0);
-          vtx3D.SetXYZ(myVertex.position().x(),myVertex.position().y(),myVertex.position().z());
+          vtx.SetXYZ(mumuVertex.position().x(),mumuVertex.position().y(),0);
+          vtx3D.SetXYZ(mumuVertex.position().x(),mumuVertex.position().y(),mumuVertex.position().z());
           TVector3 pperp(mumu.px(), mumu.py(), 0);
           TVector3 pperp3D(mumu.px(), mumu.py(), mumu.pz());
           AlgebraicVector3 vpperp(pperp.x(),pperp.y(),0);
@@ -240,7 +227,7 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             float minDz = 999999.;
             TwoTrackMinimumDistance ttmd;
             bool status = ttmd.calculate( GlobalTrajectoryParameters(
-              GlobalPoint(myVertex.position().x(), myVertex.position().y(), myVertex.position().z()),
+              GlobalPoint(mumuVertex.position().x(), mumuVertex.position().y(), mumuVertex.position().z()),
               GlobalVector(mumucand.px(),mumucand.py(),mumucand.pz()),TrackCharge(0),&(*magneticField)),
               GlobalTrajectoryParameters(
                 GlobalPoint(bs.position().x(), bs.position().y(), bs.position().z()),
@@ -261,6 +248,7 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
               muonLess.clear();
               muonLess.reserve(thePrimaryV.tracksSize());
+
               if( addMuonlessPrimaryVertex_  && thePrimaryV.tracksSize()>2) {
                 // Primary vertex matched to the dimuon, now refit it removing the two muons
                 FourOniaVtxReProducer revertex(priVtxs, iEvent);
@@ -284,7 +272,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                       // Need to go back to the original tracks before taking the key
                       std::vector<reco::Track>::const_iterator itRefittedTrack = thePrimaryV.refittedTracks().begin();
                       std::vector<reco::Track>::const_iterator refittedTracksEnd = thePrimaryV.refittedTracks().end();
-                      for( ; itRefittedTrack != refittedTracksEnd; ++itRefittedTrack ) {
+                      for( ; itRefittedTrack != refittedTracksEnd; ++itRefittedTrack )
+                      {
                         if( thePrimaryV.originalTrack(*itRefittedTrack).key() == rmu1->track().key() ) continue;
                         if( thePrimaryV.originalTrack(*itRefittedTrack).key() == rmu2->track().key() ) continue;
                         // vertexTracksKeys.push_back(thePrimaryV.originalTrack(*itRefittedTrack).key());
@@ -338,15 +327,15 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                     sumPTPV += track.pt();
                   }
                 }
-              } catch (std::exception & err) {std::cout << " muon Selection%G�%@failed " << std::endl; return ; }
+              } catch (std::exception & err) {std::cout << " muon Selection failed " << std::endl; return ; }
 
               mumucand.addUserInt("countTksOfPV", countTksOfPV);
               mumucand.addUserFloat("vertexWeight", (float) vertexWeight);
               mumucand.addUserFloat("sumPTPV", (float) sumPTPV);
 
               ///DCA
-              TrajectoryStateClosestToPoint mu1TS = t_tks[0].impactPointTSCP();
-              TrajectoryStateClosestToPoint mu2TS = t_tks[1].impactPointTSCP();
+              TrajectoryStateClosestToPoint mu1TS = muon_ttks[0].impactPointTSCP();
+              TrajectoryStateClosestToPoint mu2TS = muon_ttks[1].impactPointTSCP();
               float dca = 1E20;
               if (mu1TS.isValid() && mu2TS.isValid()) {
                 ClosestApproachInRPhi cApp;
@@ -369,10 +358,10 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               TVector3 vdiff = vtx - pvtx;
               cosAlpha = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
 
-              Measurement1D distXY = vdistXY.distance(Vertex(myVertex), thePrimaryV);
+              Measurement1D distXY = vdistXY.distance(Vertex(mumuVertex), thePrimaryV);
               ctauPV = distXY.value()*cosAlpha * mumucand.mass()/pperp.Perp();
 
-              GlobalError v1e = (Vertex(myVertex)).error();
+              GlobalError v1e = (Vertex(mumuVertex)).error();
               GlobalError v2e = thePrimaryV.error();
               AlgebraicSymMatrix33 vXYe = v1e.matrix()+ v2e.matrix();
               ctauErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*mumucand.mass()/(pperp.Perp2());
@@ -410,12 +399,12 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               pvtx.SetXYZ(theBeamSpotV.position().x(),theBeamSpotV.position().y(),0);
               vdiff = vtx - pvtx;
               cosAlphaBS = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
-              distXY = vdistXY.distance(Vertex(myVertex), theBeamSpotV);
+              distXY = vdistXY.distance(Vertex(mumuVertex), theBeamSpotV);
               //double ctauBS = distXY.value()*cosAlpha*3.09688/pperp.Perp();
 
               ctauBS = distXY.value()*cosAlpha*mumucand.mass()/pperp.Perp();
 
-              GlobalError v1eB = (Vertex(myVertex)).error();
+              GlobalError v1eB = (Vertex(mumuVertex)).error();
               GlobalError v2eB = theBeamSpotV.error();
               AlgebraicSymMatrix33 vXYeB = v1eB.matrix()+ v2eB.matrix();
               //double ctauErrBS = sqrt(vXYeB.similarity(vpperp))*3.09688/(pperp.Perp2());
@@ -445,13 +434,11 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserFloat("l_xyzBS",l_xyzBS);
               mumucand.addUserFloat("lErr_xyzBS",lErr_xyzBS);
 
-              mumucand.addUserData("commonVertex",Vertex(myVertex));
+              mumucand.addUserData("commonVertex",Vertex(mumuVertex));
 
             } else {
               mumucand.addUserFloat("vNChi2",-1);
               mumucand.addUserFloat("vProb", -1);
-
-              mumucand.addUserFloat("refittedMass", refittedMass);
 
               mumucand.addUserFloat("ctauPV",-100);
               mumucand.addUserFloat("ctauErrPV",-100);
@@ -487,8 +474,39 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               }
 
             }
-          } else
-            continue;
+
+            //Muon mass Vertex Refit
+
+            float refittedMass = -1.0, mumuVtxCL = -1.0;
+
+            KinematicParticleFactoryFromTransientTrack pFactory;
+            vector<RefCountedKinematicParticle> muonParticles;
+
+            float kinChi = 0.;
+        	  float kinNdf = 0.;
+
+        	  muonParticles.push_back(pFactory.particle(muon_ttks[0],muon_mass,kinChi,kinNdf,muon_sigma));
+        	  muonParticles.push_back(pFactory.particle(muon_ttks[1],muon_mass,kinChi,kinNdf,muon_sigma));
+
+            KinematicParticleVertexFitter kFitter;
+          	RefCountedKinematicTree mumuVertexFitTree;
+        	  mumuVertexFitTree = kFitter.fit(muonParticles);
+
+            if (mumuVertexFitTree->isValid())
+            {
+              mumuVertexFitTree->movePointerToTheTop();
+              RefCountedKinematicVertex mumu_KV = mumuVertexFitTree->currentDecayVertex();
+              if (mumu_KV->isValid())
+              {
+                RefCountedKinematicParticle mumu_vFit = mumuVertexFitTree->currentParticle();
+                refittedMass = mumu_vFit->currentState().mass();
+
+                mumuVtxCL = TMath::Prob((double)mumu_KV.chiSquared(),int(rint(mumu_KV->degreesOfFreedom())));
+              }
+            }
+
+            mumucand.addUserFloat("refittedMass", refittedMass);
+            mumucand.addUserFloat("mumuVtxCL", mumuVtxCL);
 
           // ---- MC Truth, if enabled ----
           if (addMCTruth_) {
@@ -535,8 +553,6 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserFloat("ctauTrue",-99.);
             }
           }
-
-
 
 
           // ---- Push back output ----

@@ -55,7 +55,7 @@ int selectXTree()
 
    TFile *oldfile = TFile::Open("/Users/adrianodiflorio/Documents/Git/X4140/iPythons/skimmedNP.root");
 
-   TTree *oldtree = (TTree*)oldfile->Get("xTree");
+   TTree *oldtree = (TTree*)oldfile->Get("jTree");
    Long64_t nentries = oldtree->GetEntries();
    Double_t xyl   = 0.0;
    Double_t xylErr   = 0.0;
@@ -188,19 +188,19 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
         bool test = false;
        bool jpsimass = jPsiM < 3.15 && jPsiM > 3.0;
        bool phimass = phiM < 1.06 && phiM > 0.98;
-       for (int j = 0; j < 6; j++)
-          if (tB.test(j) && cosA > 0.995 && vProb > 0.01 && xyl/xylErr > 2.0 )
+       for (int j = 0; j < 13; j++)
+          // if (tB.test(j) && cosA > 0.995 && vProb > 0.01 && xyl/xylErr > 2.0 && trigger > 0)
+          if (tB.test(j))
           {
             test = true;
             phiHists[j]->Fill(phiM);
             jpsiHists[j]->Fill(jPsiM);
    	    //  if(phimass && jpsimass && cosA > 0.995 && vProb>0.02 && xyl/xylErr > 2.0)
-            if(phimass && jpsimass)
+
             xHists[j]->Fill(xM);
           }
 	      // if(cosA > 0.995 && phimass && jpsimass && vProb>0.02 && xyl/xylErr > 2.0)
-        if(cosA > 0.995 && test && vProb > 0.01 && xyl/xylErr > 2.0 ){
-          if(phimass && jpsimass)
+        if (tB.test(j)){
         xHist->Fill(xM);
         phiHist->Fill(phiM);
         jpsiHist->Fill(jPsiM);
