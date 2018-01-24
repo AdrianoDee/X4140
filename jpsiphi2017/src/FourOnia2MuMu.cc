@@ -182,6 +182,7 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
 
         mumucand.addUserFloat("MassErr",MassWErr.error());
+        float refittedMass = -1.0;
 
         if (myVertex.isValid()) {
 
@@ -196,7 +197,7 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       	  //ParticleMass psi_mass = 3.096916;
       	  float muon_sigma = muon_mass*1.e-6;
 
-          float refittedMass = -1.0;
+
 
       	    muonParticles.push_back(pFactory.particle(t_tks[0],muon_mass,kinChi,kinNdf,muon_sigma));
       	    muonParticles.push_back(pFactory.particle(t_tks[1],muon_mass,kinChi,kinNdf,muon_sigma));
@@ -449,6 +450,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             } else {
               mumucand.addUserFloat("vNChi2",-1);
               mumucand.addUserFloat("vProb", -1);
+
+              mumucand.addUserFloat("refittedMass", refittedMass);
 
               mumucand.addUserFloat("ctauPV",-100);
               mumucand.addUserFloat("ctauErrPV",-100);
