@@ -137,7 +137,7 @@ FourOnia2KKPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(kTrack1->charge()==0) continue;
 
     // if ((kTrack1 ==  nullptr)) continue;
-    if ((kTrack1->chi2() / kTrack1->ndof() > TrMaxNormChi2)  ||  kTrack1->pt() < TrMinPt) continue;
+    // if ((kTrack1->chi2() / kTrack1->ndof() > TrMaxNormChi2)  ||  kTrack1->pt() < TrMinPt) continue;
 
     std::cout << kTrack1->pt() << " - " << kTrack1->pt() << std::endl;
 
@@ -147,7 +147,7 @@ FourOnia2KKPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       if(kTrack1==kTrack2) continue;
       if(kTrack2->charge()==0) continue;
 
-      if ((kTrack2->chi2() / kTrack2->ndof() > TrMaxNormChi2)  ||  kTrack2->pt() < TrMinPt) continue;
+      // if ((kTrack2->chi2() / kTrack2->ndof() > TrMaxNormChi2)  ||  kTrack2->pt() < TrMinPt) continue;
 
       if (kTrack1->charge() * kTrack2->charge() > 0) continue;//TODO CHECK IF phi->K0K0 ... ?
 
