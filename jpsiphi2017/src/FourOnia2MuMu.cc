@@ -164,19 +164,19 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
       // ---- define and set candidate's 4momentum  ----
-      // LorentzVector mumu = it->p4() + it2->p4();
-      TLorentzVector mu1, mu2,mumu;
+      LorentzVector mumu = it->p4() + it2->p4();
+      TLorentzVector mu1, mu2,mumuP4;
       mu1.SetXYZM(it->track()->px(),it->track()->py(),it->track()->pz(),muon_mass);
       mu2.SetXYZM(it2->track()->px(),it2->track()->py(),it2->track()->pz(),muon_mass);
       // LorentzVector mumu;
 
-      mumu=mu1+mu2;
+      mumuP4=mu1+mu2;
       mumucand.setP4(mumu);
       mumucand.setCharge(it->charge()+it2->charge());
 
       float deltaRMuMu = reco::deltaR2(it->eta(),it->phi(),it2->eta(),it2->phi());
       mumucand.addUserFloat("deltaR",deltaRMuMu);
-
+      mumucand.addUserFloat("mumuP4",mumuP4.M());
       // ---- apply the dimuon cut ----
 
       if(!dimuonSelection_(mumucand)) continue;
