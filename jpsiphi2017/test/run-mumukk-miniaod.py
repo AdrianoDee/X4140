@@ -21,8 +21,6 @@ process.source = cms.Source("PoolSource",
 
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
 
-process.load("CompactSkim.Examples.PsiTrakTrakRootupler_cfi")
-
 process.TFileService = cms.Service("TFileService",
         fileName = cms.string('rootuple-PsiTrakTrakRootupler.root'),
 )
