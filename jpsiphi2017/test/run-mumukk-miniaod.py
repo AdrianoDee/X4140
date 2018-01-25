@@ -155,7 +155,7 @@ process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
     HLTs = hltpaths
 )
 
-rootupleKK = cms.EDAnalyzer('Phi2KKRootupler',
+process.rootupleKK = cms.EDAnalyzer('Phi2KKRootupler',
                           dikaons = cms.InputTag("Phi2KKPAT"),
                           kaons = cms.InputTag("oniaSelectedTracks"),
                           primaryVertices = cms.InputTag("offlinePrimaryVertices"),
@@ -167,7 +167,7 @@ rootupleKK = cms.EDAnalyzer('Phi2KKRootupler',
                           OnlyGen = cms.bool(False)
                           )
 
-rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
+process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
                           dimuons = cms.InputTag("onia2MuMuPAT"),
                           muons = cms.InputTag("replaceme"),
                           primaryVertices = cms.InputTag("offlinePrimaryVertices"),
