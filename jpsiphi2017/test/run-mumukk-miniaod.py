@@ -111,6 +111,11 @@ filters = cms.vstring(
                                 'hltDisplacedmumuFilterDimuon0Jpsi'
                                 )
 
+process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+process.CandidateSelectedTracks = cms.EDProducer("ConcreteChargedCandidateProducer",
+                src=cms.InputTag("oniaSelectedTracks"),
+                particleType=cms.string('K+')
+                )
 
 process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         triggerConditions = cms.vstring(hltpathsV),
@@ -121,7 +126,7 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
 
 process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
     Onia = cms.InputTag('onia2MuMuPAT'),
-    Trak = cms.InputTag('cleanPatTrackCands'),
+    Trak = cms.InputTag('patSelectedTracks'),
     OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
     TrakTrakMassCuts = cms.vdouble(1.004461,1.034461),  # phi mass window 1.019461 +/- .015
     OniaTrakTrakMassCuts = cms.vdouble(4.9,5.7),            # b-hadron mass window
@@ -146,4 +151,4 @@ process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
     OnlyBest = cms.bool(True)
 )
 
-process.p = cms.Path(process.triggerSelection * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple )
+process.p = cms.Path(process.triggerSelection * process.CandidateSelectedTracks * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple )
