@@ -146,4 +146,4 @@ process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
     OnlyBest = cms.bool(True)
 )
 
-process.p = cms.Path(process.triggerSelection * process.PsiTrakProducer * process.PsiTrakFitter * process.rootuple )
+process.p = cms.Path(process.triggerSelection * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple )
