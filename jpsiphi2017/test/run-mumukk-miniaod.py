@@ -162,8 +162,8 @@ rootupleKK = cms.EDAnalyzer('Phi2KKRootupler',
                           TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
 			              TestFilterNames =  cms.vstring('hltDisplacedmumuFilterDimuon0PhiBarrel'),
                           kk_mass_cuts = cms.vdouble(0.85,1.2),
-                          isMC = cms.bool(True),
-                          OnlyBest = cms.bool(True),
+                          isMC = cms.bool(False),
+                          OnlyBest = cms.bool(False),
                           OnlyGen = cms.bool(False)
                           )
 
@@ -173,9 +173,9 @@ rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
                           primaryVertices = cms.InputTag("offlinePrimaryVertices"),
                           TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
                           onia_pdgid = cms.uint32(443),
-                          onia_mass_cuts = cms.vdouble(2.2,4.0),
-                          isMC = cms.bool(True),
-                          OnlyBest = cms.bool(True),
+                          onia_mass_cuts = cms.vdouble(2.5,3.5),
+                          isMC = cms.bool(False),
+                          OnlyBest = cms.bool(False),
                           OnlyGen = cms.bool(False)
                           )
 
