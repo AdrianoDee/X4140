@@ -217,6 +217,115 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 }
 
 
+int drawJTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPythons/xTree.root",std::string treename = "xTree")
+{
+
+  UInt_t colors[13] = {1,2,3,6,7,8,30,40,46,38,29,34,9};
+
+   TFile *oldfile = TFile::Open(path.data());
+   TTree *oldtree = (TTree*)oldfile->Get(treename.data());
+
+   Long64_t nentries = oldtree->GetEntries();
+   Double_t pM = 0.0;
+   Double_t xyl   = 0.0;
+   Double_t xylErr   = 0.0;
+   Double_t cosA  = 0.0;
+
+   Double_t phiM  = 0.0;
+   Double_t jPsiM  = 0.0;
+
+   Double_t ctau  = 0.0;
+   Double_t ctauErr  = 0.0;
+
+   Double_t vProb  = 0.0;
+
+   Int_t phiMType = 0, phiPType = 0;
+   UInt_t phi_trigger = 0, jpsi_trigger = 0, trigger = 0;
+
+   oldtree->SetBranchAddress("jM",&jM);
+   oldtree->SetBranchAddress("p_vProb",&vProb);
+   oldtree->SetBranchAddress("trigger",&trigger);
+
+   //Create a new file + a clone of old tree in new file
+   TCanvas c("c","c",1200,1600);
+
+   TFile *newfile = new TFile("drawSkim.root","RECREATE");
+   // for(int j = 0; j < 1; j++)
+   // {
+
+
+     Double_t xmin = 5.0, xmax = 6.0;
+     Int_t xBin = ((xmax - xmin)/0.01);
+
+     TTree *newtree = oldtree->CloneTree(0);
+     // TH1F* phi_triggrHist = new TH1F("phi_triggrHist","phi_triggrHist",600,0.6,1.2);
+     TH1F* jpsiHist = new TH1F("jpsiHist","jpsiHist",140,2.6,3.3);
+
+     std::vector<TH1F*> phiHists;
+
+
+     for (size_t i = 0; i < 13; i++)
+          jpsiHists.push_back(new TH1F((hltsName[i] + "_jpsi").data(),(hltsName[i] + "_jpsi").data(),140,2.6,3.3));
+
+
+     for (Long64_t i=0;i<nentries; i++) {
+        oldtree->GetEntry(i);
+        std::bitset<16> tB(trigger);
+        // std::bitset<16> pM(phiMType);
+        // std::bitset<16> pP(phiPType);
+       bool test = false;
+       // bool jpsimass = jPsiM < 3.15 && jPsiM > 3.0;
+       // bool phimass = phiM < 1.06 && phiM > 0.98;
+       for (int j = 0; j < 13; j++){
+          // if (tB.test(j) && cosA > 0.995 && vProb > 0.01 && xyl/xylErr > 2.0 && trigger > 0)
+          if (tB.test(j))
+          {
+            test = true;
+            jpsiHists[j]->Fill(jM);
+
+          }
+        }
+	      // if(cosA > 0.995 && phimass && jpsimass && vProb>0.02 && xyl/xylErr > 2.0)
+        if (test)
+        jpsiHist->Fill(jM);
+
+     }
+
+
+     //newtree->Draw("phi_M","","same");
+   // }
+   jpsiHist->SetMinimum(1.0);
+   jpsiHist->SetMaximum(jpsiHist->GetMaximum()*5.0);
+   //oldtree->Draw("phi_M");
+   // TH1F* phi_triggrHist = (TH1F*)gDirectory->Get("phi_triggrHist");
+
+   jpsiHist->SetLineColor(kBlue);
+   jpsiHist->Write();
+   jpsiHist->Draw();
+
+   TLegend* leg = new TLegend(0.1,0.5,0.45,0.9);
+   leg->AddEntry(jpsiHist,(jpsiHist->GetName()),"l");
+   for (size_t i = 0; i < 13; i++)
+    {
+      jpsiHists[i]->SetLineColor(colors[i]);
+      jpsiHists[i]->SetLineWidth(2);
+      if(i>5) phiHists[i]->SetLineStyle(kDashed);
+      jpsiHists[i]->Draw("same");
+      leg->AddEntry(jpsiHists[i],(jpsiHists[i]->GetName()),"l");
+      jpsiHists[i]->Write();
+    }
+
+    leg->Draw();
+    c.SetLogy(1);
+    c.SaveAs("phitriggerCheck.png");
+    c.SaveAs("phitriggerCheck.eps");
+    c.SaveAs("phitriggerCheck.root");
+
+   return 0;
+
+}
+
+
 int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPythons/xTree.root",std::string treename = "xTree")
 {
 
