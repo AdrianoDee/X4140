@@ -1,6 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 process = cms.Process('PSIKK')
 
+input_file = "file:1AC81AA9-36B2-E711-AEDB-02163E01A6C9.root"
+
 process.load("TrackingTools.TransientTrack.TransientTrackBuilder_cfi")
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff")
@@ -14,7 +16,7 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 500
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:inputfile')
+    fileNames = cms.untracked.vstring(input_file)
 )
 
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
@@ -119,32 +121,31 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         throw = cms.bool(False)
                                         )
 
-PsiTrakProducer = cms.EDProducer('OniaTrakProducer',
+process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
     Onia = cms.InputTag('onia2MuMuPAT'),
     Trak = cms.InputTag('cleanPatTrackCands'),
-    OniaMassCuts = cms.vdouble(2.947,3.247),
-    OniaTrakMassCuts = cms.vdouble(5.0,5.7),
-    OnlyBest = cms.bool(True)
+    OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
+    TrakTrakMassCuts = cms.vdouble(1.004461,1.034461),  # phi mass window 1.019461 +/- .015
+    OniaTrakTrakMassCuts = cms.vdouble(4.9,5.7),            # b-hadron mass window
+    MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
+    OnlyBest  = cms.bool(True)
 )
 
-PsiTrakFitter = cms.EDProducer('PsiTrakKinematicFit',
-    PsiTrak         = cms.InputTag('PsiTrakProducer','OniaTrakCandidates'),
-    mass_constraint = cms.double(3.0969),              # J/psi mass in GeV
-    product_name    = cms.string('PsiTrakCandidates')
+process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
+    PsiTrakTrak     = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
+    mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
+    OniaTrakTrakMassCuts = cms.vdouble(5.0,5.7),            # b-hadron mass window
+    MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
+    product_name    = cms.string('PsiPhiCandidates')
 )
 
-rootuple = cms.EDAnalyzer('PsiTrakRootupler',
-    oniat_cand = cms.InputTag("PsiTrakProducer","OniaTrakCandidates"),
-    oniat_rf_cand = cms.InputTag("PsiTrakFitter","PsiTrakCandidates"),
+process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
+    oniat_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
+    oniat_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
     primaryVertices = cms.InputTag("offlinePrimaryVertices"),
     TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
-    oniat_pdgid = cms.uint32(521),
-    onia_pdgid = cms.uint32(443),
-    trak_pdgid = cms.uint32(321),
     isMC = cms.bool(False),
     OnlyBest = cms.bool(True)
 )
 
-PsiTrakSequence = cms.Sequence(PsiTrakProducer*PsiTrakFitter*rootuple)
-
-process.p = cms.Path(process.PsiTrakTrakSequence)
+process.p = cms.Path(process.triggerSelection * process.PsiTrakProducer * process.PsiTrakFitter * process.rootuple )
