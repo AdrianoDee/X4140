@@ -2,7 +2,7 @@
 //
 // Package:    Phi2KKRootupler
 // Class:      Phi2KKRootupler
-// 
+//
 // Description: Dump  Phi(k+ k-)  decays
 //
 // Author:  Alberto Sanchez Hernandez
@@ -68,7 +68,7 @@ class Phi2KKRootupler:public edm::EDAnalyzer {
         UInt_t    nkk;
         UInt_t    nkaons;
         UInt_t    trigger;
-        Int_t     charge; 
+        Int_t     charge;
 	Int_t     ipv;
 	Int_t     ntracks, npvtracks;
 	Int_t     ntracks_pv, opv;
@@ -99,7 +99,7 @@ class Phi2KKRootupler:public edm::EDAnalyzer {
 	TLorentzVector gen_dikaon_p4;
 	TLorentzVector gen_kaonP_p4;
 	TLorentzVector gen_kaonM_p4;
-          
+
         edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
         edm::EDGetTokenT<pat::PackedGenParticleCollection> packCands_;
 
@@ -133,7 +133,7 @@ OnlyGen_(iConfig.getParameter<bool>("OnlyGen"))
     kk_tree->Branch("trigger",  &trigger,  "trigger/i");
     kk_tree->Branch("charge",   &charge,   "charge/I");
     kk_tree->Branch("ipv",      &ipv,      "ipv/I");
-    kk_tree->Branch("ntracks",  &ntracks,  "ntracks/I");
+    // kk_tree->Branch("ntracks",  &ntracks,  "ntracks/I");
     kk_tree->Branch("npvtracks",&npvtracks,"npvtracks/I");
     kk_tree->Branch("ntracks_pv",&ntracks_pv,"ntracks_pv/I");
     kk_tree->Branch("opv",       &opv,       "opv/I");
@@ -236,7 +236,7 @@ void Phi2KKRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup &
 
   run       = iEvent.id().run();
   event     = iEvent.id().event();
-  lumiblock = iEvent.id().luminosityBlock(); 
+  lumiblock = iEvent.id().luminosityBlock();
 
   numPrimaryVertices = 0;
   if (primaryVertices_handle.isValid()) numPrimaryVertices = (int) primaryVertices_handle->size();
@@ -274,18 +274,18 @@ void Phi2KKRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup &
           if ( motherInPrunedCollection != nullptr && (d->pdgId() ==  321 ) && isAncestor(aonia , motherInPrunedCollection) ) {
             gen_kaonM_p4.SetPtEtaPhiM(d->pt(),d->eta(),d->phi(),d->mass());
             foundit++;
-          } 
+          }
           if ( motherInPrunedCollection != nullptr && (d->pdgId() == -321 ) && isAncestor(aonia , motherInPrunedCollection) ) {
             gen_kaonP_p4.SetPtEtaPhiM(d->pt(),d->eta(),d->phi(),d->mass());
             foundit++;
           }
-          if ( foundit == 3 ) break;               
+          if ( foundit == 3 ) break;
         }
         if ( foundit == 3 ) {
           gen_dikaon_p4 = gen_kaonM_p4 + gen_kaonP_p4;   // this should take into account FSR
           mother_pdgId  = GetAncestor(aonia)->pdgId();
           break;
-        } else dikaon_pdgId = 0;            
+        } else dikaon_pdgId = 0;
       }  // if ( p_id
     } // for (size
     if ( ! dikaon_pdgId ) std::cout << "Phi2KKRootupler: does not found the given decay " << run << "," << event << std::endl; // sanity check
@@ -317,7 +317,7 @@ void Phi2KKRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup &
           ppdlBS = dikaonCand->userFloat("ppdlBS");
           ppdlErrBS = dikaonCand->userFloat("ppdlErrBS");
           cosAlpha = dikaonCand->userFloat("cosAlpha");
-          charge = dikaonCand->charge(); 
+          charge = dikaonCand->charge();
           TVector3 pperp(dikaonCand->px(),dikaonCand->py(),0);
           lxyPV = ppdlPV * pperp.Perp() / dikaonCand->mass();
           lxyBS = ppdlBS * pperp.Perp() / dikaonCand->mass();
@@ -329,17 +329,17 @@ void Phi2KKRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup &
 	  deta  = vP.Eta() - vM.Eta();
 	  //dr    = sqrt(pow(dphi,2) + pow(deta,2));
 	  dr      = dikaonCand->userFloat("deltar");
-	  ntracks = dikaonCand->userInt("ntracks");
+	  // ntracks = dikaonCand->userInt("ntracks");
 	  npvtracks = dikaonCand->userInt("npvtracks");
 	  ntracks_pv = dikaonCand->userInt("ntracks_pv");
 	  opv   = dikaonCand->userInt("oniaPV");
           nkk++;
           if (OnlyBest_) break;
-          else { 
+          else {
             kk_tree->Fill();   // be aware, we are storing all combinations
             already_stored = true;
           }
-        } 
+        }
       }
     } //..else {
       if ( nkk == 0 && kaons.isValid() && !kaons->empty() ) {
@@ -347,26 +347,26 @@ void Phi2KKRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup &
         reco::Candidate::LorentzVector v1, v2;
         for ( std::vector<pat::GenericParticle>::const_iterator kaonCand = kaons->begin(); kaonCand!= kaons->end(); ++kaonCand ) {
           nkaons++;
-          if (nkaons == 1) { 
+          if (nkaons == 1) {
             mcharge1 = kaonCand->charge();
             v1 = kaonCand->p4();
           } else {
-            if ( mcharge1*kaonCand->charge() < 0  && mcharge2 == 0 ) { 
+            if ( mcharge1*kaonCand->charge() < 0  && mcharge2 == 0 ) {
               mcharge2 = kaonCand->charge();
               v2 = kaonCand->p4();
               nkaons = 2;
               break;    // we store only 2 kaons
-            } 
+            }
           }
         }
-        if ( mcharge1 > 0 ) { 
+        if ( mcharge1 > 0 ) {
           kaonP_p4.SetPtEtaPhiM(v1.pt(),v1.eta(),v1.phi(),v1.mass());
           if (mcharge2 < 0 ) kaonN_p4.SetPtEtaPhiM(v2.pt(),v2.eta(),v2.phi(),v2.mass());
         } else {
           kaonN_p4.SetPtEtaPhiM(v1.pt(),v1.eta(),v1.phi(),v1.mass());
           if (mcharge2 > 0 ) kaonP_p4.SetPtEtaPhiM(v2.pt(),v2.eta(),v2.phi(),v2.mass());
         }
-      } 
+      }
   }  // !OnlyGen_
 
   if ( !already_stored ) {  // we have to make sure, we are not double storing an combination
