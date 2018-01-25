@@ -8,7 +8,7 @@ config = Configuration()
 
 #print("Test = " + str(skipevt))
 
-datasetbase = '/Charmonium/' # '/Muonia/' #
+datasetbase = '/Charmonium' # '/Muonia' #
 datasetnames = {
 
 "F" :  datasetbase + '/Run2017F-BPHSkim-PromptReco-v1/USER',
