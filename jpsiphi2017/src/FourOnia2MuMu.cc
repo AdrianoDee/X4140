@@ -149,7 +149,7 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       if (!(higherPuritySelection_(*it) || higherPuritySelection_(*it2))) continue;
 
       // ---- fit vertex using Tracker tracks (if they have tracks) ----
-      if (!(it->track().isNonnull() || it2->track().isNonnull())) continue;
+      if (!(it->track().isNonnull() && it2->track().isNonnull())) continue;
 
       pat::CompositeCandidate mumucand;
       vector<TransientVertex> pvs;
