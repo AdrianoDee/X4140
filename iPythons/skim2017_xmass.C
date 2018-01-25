@@ -226,7 +226,7 @@ int drawJTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
    TTree *oldtree = (TTree*)oldfile->Get(treename.data());
 
    Long64_t nentries = oldtree->GetEntries();
-   Double_t pM = 0.0;
+   Double_t jM = 0.0;
    Double_t xyl   = 0.0;
    Double_t xylErr   = 0.0;
    Double_t cosA  = 0.0;
@@ -243,7 +243,7 @@ int drawJTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
    UInt_t phi_trigger = 0, jpsi_trigger = 0, trigger = 0;
 
    oldtree->SetBranchAddress("jM",&jM);
-   oldtree->SetBranchAddress("p_vProb",&vProb);
+   oldtree->SetBranchAddress("j_vProb",&vProb);
    oldtree->SetBranchAddress("trigger",&trigger);
 
    //Create a new file + a clone of old tree in new file
@@ -261,7 +261,7 @@ int drawJTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
      // TH1F* phi_triggrHist = new TH1F("phi_triggrHist","phi_triggrHist",600,0.6,1.2);
      TH1F* jpsiHist = new TH1F("jpsiHist","jpsiHist",140,2.6,3.3);
 
-     std::vector<TH1F*> phiHists;
+     std::vector<TH1F*> jpsiHists;
 
 
      for (size_t i = 0; i < 13; i++)
