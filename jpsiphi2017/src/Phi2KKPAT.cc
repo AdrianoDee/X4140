@@ -1,4 +1,4 @@
-#include "../Phi2KKPAT.h"
+#include "../interface/Phi2KKPAT.h"
 
 #include <DataFormats/TrackReco/interface/TrackFwd.h>
 #include <DataFormats/TrackReco/interface/Track.h>

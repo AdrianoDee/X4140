@@ -1,4 +1,4 @@
-#include "../OniaTrakTrakProducer.h"
+#include "../interface/OniaTrakTrakProducer.h"
 
 OniaTrakTrakProducer::OniaTrakTrakProducer(const edm::ParameterSet& ps):
   OniaCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Onia"))),
