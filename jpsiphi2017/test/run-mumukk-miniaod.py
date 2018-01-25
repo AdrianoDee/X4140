@@ -156,7 +156,7 @@ process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
 )
 
 process.Phi2KKPAT = cms.EDProducer('Phi2KKPAT',
-  kaons = cms.InputTag("oniaSelectedTracks"),
+  kaons = cms.InputTag("patSelectedTracks"),
   beamSpotTag = cms.InputTag("offlineBeamSpot"),
   primaryVertexTag = cms.InputTag("offlinePrimaryVertices"),
   OniaTag = cms.InputTag("onia2MuMuPAT"),                      ## Use Onia2MuMu as seed for PV, only tracks in this PV are used, PV=0 is used otherwise
@@ -169,10 +169,10 @@ process.Phi2KKPAT = cms.EDProducer('Phi2KKPAT',
 
 process.rootupleKK = cms.EDAnalyzer('Phi2KKRootupler',
                           dikaons = cms.InputTag("Phi2KKPAT"),
-                          kaons = cms.InputTag("oniaSelectedTracks"),
+                          kaons = cms.InputTag("patSelectedTracks"),
                           primaryVertices = cms.InputTag("offlinePrimaryVertices"),
                           TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
-			              TestFilterNames =  cms.vstring('hltDisplacedmumuFilterDimuon0PhiBarrel'),
+			              TestFilterNames =  filters,
                           kk_mass_cuts = cms.vdouble(0.85,1.2),
                           isMC = cms.bool(False),
                           OnlyBest = cms.bool(False),
@@ -193,4 +193,4 @@ process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
 
 
 
-process.p = cms.Path(process.triggerSelection * process.CandidateSelectedTracks * process.patSelectedTracks * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple * process.rootupleMuMu * process.Phi2KKPAT * process.rootupleKK)
+process.p = cms.Path(process.triggerSelection * process.CandidateSelectedTracks * process.patSelectedTracks * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple * process.rootupleMuMu * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
