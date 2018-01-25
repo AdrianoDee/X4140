@@ -117,6 +117,9 @@ process.CandidateSelectedTracks = cms.EDProducer("ConcreteChargedCandidateProduc
                 particleType=cms.string('K+')
                 )
 
+from PhysicsTools.PatAlgos.producersLayer1.genericParticleProducer_cfi import patGenericParticles
+process.patSelectedTracks = patGenericParticles.clone(src=cms.InputTag("CandidateSelectedTracks"))
+
 process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         triggerConditions = cms.vstring(hltpathsV),
                                         hltResults = cms.InputTag( "TriggerResults", "", "HLT" ),
