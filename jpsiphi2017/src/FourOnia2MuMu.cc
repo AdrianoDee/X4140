@@ -148,6 +148,9 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       // one must pass tight quality
       if (!(higherPuritySelection_(*it) || higherPuritySelection_(*it2))) continue;
 
+      // ---- fit vertex using Tracker tracks (if they have tracks) ----
+      if (!(it->track().isNonnull() || it2->track().isNonnull())) continue;
+
       pat::CompositeCandidate mumucand;
       vector<TransientVertex> pvs;
 
@@ -181,8 +184,6 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       if(!dimuonSelection_(mumucand)) continue;
 
-      // ---- fit vertex using Tracker tracks (if they have tracks) ----
-      if (!(it->track().isNonnull() || it2->track().isNonnull())) continue;
 
       vector<TransientTrack> muon_ttks;
       muon_ttks.push_back(theTTBuilder->build(*it->track()));  // pass the reco::Track, not  the reco::TrackRef (which can be transient)
