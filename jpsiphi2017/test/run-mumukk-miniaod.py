@@ -151,7 +151,34 @@ process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
     primaryVertices = cms.InputTag("offlinePrimaryVertices"),
     TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
     isMC = cms.bool(False),
-    OnlyBest = cms.bool(True)
+    OnlyBest = cms.bool(True),
+    HLTs = hltpaths
 )
 
-process.p = cms.Path(process.triggerSelection * process.CandidateSelectedTracks * process.patSelectedTracks * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple )
+rootupleKK = cms.EDAnalyzer('Phi2KKRootupler',
+                          dikaons = cms.InputTag("Phi2KKPAT"),
+                          kaons = cms.InputTag("oniaSelectedTracks"),
+                          primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+                          TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+			              TestFilterNames =  cms.vstring('hltDisplacedmumuFilterDimuon0PhiBarrel'),
+                          kk_mass_cuts = cms.vdouble(0.85,1.2),
+                          isMC = cms.bool(True),
+                          OnlyBest = cms.bool(True),
+                          OnlyGen = cms.bool(False)
+                          )
+
+rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
+                          dimuons = cms.InputTag("onia2MuMuPAT"),
+                          muons = cms.InputTag("replaceme"),
+                          primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+                          TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+                          onia_pdgid = cms.uint32(443),
+                          onia_mass_cuts = cms.vdouble(2.2,4.0),
+                          isMC = cms.bool(True),
+                          OnlyBest = cms.bool(True),
+                          OnlyGen = cms.bool(False)
+                          )
+
+
+
+process.p = cms.Path(process.triggerSelection * process.CandidateSelectedTracks * process.patSelectedTracks * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple * process.rootupleMuMu * process.rootupleKK)

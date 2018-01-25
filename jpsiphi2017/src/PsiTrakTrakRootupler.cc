@@ -1,7 +1,7 @@
 /*
    Package:    PsiTrakTrakRootupler
    Class:      PsiTrakTrakRootupler
- 
+
    Description: make rootuple of J/psi Track combination
 
    Original Author:  Alberto Sanchez Hernandez
@@ -60,7 +60,7 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
       void endRun(edm::Run const&, edm::EventSetup const&) override;
       void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
       void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
-  
+
   // ----------member data ---------------------------
   std::string file_name;
   edm::EDGetTokenT<pat::CompositeCandidateCollection> oniat_cand_Label;
@@ -69,8 +69,9 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   edm::EDGetTokenT<edm::TriggerResults> triggerResults_Label;
   int  oniat_pdgid_, onia_pdgid_, trak_pdgid_;
   bool isMC_,OnlyBest_;
+  std::vector<std::string>                            HLTs_;
 
-  UInt_t run,event,numPrimaryVertices, trigger;  
+  UInt_t run,event,numPrimaryVertices, trigger;
 
   TLorentzVector oniat_p4;
   TLorentzVector psi_p4;
@@ -133,8 +134,9 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         oniat_rf_cand_Label(consumes<pat::CompositeCandidateCollection>(iConfig.getParameter<edm::InputTag>("oniat_rf_cand"))),
         primaryVertices_Label(consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("primaryVertices"))),
         triggerResults_Label(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("TriggerResults"))),
-	isMC_(iConfig.getParameter<bool>("isMC")),
-        OnlyBest_(iConfig.getParameter<bool>("OnlyBest"))
+	      isMC_(iConfig.getParameter<bool>("isMC")),
+        OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
+        HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs"))
 {
 	edm::Service<TFileService> fs;
         oniat_tree = fs->make<TTree>("OniaPhiTree","Tree of Onia and Phi");
@@ -291,116 +293,25 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
         // ex. 1 = pass 0
 
   trigger = 0;
-  if ( triggerResults_handle.isValid() ) {
-    const edm::TriggerNames & TheTriggerNames = iEvent.triggerNames(*triggerResults_handle);
+  trigger = 0;
 
-    vector <unsigned int> bits_0;
-    for ( int version = 1; version<5; version ++ ) {
-      stringstream ss;
-      ss<<"HLT_Dimuon10_Jpsi_Barrel_v"<<version;
-      bits_0.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss.str()).label()));
-    }
+  if (triggerResults_handle.isValid()) {
+     const edm::TriggerNames & TheTriggerNames = iEvent.triggerNames(*triggerResults_handle);
+     unsigned int NTRIGGERS = HLTs_.size();
 
-    vector <unsigned int> bits_1;
-    for ( int version = 1; version<5; version ++ ) {
-      stringstream ss;
-      ss<<"HLT_Dimuon16_Jpsi_v"<<version;
-      bits_1.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss.str()).label()));
-    }
-
-    vector <unsigned int> bits_2;
-    for ( int version = 1; version<5; version ++ ) {
-      stringstream ss;
-      ss<<"HLT_Dimuon20_Jpsi_v"<<version;
-      bits_2.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss.str()).label()));
-    }
-
-    vector <unsigned int> bits_3;
-    for ( int version = 1; version<5; version ++ ) {
-      stringstream ss;
-      ss<<"HLT_DoubleMu4_3_Bs_v"<<version;
-      bits_3.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss.str()).label()));
-    }
-
-    vector <unsigned int> bits_4;
-    for ( int version = 1; version<5; version ++ ) {
-      stringstream ss;
-      ss<<"HLT_DoubleMu4_3_Jpsi_Displaced_v"<<version;
-      bits_4.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss.str()).label()));
-    }
-
-    vector <unsigned int> bits_5;
-    for ( int version = 1; version<5; version ++ ) {
-      stringstream ss;
-      ss<<"HLT_DoubleMu4_JpsiTrk_Displaced_v"<<version;
-      bits_5.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss.str()).label()));
-    }
-
-
-    for (unsigned int i=0; i<bits_0.size(); i++) {
-      unsigned int bit = bits_0[i];
-      if ( bit < triggerResults_handle->size() ){
-        if ( triggerResults_handle->accept( bit ) && !triggerResults_handle->error( bit ) ) {
-          trigger += 1;
-          break;
+     for (unsigned int i = 0; i < NTRIGGERS; i++) {
+        for (int version = 1; version < 20; version++) {
+           std::stringstream ss;
+           ss << HLTs_[i] << "_v" << version;
+           unsigned int bit = TheTriggerNames.triggerIndex(edm::InputTag(ss.str()).label());
+           if (bit < triggerResults_handle->size() && triggerResults_handle->accept(bit) && !triggerResults_handle->error(bit)) {
+              trigger += (1<<i);
+              break;
+           }
         }
-      }
-    }
+     }
+   } else std::cout << "*** NO triggerResults found " << iEvent.id().run() << "," << iEvent.id().event() << std::endl;
 
-    for (unsigned int i=0; i<bits_1.size(); i++) {
-      unsigned int bit = bits_1[i];
-      if ( bit < triggerResults_handle->size() ){
-        if ( triggerResults_handle->accept( bit ) && !triggerResults_handle->error( bit ) ) {
-          trigger += 2;
-          break;
-        }
-      }
-    }
-
-    for (unsigned int i=0; i<bits_2.size(); i++) {
-      unsigned int bit = bits_2[i];
-      if ( bit < triggerResults_handle->size() ){
-        if ( triggerResults_handle->accept( bit ) && !triggerResults_handle->error( bit ) ) {
-          trigger += 4;
-          break;
-        }
-      }
-    }
-
-    for (unsigned int i=0; i<bits_3.size(); i++) {
-      unsigned int bit = bits_3[i];
-      if ( bit < triggerResults_handle->size() ){
-        if ( triggerResults_handle->accept( bit ) && !triggerResults_handle->error( bit ) ) {
-          trigger += 8;
-          break;
-        }
-      }
-    }
-
-    for (unsigned int i=0; i<bits_4.size(); i++) {
-      unsigned int bit = bits_4[i];
-      if ( bit < triggerResults_handle->size() ){
-        if ( triggerResults_handle->accept( bit ) && !triggerResults_handle->error( bit ) ) {
-          trigger += 16;
-          break;
-        }
-      }
-    }
-
-    for (unsigned int i=0; i<bits_5.size(); i++) {
-      unsigned int bit = bits_5[i];
-      if ( bit < triggerResults_handle->size() ){
-        if ( triggerResults_handle->accept( bit ) && !triggerResults_handle->error( bit ) ) {
-          trigger += 32;
-          break;
-        }
-      }
-    }
-	    
-  } else {
-    std::cout<< "No valid trigger information found " << run << "," << event <<std::endl;
-  }
-	
 // grabbing oniat information
   if (!oniat_cand_handle.isValid()) std::cout<< "No oniat information " << run << "," << event <<std::endl;
   if (!oniat_rf_cand_handle.isValid()) std::cout<< "No oniat_rf information " << run << "," << event <<std::endl;
@@ -414,7 +325,7 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       oniat_vChi2     = oniat_rf_cand.userFloat("vChi2");
       oniat_cosAlpha  = oniat_rf_cand.userFloat("cosAlpha");
       oniat_ctauPV    = oniat_rf_cand.userFloat("ctauPV");
-      oniat_ctauErrPV = oniat_rf_cand.userFloat("ctauErrPV"); 
+      oniat_ctauErrPV = oniat_rf_cand.userFloat("ctauErrPV");
       oniat_charge    = oniat_rf_cand.charge();
       oniat_rf_p4.SetPtEtaPhiM(oniat_rf_cand.pt(),oniat_rf_cand.eta(),oniat_rf_cand.phi(),oniat_rf_cand.mass());
       psi_rf_p4.SetPtEtaPhiM(oniat_rf_cand.daughter("onia")->pt(),oniat_rf_cand.daughter("onia")->eta(),
@@ -423,7 +334,7 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
                               oniat_rf_cand.daughter("ditrak")->phi(),oniat_rf_cand.daughter("ditrak")->mass());
       if (bindx<0 || bindx>(int) oniat_cand_handle->size()) {
         std::cout << "Incorrect index for oniat combination " << run << "," << event <<"," << bindx << std::endl;
-        continue; 
+        continue;
       }
       oniat_cand = oniat_cand_handle->at(bindx);
       onia_cand = dynamic_cast <pat::CompositeCandidate *>(oniat_cand.daughter("onia"));
@@ -470,7 +381,7 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       if (OnlyBest_) break;  // oniat candidates are sorted by vProb
     }
   }
- 
+
 }
 
 // ------------ method called once each job just before starting event loop  ------------
