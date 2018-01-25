@@ -309,7 +309,7 @@ int drawJTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
     {
       jpsiHists[i]->SetLineColor(colors[i]);
       jpsiHists[i]->SetLineWidth(2);
-      if(i>5) phiHists[i]->SetLineStyle(kDashed);
+      if(i>5) jpsiHists[i]->SetLineStyle(kDashed);
       jpsiHists[i]->Draw("same");
       leg->AddEntry(jpsiHists[i],(jpsiHists[i]->GetName()),"l");
       jpsiHists[i]->Write();
