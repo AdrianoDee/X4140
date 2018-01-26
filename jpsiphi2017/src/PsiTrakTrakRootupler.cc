@@ -293,7 +293,6 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
         // ex. 1 = pass 0
 
   trigger = 0;
-  trigger = 0;
 
   if (triggerResults_handle.isValid()) {
      const edm::TriggerNames & TheTriggerNames = iEvent.triggerNames(*triggerResults_handle);
