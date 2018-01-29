@@ -117,7 +117,7 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
    TTree *oldtree = (TTree*)oldfile->Get(treename.data());
 
    Long64_t nentries = oldtree->GetEntries();
-   Double_t pM = 0.0;
+   Double_t phiM = 0.0;
    Double_t xyl   = 0.0;
    Double_t xylErr   = 0.0;
    Double_t cosA  = 0.0;
@@ -131,12 +131,16 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
    Double_t vProb  = 0.0;
 
    Int_t phiMType = 0, phiPType = 0;
-   UInt_t phi_trigger = 0, jpsi_trigger = 0, trigger = 0;
+   UInt_t jpsi_trigger = 0, trigger = 0;
+   Int_t phi_trigger = 0;
 
-   oldtree->SetBranchAddress("pM",&pM);
+   oldtree->SetBranchAddress("pM",&phiM);
    oldtree->SetBranchAddress("p_vProb",&vProb);
    oldtree->SetBranchAddress("trigger",&trigger);
    oldtree->SetBranchAddress("p_triggerMatch",&phi_trigger);
+
+   oldtree->SetBranchAddress("p_muonP_type",&phiPType);
+   oldtree->SetBranchAddress("p_muonM_type",&phiMType);
 
    //Create a new file + a clone of old tree in new file
    TCanvas c("c","c",1200,1600);
@@ -163,23 +167,23 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
      for (Long64_t i=0;i<nentries; i++) {
         oldtree->GetEntry(i);
         std::bitset<16> tB(trigger);
-        // std::bitset<16> pM(phiMType);
-        // std::bitset<16> pP(phiPType);
+        std::bitset<16> pM(phiMType);
+        std::bitset<16> pP(phiPType);
        bool test = false;
        // bool jpsimass = jPsiM < 3.15 && jPsiM > 3.0;
        // bool phimass = phiM < 1.06 && phiM > 0.98;
        for (int j = 0; j < 13; j++){
           // if (tB.test(j) && cosA > 0.995 && vProb > 0.01 && xyl/xylErr > 2.0 && trigger > 0)
-          if (tB.test(j) && vProb > 0.01 && phi_trigger > 0)
+          if (tB.test(j) && vProb > 0.01 && phi_trigger > 0 && pM.test(1) && pP.test(1))
           {
             test = true;
-            phiHists[j]->Fill(pM);
+            phiHists[j]->Fill(phiM);
 
           }
         }
 	      // if(cosA > 0.995 && phimass && jpsimass && vProb>0.02 && xyl/xylErr > 2.0)
-        if (test && vProb > 0.01 && phi_trigger > 0)
-        phiHist->Fill(pM);
+        if (test)
+        phiHist->Fill(phiM);
 
      }
 
