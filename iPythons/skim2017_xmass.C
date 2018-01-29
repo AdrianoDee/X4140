@@ -136,6 +136,7 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
    oldtree->SetBranchAddress("pM",&pM);
    oldtree->SetBranchAddress("p_vProb",&vProb);
    oldtree->SetBranchAddress("trigger",&trigger);
+   oldtree->SetBranchAddress("p_triggerMatch",&phi_trigger);
 
    //Create a new file + a clone of old tree in new file
    TCanvas c("c","c",1200,1600);
@@ -169,7 +170,7 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
        // bool phimass = phiM < 1.06 && phiM > 0.98;
        for (int j = 0; j < 13; j++){
           // if (tB.test(j) && cosA > 0.995 && vProb > 0.01 && xyl/xylErr > 2.0 && trigger > 0)
-          if (tB.test(j))
+          if (tB.test(j) && vProb > 0.01 && phi_trigger > 0)
           {
             test = true;
             phiHists[j]->Fill(pM);
@@ -177,7 +178,7 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
           }
         }
 	      // if(cosA > 0.995 && phimass && jpsimass && vProb>0.02 && xyl/xylErr > 2.0)
-        if (test)
+        if (test && vProb > 0.01 && phi_trigger > 0)
         phiHist->Fill(pM);
 
      }

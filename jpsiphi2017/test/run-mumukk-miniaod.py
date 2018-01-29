@@ -7,6 +7,7 @@ process.load("TrackingTools.TransientTrack.TransientTrackBuilder_cfi")
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff")
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+process.load("SimTracker.TrackerHitAssociation.tpClusterProducer_cfi")
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, '92X_dataRun2_Prompt_v11')
 
@@ -185,7 +186,7 @@ process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
                           primaryVertices = cms.InputTag("offlinePrimaryVertices"),
                           TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
                           onia_pdgid = cms.uint32(443),
-                          onia_mass_cuts = cms.vdouble(0.5,3.5),
+                          onia_mass_cuts = cms.vdouble(2.5,3.5),
                           isMC = cms.bool(False),
                           OnlyBest = cms.bool(False),
                           OnlyGen = cms.bool(False)
