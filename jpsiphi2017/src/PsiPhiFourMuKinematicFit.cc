@@ -78,7 +78,7 @@ class PsiPhiFourMuKinematicFit : public edm::EDProducer {
 
 // ----------member data ---------------------------
   edm::EDGetTokenT<pat::CompositeCandidateCollection> oniafourmu_cand_;
-  double phi_mass_,mass_jpsi;
+  double mass_phi,mass_jpsi;
   std::vector<double> FourOniaMassCuts_;
   std::string product_name_;
 
