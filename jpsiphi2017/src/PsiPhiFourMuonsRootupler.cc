@@ -1,4 +1,4 @@
-phi/*
+/*
    Package:    PsiPhiFourMuonsRootupler
    Class:      PsiPhiFourMuonsRootupler
 
@@ -77,7 +77,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   TLorentzVector jpsiphi_p4;
   TLorentzVector psi_p4;
   TLorentzVector phi_p4;
-  TLorentzVector muonPhiN_p4;
+  TLorentzVector muonPhiP_p4;
   TLorentzVector muonJpsiN_p4;
   TLorentzVector muonJpsiP_p4;
   TLorentzVector muonPhiN_p4;
@@ -104,7 +104,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   TLorentzVector gen_jpsiphi_p4;
   TLorentzVector gen_psi_p4;
   TLorentzVector gen_phi_p4;
-  TLorentzVector gen_muonPhiN_p4;
+  TLorentzVector gen_muonPhiP_p4;
   TLorentzVector gen_muonJpsiN_p4;
   TLorentzVector gen_muonJpsiP_p4;
   TLorentzVector gen_muonPhiN_p4;
