@@ -51,7 +51,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
             if( phiMu2 == jPsiMu1 || phiMu2 == jPsiMu2 ) continue;
             if( jPsiMu1 == jPsiMu2 ) continue;
 
-            pat::CompositeCandidate fourOniaCandidate = makeCandidate(*phiCand, *&jPsiCand);
+            pat::CompositeCandidate fourOniaCandidate = makeCandidate(*phiCand, *jPsiCand);
 
             if(fourOniaCandidate.charge() != 0.0) continue;
 
@@ -67,8 +67,8 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
      // if (OnlyBest_) break;
   }
 
-  if ( !psiOnia->empty() )  nPhi++;
-  if ( !phiOnia->empty() )  nJps++;
+  if ( !(psiOnia->empty()) )  nPhi++;
+  if ( !(phiOnia->empty()) )  nJps++;
 
   event.put(std::move(FourMuCandColl),"FourOniaCandidates");
   nevents++;

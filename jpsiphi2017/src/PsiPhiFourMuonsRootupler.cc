@@ -313,10 +313,10 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       jpsiphi_ctauErrPV = jpsiphi_rf_cand.userFloat("ctauErrPV");
       jpsiphi_charge    = jpsiphi_rf_cand.charge();
       jpsiphi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.pt(),jpsiphi_rf_cand.eta(),jpsiphi_rf_cand.phi(),jpsiphi_rf_cand.mass());
-      psi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand->daughter("jpsi")->pt(),jpsiphi_rf_cand->daughter("jpsi")->eta(),
-                              jpsiphi_rf_cand->daughter("jpsi")->phi(),jpsiphi_rf_cand->daughter("jpsi")->mass());
-      phi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand->daughter("phi")->pt(),jpsiphi_rf_cand->daughter("phi")->eta(),
-                              jpsiphi_rf_cand->daughter("phi")->phi(),jpsiphi_rf_cand->daughter("phi")->mass());
+      psi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("jpsi")->pt(),jpsiphi_rf_cand.daughter("jpsi")->eta(),
+                              jpsiphi_rf_cand.daughter("jpsi")->phi(),jpsiphi_rf_cand.daughter("jpsi")->mass());
+      phi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("phi")->pt(),jpsiphi_rf_cand.daughter("phi")->eta(),
+                              jpsiphi_rf_cand.daughter("phi")->phi(),jpsiphi_rf_cand.daughter("phi")->mass());
       if (bindx<0 || bindx>(int) jpsiphi_cand_handle->size()) {
         std::cout << "Incorrect index for jpsiphi combination " << run << "," << event <<"," << bindx << std::endl;
         continue;
