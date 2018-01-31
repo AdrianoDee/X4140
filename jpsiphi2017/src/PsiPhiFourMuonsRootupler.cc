@@ -341,12 +341,12 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       if (jpsi_cand->daughter("muon1")->charge() < 0) {
          vJpsiP = jpsi_cand->daughter("muon2")->p4();
          vJpsiM = jpsi_cand->daughter("muon1")->p4();
-         jpsiPatMuonN = dynamic_cast<const pat::Muon*>(j_.daughter("muon1"));
-         jpsiPatMuonP = dynamic_cast<const pat::Muon*>(j_.daughter("muon2"));
+         jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand.daughter("muon1"));
+         jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand.daughter("muon2"));
       } else
       {
-        jpsiPatMuonP = dynamic_cast<const pat::Muon*>(j_.daughter("muon1"));
-        jpsiPatMuonN = dynamic_cast<const pat::Muon*>(j_.daughter("muon2"));
+        jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand.daughter("muon1"));
+        jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand.daughter("muon2"));
       }
       muonPhiN_p4.SetPtEtaPhiM(vJpsiP.pt(), vJpsiP.eta(), vJpsiP.phi(), vJpsiP.mass());
       muonJpsiN_p4.SetPtEtaPhiM(vJpsiM.pt(), vJpsiM.eta(), vJpsiM.phi(), vJpsiM.mass());
@@ -376,12 +376,12 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       if (phi_cand->daughter("muon1")->charge() < 0) {
          vPhiP = phi_cand->daughter("muon2")->p4();
          vPhiM = phi_cand->daughter("muon1")->p4();
-         phiPatMuonN = dynamic_cast<const pat::Muon*>(j_.daughter("muon1"));
-         phiPatMuonP = dynamic_cast<const pat::Muon*>(j_.daughter("muon2"));
+         phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand.daughter("muon1"));
+         phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand.daughter("muon2"));
       } else
       {
-        phiPatMuonP = dynamic_cast<const pat::Muon*>(j_.daughter("muon1"));
-        phiPatMuonN = dynamic_cast<const pat::Muon*>(j_.daughter("muon2"));
+        phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand.daughter("muon1"));
+        phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand.daughter("muon2"));
       }
 
       muonPhiP_isLoose   =  phiPatMuonP->isLooseMuon();
