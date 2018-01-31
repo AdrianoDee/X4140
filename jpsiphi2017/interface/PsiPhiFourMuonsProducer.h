@@ -38,7 +38,7 @@ class PsiPhiFourMuonsProducer : public edm::EDProducer {
 
   void endJob() override;
   edm::EDGetTokenT<pat::CompositeCandidateCollection> PsiCollection_;
-  edm::EDGetTokenT<std::vector<pat::GenericParticle>> PhiCollection_;
+  edm::EDGetTokenT<pat::CompositeCandidateCollection> PhiCollection_;
   std::vector<double> JPsiMassCuts_;
   std::vector<double> PhiMassCuts_;
   std::vector<double> FourOniaMassCuts_;
