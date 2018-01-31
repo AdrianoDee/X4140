@@ -313,17 +313,17 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       jpsiphi_ctauErrPV = jpsiphi_rf_cand.userFloat("ctauErrPV");
       jpsiphi_charge    = jpsiphi_rf_cand.charge();
       jpsiphi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.pt(),jpsiphi_rf_cand.eta(),jpsiphi_rf_cand.phi(),jpsiphi_rf_cand.mass());
-      psi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("jpsi")->pt(),jpsiphi_rf_cand.daughter("jpsi")->eta(),
-                              jpsiphi_rf_cand.daughter("jpsi")->phi(),jpsiphi_rf_cand.daughter("jpsi")->mass());
-      phi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("phi")->pt(),jpsiphi_rf_cand.daughter("phi")->eta(),
-                              jpsiphi_rf_cand.daughter("phi")->phi(),jpsiphi_rf_cand.daughter("phi")->mass());
+      psi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand->daughter("jpsi")->pt(),jpsiphi_rf_cand->daughter("jpsi")->eta(),
+                              jpsiphi_rf_cand->daughter("jpsi")->phi(),jpsiphi_rf_cand->daughter("jpsi")->mass());
+      phi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand->daughter("phi")->pt(),jpsiphi_rf_cand->daughter("phi")->eta(),
+                              jpsiphi_rf_cand->daughter("phi")->phi(),jpsiphi_rf_cand->daughter("phi")->mass());
       if (bindx<0 || bindx>(int) jpsiphi_cand_handle->size()) {
         std::cout << "Incorrect index for jpsiphi combination " << run << "," << event <<"," << bindx << std::endl;
         continue;
       }
       jpsiphi_cand = jpsiphi_cand_handle->at(bindx);
-      jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("jpsi"));
-      phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("phi"));
+      jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand->daughter("jpsi"));
+      phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand->daughter("phi"));
 
       psi_vProb        = jpsi_cand->userFloat("vProb");
       psi_vChi2        = jpsi_cand->userFloat("vNChi2");
@@ -341,12 +341,12 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       if (jpsi_cand->daughter("muon1")->charge() < 0) {
          vJpsiP = jpsi_cand->daughter("muon2")->p4();
          vJpsiM = jpsi_cand->daughter("muon1")->p4();
-         jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand.daughter("muon1"));
-         jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand.daughter("muon2"));
+         jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon1"));
+         jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon2"));
       } else
       {
-        jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand.daughter("muon1"));
-        jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand.daughter("muon2"));
+        jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon1"));
+        jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon2"));
       }
       muonPhiN_p4.SetPtEtaPhiM(vJpsiP.pt(), vJpsiP.eta(), vJpsiP.phi(), vJpsiP.mass());
       muonJpsiN_p4.SetPtEtaPhiM(vJpsiM.pt(), vJpsiM.eta(), vJpsiM.phi(), vJpsiM.mass());
@@ -376,12 +376,12 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       if (phi_cand->daughter("muon1")->charge() < 0) {
          vPhiP = phi_cand->daughter("muon2")->p4();
          vPhiM = phi_cand->daughter("muon1")->p4();
-         phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand.daughter("muon1"));
-         phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand.daughter("muon2"));
+         phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon1"));
+         phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon2"));
       } else
       {
-        phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand.daughter("muon1"));
-        phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand.daughter("muon2"));
+        phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon1"));
+        phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon2"));
       }
 
       muonPhiP_isLoose   =  phiPatMuonP->isLooseMuon();
