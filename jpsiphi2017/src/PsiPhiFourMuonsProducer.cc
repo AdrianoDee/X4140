@@ -1,7 +1,7 @@
 #include "../interface/PsiPhiFourMuonsProducer.h"
 
 PsiPhiFourMuonsProducer::PsiPhiFourMuonsProducer(const edm::ParameterSet& ps):
-  JPsiMassCuts_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Jpsi"))),
+  PsiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Jpsi"))),
   PhiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Phi"))),
   JPsiMassCuts_(ps.getParameter<std::vector<double>>("JPsiMassCuts")),
   PhiMassCuts_(ps.getParameter<std::vector<double>>("PhiMassCuts")),
@@ -20,7 +20,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
   std::unique_ptr<pat::CompositeCandidateCollection> FourMuCandColl(new pat::CompositeCandidateCollection);
 
   edm::Handle<pat::CompositeCandidateCollection> psiOnia;
-  event.getByToken(JPsiMassCuts_,psiOnia);
+  event.getByToken(PsiCollection_,psiOnia);
 
   edm::Handle<pat::CompositeCandidateCollection> phiOnia;
   event.getByToken(PhiCollection_,phiOnia);
@@ -31,8 +31,8 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
   float PhiMassMax_ = PhiMassCuts_[1];
   float PhiMassMin_ = PhiMassCuts_[0];
 
-  float OniaTrakTrakMassMax_ = FourOniaMassCuts_[1];
-  float OniaTrakTrakMassMin_ = FourOniaMassCuts_[0];
+  float FourOniaMassMax_ = FourOniaMassCuts_[1];
+  float FourOniaMassMin_ = FourOniaMassCuts_[0];
 
 // Note: Dimuon cand are sorted by decreasing vertex probability then first is associated with "best" dimuon
   //Looking for J/Psi
@@ -42,7 +42,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
        const pat::Muon *jPsiMu2 = dynamic_cast<const pat::Muon*>(jPsiCand->daughter("muon2"));
 
 
-       for (pat::CompositeCandidateCollection::const_iterator phiCand = jPsiCand + 1; phiCand != onia->end(); ++phiCand){
+       for (pat::CompositeCandidateCollection::const_iterator phiCand = jPsiCand + 1; phiCand != phiOnia->end(); ++phiCand){
           if ( phiCand->mass() < PhiMassMax_  && phiCand->mass() > PhiMassMin_ ) {
             const pat::Muon *phiMu1 = dynamic_cast<const pat::Muon*>(phiCand->daughter("muon1"));
             const pat::Muon *phiMu2 = dynamic_cast<const pat::Muon*>(phiCand->daughter("muon2"));
@@ -55,10 +55,10 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
 
             if(fourOniaCandidate.charge() != 0.0) continue;
 
-            if ( OniaTTCand.mass() < OniaTrakTrakMassMax_ && OniaTTCand.mass() > OniaTrakTrakMassMin_)
+            if ( fourOniaCandidate.mass() < FourOniaMassMax_ && fourOniaCandidate.mass() > FourOniaMassMin_)
               {
                 candidates++;
-                FourMuCandColl->push_back(OniaTTCand);
+                FourMuCandColl->push_back(fourOniaCandidate);
               }
             }
           }
