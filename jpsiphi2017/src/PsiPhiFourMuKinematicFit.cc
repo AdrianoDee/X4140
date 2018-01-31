@@ -213,7 +213,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
       jpsiVertexFitTree->movePointerToTheTop();
       jpsiVertexFitTree = csFitterJpsi.fit(jpsi_c,jpsiVertexFitTree);
 
-      if (photonVertexFitTree->isValid()) {
+      if (jpsiVertexFitTree->isValid()) {
 
         RefCountedKinematicTree phiVertexFitTree;
         phiVertexFitTree = fitter.fit(phiParticles);
