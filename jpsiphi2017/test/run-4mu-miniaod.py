@@ -37,7 +37,9 @@ hltList = [
 'HLT_DoubleMu4_3_Jpsi_Displaced',
 'HLT_Dimuon20_Jpsi_Barrel_Seagulls',
 'HLT_Dimuon25_Jpsi',
-'HLT_Dimuon0_Jpsi'
+'HLT_Dimuon0_Jpsi',
+'HLT_Dimuon16_Jpsi', #v4.2 2016
+'HLT_Dimuon20_Jpsi' #v4.2 2016
 ]
 
 hltpaths = cms.vstring(hltList)

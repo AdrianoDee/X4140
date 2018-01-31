@@ -1,8 +1,8 @@
 #include "../interface/PsiPhiFourMuonsProducer.h"
 
 PsiPhiFourMuonsProducer::PsiPhiFourMuonsProducer(const edm::ParameterSet& ps):
-  PsiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Onia"))),
-  PhiCollection_(consumes<std::vector<pat::GenericParticle>>(ps.getParameter<edm::InputTag>("Trak"))),
+  PsiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Jpsi"))),
+  PhiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Phi"))),
   JPsiMassCuts_(ps.getParameter<std::vector<double>>("JPsiMassCuts")),
   PhiMassCuts_(ps.getParameter<std::vector<double>>("PhiMassCuts")),
   FourOniaMassCuts_(ps.getParameter<std::vector<double>>("OniaTrakTrakMassCuts")),
@@ -52,6 +52,8 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
             if( jPsiMu1 == jPsiMu2 ) continue;
 
             pat::CompositeCandidate fourOniaCandidate = makeCandidate(*phiCand, *&jPsiCand);
+
+            if(fourOniaCandidate.charge() != 0.0) continue;
 
             if ( OniaTTCand.mass() < OniaTrakTrakMassMax_ && OniaTTCand.mass() > OniaTrakTrakMassMin_)
               {
