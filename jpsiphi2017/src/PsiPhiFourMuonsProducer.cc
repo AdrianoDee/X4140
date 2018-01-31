@@ -1,7 +1,7 @@
 #include "../interface/PsiPhiFourMuonsProducer.h"
 
 PsiPhiFourMuonsProducer::PsiPhiFourMuonsProducer(const edm::ParameterSet& ps):
-  PsiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Jpsi"))),
+  JPsiMassCuts_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Jpsi"))),
   PhiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Phi"))),
   JPsiMassCuts_(ps.getParameter<std::vector<double>>("JPsiMassCuts")),
   PhiMassCuts_(ps.getParameter<std::vector<double>>("PhiMassCuts")),
@@ -20,7 +20,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
   std::unique_ptr<pat::CompositeCandidateCollection> FourMuCandColl(new pat::CompositeCandidateCollection);
 
   edm::Handle<pat::CompositeCandidateCollection> psiOnia;
-  event.getByToken(PsiCollection_,psiOnia);
+  event.getByToken(JPsiMassCuts_,psiOnia);
 
   edm::Handle<pat::CompositeCandidateCollection> phiOnia;
   event.getByToken(PhiCollection_,phiOnia);
