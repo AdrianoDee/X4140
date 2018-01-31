@@ -6,7 +6,6 @@ PsiPhiFourMuonsProducer::PsiPhiFourMuonsProducer(const edm::ParameterSet& ps):
   JPsiMassCuts_(ps.getParameter<std::vector<double>>("JPsiMassCuts")),
   PhiMassCuts_(ps.getParameter<std::vector<double>>("PhiMassCuts")),
   FourOniaMassCuts_(ps.getParameter<std::vector<double>>("OniaTrakTrakMassCuts")),
-  OnlyBest_(ps.getParameter<bool>("OnlyBest"))
 {
   produces<pat::CompositeCandidateCollection>("FourOniaCandidates");
   candidates = 0;
@@ -65,14 +64,13 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
         }
       }
      // if (OnlyBest_) break;
+     if ( !(psiOnia->empty()) )  nPhi++;
+     if ( !(phiOnia->empty()) )  nJps++;
+
+     event.put(std::move(FourMuCandColl),"FourOniaCandidates");
+     nevents++;
   }
 
-  if ( !(psiOnia->empty()) )  nPhi++;
-  if ( !(phiOnia->empty()) )  nJps++;
-
-  event.put(std::move(FourMuCandColl),"FourOniaCandidates");
-  nevents++;
-}
 
 void PsiPhiFourMuonsProducer::endJob(){
   std::cout << "###########################" << std::endl;

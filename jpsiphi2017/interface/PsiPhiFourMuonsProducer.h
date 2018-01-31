@@ -42,7 +42,6 @@ class PsiPhiFourMuonsProducer : public edm::EDProducer {
   std::vector<double> JPsiMassCuts_;
   std::vector<double> PhiMassCuts_;
   std::vector<double> FourOniaMassCuts_;
-  bool OnlyBest_;
 
   reco::Candidate::LorentzVector convertVector(const math::XYZTLorentzVectorF& v);
 
