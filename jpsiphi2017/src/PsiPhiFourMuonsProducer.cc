@@ -64,7 +64,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
           }
         }
       }
-     if (OnlyBest_) break;
+     // if (OnlyBest_) break;
   }
 
   if ( !psiOnia->empty() )  nPhi++;

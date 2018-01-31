@@ -336,7 +336,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       reco::Candidate::LorentzVector vJpsiP = jpsi_cand->daughter("muon1")->p4();
       reco::Candidate::LorentzVector vJpsiM = jpsi_cand->daughter("muon2")->p4();
 
-      pat::Muon *jpsiPatMuonP,  *jpsiPatMuonN, *phiPatMuonP, *phiPatMuonN;
+      const pat::Muon *jpsiPatMuonP,  *jpsiPatMuonN, *phiPatMuonP, *phiPatMuonN;
 
       if (jpsi_cand->daughter("muon1")->charge() < 0) {
          vJpsiP = jpsi_cand->daughter("muon2")->p4();
