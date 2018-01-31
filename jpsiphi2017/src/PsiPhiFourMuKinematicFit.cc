@@ -263,7 +263,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
             vtx.SetXYZ(B0sVtxX_fit,B0sVtxY_fit,0);
 
-            TVector3 pperp(B0sPx_fit, B0sPY_fit, 0);
+            TVector3 pperp(B0sPx_fit, B0sPy_fit, 0);
             AlgebraicVector3 vpperp(pperp.x(),pperp.y(),0);
             pvtx.SetXYZ(thePrimaryV.position().x(),thePrimaryV.position().y(),0);
             TVector3 vdiff = vtx - pvtx;
@@ -337,8 +337,8 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
                                                jpsiPz_fit*jpsiPz_fit)), math::XYZPoint(B0sVtxX_fit, B0sVtxY_fit, B0sVtxZ_fit), 22);
             pat::CompositeCandidate patJpsi(recoJpsi);
 
-            patB0s.addDaughter(ups,"dimuon");
-            patB0s.addDaughter(patJpsi,"photon");
+            patB0s.addDaughter(phiRefit,"phi");
+            patB0s.addDaughter(patJpsi,"jpsi");
 
             PsiPhiCandRefitColl->push_back(patB0s);
           }
