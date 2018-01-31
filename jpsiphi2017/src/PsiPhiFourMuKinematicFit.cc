@@ -188,7 +188,6 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
     allFourMuDaughters.push_back(pFactory.particle (fourMuTT[2], muonMass, float(0), float(0), muonSigma));
     allFourMuDaughters.push_back(pFactory.particle (fourMuTT[3], muonMass, float(0), float(0), muonSigma));
 
-    KinematicParticleFactoryFromTransientTrack pFactory;
     std::vector<RefCountedKinematicParticle> jpsiParticles;
     jpsiParticles.push_back(pFactory.particle(JpsiTT[0],muonMass,float(0),float(0),muonSigma));
     jpsiParticles.push_back(pFactory.particle(JpsiTT[1],muonMass,float(0),float(0),muonSigma));
@@ -202,7 +201,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
     RefCountedKinematicTree jpsiVertexFitTree;
     jpsiVertexFitTree = fitter.fit(jpsiParticles);
 
-    if(jpsiVertexFitTree->isValid)
+    if(jpsiVertexFitTree->isValid())
     {
 
       const ParticleMass jpsi_mass(mass_jpsi);
