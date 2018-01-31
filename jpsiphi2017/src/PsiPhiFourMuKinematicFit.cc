@@ -234,8 +234,8 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
         if (!B0sTree->isEmpty())
         {
           B0sTree->movePointerToTheTop();
-          RefCountedKinematicParticle fitB0s = B0STree->currentParticle();
-          RefCountedKinematicVertex B0sDecayVertex = B0STree->currentDecayVertex();
+          RefCountedKinematicParticle fitB0s = B0sTree->currentParticle();
+          RefCountedKinematicVertex B0sDecayVertex = B0sTree->currentDecayVertex();
 
           if (fitB0s->currentState().isValid())
           {
