@@ -78,7 +78,7 @@ void PsiPhiFourMuonsProducer::endJob(){
   std::cout << "###########################" << std::endl;
   std::cout << "Found " << nevents << " Events" << std::endl;
   std::cout << "Events with Phi  candidates " << nPhi << std::endl;
-  std::cout << "Events with JPsi candidates " << nrenJpsco << std::endl;
+  std::cout << "Events with JPsi candidates " << nJps << std::endl;
   std::cout << "###########################" << std::endl;
   std::cout << "Found " << candidates << " OniaTrakTrak candidates." << std::endl;
   std::cout << "###########################" << std::endl;
