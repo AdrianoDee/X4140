@@ -25,7 +25,6 @@
 ///For kinematic fit:
 #include <DataFormats/PatCandidates/interface/Muon.h>
 #include "DataFormats/Math/interface/LorentzVector.h"
-#include "DataFormats/EjpsiCandidates/interface/Conversion.h"
 #include "DataFormats/PatCandidates/interface/CompositeCandidate.h"
 #include "DataFormats/PatCandidates/interface/UserData.h"
 #include "DataFormats/PatCandidates/interface/GenericParticle.h"
@@ -325,8 +324,8 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
             phiRefit.addDaughter(patPhiMu2,"muon2");
             phiRefit.setP4(patPhiMu1.p4()+patPhiMu2.p4());
 
-            child = ChiBTree->movePointerToTheNextChild();
-            RefCountedKinematicParticle fitJpsi = ChiBTree->currentParticle();
+            child = B0sTree->movePointerToTheNextChild();
+            RefCountedKinematicParticle fitJpsi = B0sTree->currentParticle();
 	          if (!child) break;
 
             float jpsiM_fit  = fitJpsi->currentState().mass();
@@ -336,7 +335,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
             reco::CompositeCandidate recoJpsi(0, math::XYZTLorentzVector(jpsiPx_fit, jpsiPy_fit, jpsiPz_fit,
                                                sqrt(jpsiM_fit*jpsiM_fit + jpsiPx_fit*jpsiPx_fit + jpsiPy_fit*jpsiPy_fit +
-                                               jpsiPz_fit*jpsiPz_fit)), math::XYZPoint(ChiBVtxX_fit, ChiBVtxY_fit, ChiBVtxZ_fit), 22);
+                                               jpsiPz_fit*jpsiPz_fit)), math::XYZPoint(B0sVtxX_fit, B0sVtxY_fit, B0sVtxZ_fit), 22);
             pat::CompositeCandidate patJpsi(recoJpsi);
 
             patB0s.addDaughter(ups,"dimuon");
