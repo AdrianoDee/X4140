@@ -222,9 +222,9 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
       	RefCountedKinematicParticle fitJpsi = jpsiVertexFitTree->currentParticle();
 
         std::vector<RefCountedKinematicParticle> allB0sDaughters;
-        allB0SDaughters.push_back(pFactory.particle (PhiTT[0], muonMass, float(0), float(0), muonSigma));
-        allB0SDaughters.push_back(pFactory.particle (PhiTT[1], muonMass, float(0), float(0), muonSigma));
-      	allB0SDaughters.push_back(fitJpsi);
+        allB0sDaughters.push_back(pFactory.particle (PhiTT[0], muonMass, float(0), float(0), muonSigma));
+        allB0sDaughters.push_back(pFactory.particle (PhiTT[1], muonMass, float(0), float(0), muonSigma));
+      	allB0sDaughters.push_back(fitJpsi);
 
         KinematicConstrainedVertexFitter constVertexFitter;
 
