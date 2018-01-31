@@ -265,10 +265,10 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
   reco::BeamSpot bs = *theBeamSpot;
 
   if ( primaryVertices_handle->begin() != primaryVertices_handle->end() ) {
-    thePrimaryV = Vertex(*(primaryVertices_handle->begin()));
+    thePrimaryV = reco::Vertex(*(primaryVertices_handle->begin()));
   }
   else {
-    thePrimaryV = Vertex(bs.position(), bs.covariance3D());
+    thePrimaryV = reco::Vertex(bs.position(), bs.covariance3D());
   }
 
 	// grab Trigger information
@@ -322,8 +322,8 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
         continue;
       }
       jpsiphi_cand = jpsiphi_cand_handle->at(bindx);
-      jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand->daughter("jpsi"));
-      phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand->daughter("phi"));
+      jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("jpsi"));
+      phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("phi"));
 
       psi_vProb        = jpsi_cand->userFloat("vProb");
       psi_vChi2        = jpsi_cand->userFloat("vNChi2");
