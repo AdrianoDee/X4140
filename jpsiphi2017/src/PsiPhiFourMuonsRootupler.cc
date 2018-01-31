@@ -25,6 +25,7 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "DataFormats/PatCandidates/interface/CompositeCandidate.h"
+#include <DataFormats/PatCandidates/interface/Muon.h>
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
@@ -99,7 +100,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   Bool_t muonJpsiP_isTracker, muonJpsiP_isGlobal, muonJpsiN_isTracker, muonJpsiN_isGlobal;
   Bool_t muonPhiP_isTracker, muonPhiP_isGlobal, muonPhiN_isTracker, muonPhiN_isGlobal;
 
-  UInt_t muonJpsiP_type, muonJpsiM_type, muonPhiP_type, muonPhiM_type;
+  UInt_t muonJpsiP_type, muonJpsiN_type, muonPhiP_type, muonPhiN_type;
   Int_t          gen_jpsiphi_pdgId;
   TLorentzVector gen_jpsiphi_p4;
   TLorentzVector gen_psi_p4;
@@ -165,8 +166,6 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
         jpsiphi_tree->Branch("jpsiphi_ctauPV",     &jpsiphi_ctauPV,       "jpsiphi_ctauPV/D");
         jpsiphi_tree->Branch("jpsiphi_ctauErrPV",  &jpsiphi_ctauErrPV,    "jpsiphi_ctauErrPV/D");
         jpsiphi_tree->Branch("jpsiphi_charge",     &jpsiphi_charge,       "jpsiphi_charge/I");
-
-        jpsiphi_tree->Branch("muonJpsi",        &muonJpsi,        "muonJpsi/O");
 
         jpsiphi_tree->Branch("muonJpsiP_isLoose",        &muonJpsiP_isLoose,        "muonJpsiP_isLoose/O");
         jpsiphi_tree->Branch("muonJpsiP_isSoft",        &muonJpsiP_isSoft,        "muonJpsiP_isSoft/O");
@@ -258,16 +257,15 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
   run = iEvent.id().run();
   event = iEvent.id().event();
 
-  Vertex thePrimaryV;
-  Vertex theBeamSpotV;
+  reco::Vertex thePrimaryV;
+  reco::Vertex theBeamSpotV;
 
-  Handle<BeamSpot> theBeamSpot;
+  edm::Handle<reco::BeamSpot> theBeamSpot;
   iEvent.getByToken(thebeamspot_,theBeamSpot);
-  BeamSpot bs = *theBeamSpot;
-  theBeamSpotV = Vertex(bs.position(), bs.covariance3D());
+  reco::BeamSpot bs = *theBeamSpot;
 
   if ( primaryVertices_handle->begin() != primaryVertices_handle->end() ) {
-    thePrimaryV = Vertex(*(priVtxs->begin()));
+    thePrimaryV = Vertex(*(primaryVertices_handle->begin()));
   }
   else {
     thePrimaryV = Vertex(bs.position(), bs.covariance3D());
