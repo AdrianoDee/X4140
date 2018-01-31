@@ -124,7 +124,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
 PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iConfig):
         jpsiphi_cand_Label(consumes<pat::CompositeCandidateCollection>(iConfig.getParameter<edm::InputTag>("jpsiphi_cand"))),
         jpsiphi_rf_cand_Label(consumes<pat::CompositeCandidateCollection>(iConfig.getParameter<edm::InputTag>("jpsiphi_rf_cand"))),
-        thebeamspot_(consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpotTag")))
+        thebeamspot_(consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpotTag"))),
         primaryVertices_Label(consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("primaryVertices"))),
         triggerResults_Label(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("TriggerResults"))),
 	      isMC_(iConfig.getParameter<bool>("isMC")),
@@ -213,7 +213,7 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
       	    jpsiphi_tree->Branch("gen_jpsiphi_p4",    "TLorentzVector", &gen_jpsiphi_p4);
       	    jpsiphi_tree->Branch("gen_psi_p4",      "TLorentzVector", &gen_psi_p4);
       	    jpsiphi_tree->Branch("gen_phi_p4",      "TLorentzVector", &gen_phi_p4);
-            jpsiphi_tree->Branch("gen_muonPhiN_p4",    "TLorentzVector", &gen_muonPhiN_p4);
+            jpsiphi_tree->Branch("gen_muonPhiP_p4",    "TLorentzVector", &gen_muonPhiP_p4);
             jpsiphi_tree->Branch("gen_muonJpsiN_p4",    "TLorentzVector", &gen_muonJpsiN_p4);
             jpsiphi_tree->Branch("gen_muonJpsiP_p4",    "TLorentzVector", &gen_muonJpsiP_p4);
             jpsiphi_tree->Branch("gen_muonPhiN_p4",    "TLorentzVector", &gen_muonPhiN_p4);
