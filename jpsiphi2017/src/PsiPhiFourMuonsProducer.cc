@@ -73,7 +73,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
      if ( !(psiOnia->empty()) )  nPhi++;
      if ( !(phiOnia->empty()) )  nJps++;
 
-     event.put(std::move(FourMuCandColl),"FourOniaCandidates");
+     event.put(std::move(FourMuCandColl),"PsiPhiFourMuonsCandidates");
      nevents++;
   }
 
