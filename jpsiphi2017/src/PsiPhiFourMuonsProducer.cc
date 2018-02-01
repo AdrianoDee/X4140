@@ -24,7 +24,6 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
   edm::Handle<pat::CompositeCandidateCollection> phiOnia;
   event.getByToken(PhiCollection_,phiOnia);
 
-  uint ncombo = 0;
   float JPsiMassMax_ = JPsiMassCuts_[1];
   float JPsiMassMin_ = JPsiMassCuts_[0];
   float PhiMassMax_ = PhiMassCuts_[1];

@@ -180,7 +180,7 @@ process.PsiPhiProducer = cms.EDProducer('PsiPhiFourMuonsProducer',
     FourOniaMassCuts_ = cms.vdouble(4.0,6.0),            # b-hadron mass window
 )
 
-process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
+process.PsiPhiFitter = cms.EDProducer('PsiPhiFourMuKinematicFit',
     PsiTrakTrak     = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
     phi_constraint = cms.double(1.019461),              # J/psi mass in GeV
     jpsi_constraint = cms.double(3.096916),
@@ -202,8 +202,6 @@ process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
 
 process.xCandSequence = cms.Sequence(
                    process.triggerSelection *
-                   process.slimmedMuonsWithTriggerSequence *
-				   process.oniaSelectedMuons *
                    process.JPsi2MuMuPAT *
                    process.Phi2MuMuPAT *
                    process.PsiPhiProducer *
