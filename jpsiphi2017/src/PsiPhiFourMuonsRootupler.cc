@@ -368,7 +368,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       phi_ctauPV       = phi_cand->userFloat("ppdlPV");
       phi_ctauErrPV    = phi_cand->userFloat("ppdlErrPV");
       phi_cosAlpha     = phi_cand->userFloat("cosAlpha");
-      phi_triggerMatch = isTriggerMatched(jphi_cand);
+      phi_triggerMatch = isTriggerMatched(phi_cand);
 
       reco::Candidate::LorentzVector vJpsiP = jpsi_cand->daughter("muon1")->p4();
       reco::Candidate::LorentzVector vJpsiM = jpsi_cand->daughter("muon2")->p4();
