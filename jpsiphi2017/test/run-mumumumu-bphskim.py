@@ -156,7 +156,7 @@ process.PsiPhiProducer = cms.EDProducer('PsiPhiFourMuonsProducer',
 )
 
 process.PsiPhiFitter = cms.EDProducer('PsiPhiFourMuKinematicFit',
-    JPsiPhiCollection     = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
+    JPsiPhiCollection     = cms.InputTag('PsiPhiProducer','PsiPhiFourMuonsCandidates'),
     PhiConstraint = cms.double(1.019461),              # J/psi mass in GeV
     JPsiConstraint = cms.double(3.096916),
     FourOniaMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
