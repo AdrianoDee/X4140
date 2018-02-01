@@ -43,7 +43,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
        const pat::Muon *jPsiMu2 = dynamic_cast<const pat::Muon*>(jPsiCand->daughter("muon2"));
 
 
-       for (pat::CompositeCandidateCollection::const_iterator phiCand = jPsiCand + 1; phiCand != phiOnia->end(); ++phiCand){
+       for (pat::CompositeCandidateCollection::const_iterator phiCand = phiOnia->begin(); phiCand != phiOnia->end(); ++phiCand){
          std::cout<<"Deb2 "<<++debug<<std::endl;
           if ( phiCand->mass() < PhiMassMax_  && phiCand->mass() > PhiMassMin_ ) {
             std::cout<<"Deb2.1 "<<++debug<<std::endl;

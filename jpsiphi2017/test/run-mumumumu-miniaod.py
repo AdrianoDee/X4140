@@ -218,6 +218,7 @@ process.rootupleJPsi = cms.EDAnalyzer('Onia2MuMuRootupler',
                           isMC = cms.bool(False),
                           OnlyBest = cms.bool(False),
                           OnlyGen = cms.bool(False)
+                          )
 
 process.rootuplePhi = cms.EDAnalyzer('Onia2MuMuRootupler',
                           dimuons = cms.InputTag("Phi2MuMuPAT"),
