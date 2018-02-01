@@ -34,13 +34,17 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
 
 // Note: Dimuon cand are sorted by decreasing vertex probability then first is associated with "best" dimuon
   //Looking for J/Psi
+  int debug = 0;
+  std::cout<<"Deb "<<++debug<<std::endl;
   for (pat::CompositeCandidateCollection::const_iterator jPsiCand = psiOnia->begin(); jPsiCand != psiOnia->end(); ++jPsiCand){
+      std::cout<<"Deb1 "<<++debug<<std::endl;
      if ( jPsiCand->mass() < JPsiMassMax_  && jPsiCand->mass() > JPsiMassMin_ ) {
        const pat::Muon *jPsiMu1 = dynamic_cast<const pat::Muon*>(jPsiCand->daughter("muon1"));
        const pat::Muon *jPsiMu2 = dynamic_cast<const pat::Muon*>(jPsiCand->daughter("muon2"));
 
 
        for (pat::CompositeCandidateCollection::const_iterator phiCand = jPsiCand + 1; phiCand != phiOnia->end(); ++phiCand){
+         std::cout<<"Deb2 "<<++debug<<std::endl;
           if ( phiCand->mass() < PhiMassMax_  && phiCand->mass() > PhiMassMin_ ) {
             const pat::Muon *phiMu1 = dynamic_cast<const pat::Muon*>(phiCand->daughter("muon1"));
             const pat::Muon *phiMu2 = dynamic_cast<const pat::Muon*>(phiCand->daughter("muon2"));
@@ -52,7 +56,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
             pat::CompositeCandidate fourOniaCandidate = makeCandidate(*phiCand, *jPsiCand);
 
             if(fourOniaCandidate.charge() != 0.0) continue;
-
+            std::cout<<"Deb3 "<<++debug<<std::endl;
             if ( fourOniaCandidate.mass() < FourOniaMassMax_ && fourOniaCandidate.mass() > FourOniaMassMin_)
               {
                 candidates++;
@@ -63,6 +67,8 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
         }
       }
      // if (OnlyBest_) break;
+
+     std::cout<<"Deb 4"<<++debug<<std::endl;
      if ( !(psiOnia->empty()) )  nPhi++;
      if ( !(phiOnia->empty()) )  nJps++;
 
@@ -73,7 +79,7 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
 
 void PsiPhiFourMuonsProducer::endJob(){
   std::cout << "###########################" << std::endl;
-  std::cout << "OniaTrakTrak Candidate producer report:" << std::endl;
+  std::cout << "PhiPhiFourMuons Candidate producer report:" << std::endl;
   std::cout << "###########################" << std::endl;
   std::cout << "Found " << nevents << " Events" << std::endl;
   std::cout << "Events with Phi  candidates " << nPhi << std::endl;
