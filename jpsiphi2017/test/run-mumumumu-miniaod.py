@@ -173,18 +173,18 @@ process.DiMuonCounterPhi = cms.EDFilter('CandViewCountFilter',
 )
 
 process.PsiPhiProducer = cms.EDProducer('PsiPhiFourMuonsProducer',
-    PsiCollection_ = cms.InputTag('JPsi2MuMuPAT'),
-    PhiCollection_ = cms.InputTag('Phi2MuMuPAT'),
-    JPsiMassCuts_ = cms.vdouble(2.9,3.2),      # J/psi mass window 3.096916 +/- 0.150
-    PhiMassCuts_ = cms.vdouble(0.9,1.15),  # phi mass window 1.019461 +/- .015
-    FourOniaMassCuts_ = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    JPsiCollection = cms.InputTag('JPsi2MuMuPAT'),
+    PhiCollection = cms.InputTag('Phi2MuMuPAT'),
+    JPsiMassCuts = cms.vdouble(2.9,3.2),      # J/psi mass window 3.096916 +/- 0.150
+    PhiMassCuts = cms.vdouble(0.9,1.15),  # phi mass window 1.019461 +/- .015
+    FourOniaMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
 )
 
 process.PsiPhiFitter = cms.EDProducer('PsiPhiFourMuKinematicFit',
-    PsiTrakTrak     = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
-    phi_constraint = cms.double(1.019461),              # J/psi mass in GeV
-    jpsi_constraint = cms.double(3.096916),
-    FourOniaMassCuts_ = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    JPsiPhiCollection     = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
+    PhiConstraint = cms.double(1.019461),              # J/psi mass in GeV
+    JPsiConstraint = cms.double(3.096916),
+    FourOniaMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
     product_name    = cms.string('PsiPhiCandidatesRefit')
 )
 

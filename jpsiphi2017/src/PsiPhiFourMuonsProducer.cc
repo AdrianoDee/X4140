@@ -1,8 +1,8 @@
 #include "../interface/PsiPhiFourMuonsProducer.h"
 
 PsiPhiFourMuonsProducer::PsiPhiFourMuonsProducer(const edm::ParameterSet& ps):
-  PsiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Jpsi"))),
-  PhiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Phi"))),
+  PsiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("JPsiCollection"))),
+  PhiCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("PhiCollection"))),
   JPsiMassCuts_(ps.getParameter<std::vector<double>>("JPsiMassCuts")),
   PhiMassCuts_(ps.getParameter<std::vector<double>>("PhiMassCuts")),
   FourOniaMassCuts_(ps.getParameter<std::vector<double>>("FourOniaMassCuts"))

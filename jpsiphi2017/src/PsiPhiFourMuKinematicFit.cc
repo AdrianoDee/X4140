@@ -104,10 +104,10 @@ class PsiPhiFourMuKinematicFit : public edm::EDProducer {
 // constructors and destructor
 //
 PsiPhiFourMuKinematicFit::PsiPhiFourMuKinematicFit(const edm::ParameterSet& iConfig) {
-  oniafourmu_cand_   = consumes<pat::CompositeCandidateCollection>(iConfig.getParameter<edm::InputTag>("PsiTrakTrak"));
-  mass_phi         = iConfig.getParameter<double>("phi_constraint");
-  mass_jpsi         = iConfig.getParameter<double>("jpsi_constraint");
-  FourOniaMassCuts_ = iConfig.getParameter<std::vector<double>>("OniaTrakTrakMassCuts");
+  oniafourmu_cand_   = consumes<pat::CompositeCandidateCollection>(iConfig.getParameter<edm::InputTag>("JPsiPhiCollection"));
+  mass_phi         = iConfig.getParameter<double>("PhiConstraint");
+  mass_jpsi         = iConfig.getParameter<double>("JPsiConstraint");
+  FourOniaMassCuts_ = iConfig.getParameter<std::vector<double>>("FourOniaMassCuts");
   product_name_ = iConfig.getParameter<std::string>("product_name");
 
 // kinematic refit collections
