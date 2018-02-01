@@ -357,14 +357,18 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
      }
    } else std::cout << "*** NO triggerResults found " << iEvent.id().run() << "," << iEvent.id().event() << std::endl;
 
+int debug = 0;
 // grabbing jpsiphi information
   if (!jpsiphi_cand_handle.isValid()) std::cout<< "No jpsiphi information " << run << "," << event <<std::endl;
   if (!jpsiphi_rf_cand_handle.isValid()) std::cout<< "No jpsiphi_rf information " << run << "," << event <<std::endl;
 // get rf information. Notice we are just keeping combinations with succesfull vertex fit
   if (jpsiphi_rf_cand_handle.isValid() && jpsiphi_cand_handle.isValid()) {
 
+    std::cout<<"Deb "<<++debug<<std::endl;
+
     pat::CompositeCandidate jpsiphi_rf_cand, jpsiphi_cand, *jpsi_cand, *phi_cand;
     for (unsigned int i=0; i< jpsiphi_rf_cand_handle->size(); i++){
+      std::cout<<"Deb 1"<<++debug<<std::endl;
       jpsiphi_rf_cand      = jpsiphi_rf_cand_handle->at(i);
       jpsiphi_rf_bindx     = jpsiphi_rf_cand.userInt("bIndex");
       jpsiphi_rf_vProb     = jpsiphi_rf_cand.userFloat("vProb");
@@ -414,6 +418,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
 
       for (unsigned int i=0; i< jpsiphi_cand_handle->size(); i++){
 
+        std::cout<<"Deb 2"<<++debug<<std::endl;
         jpsiphi_cand   = jpsiphi_cand_handle->at(i);
         jpsiphi_vProb     = jpsiphi_cand.userFloat("vProb");
         jpsiphi_vChi2     = jpsiphi_cand.userFloat("vChi2");
@@ -430,7 +435,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       // jpsiphi_cand = jpsiphi_cand_handle->at(bindx);
       jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("jpsi"));
       phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("phi"));
-
+      std::cout<<"Deb 2.1"<<++debug<<std::endl;
       psi_vProb        = jpsi_cand->userFloat("vProb");
       psi_vChi2        = jpsi_cand->userFloat("vNChi2");
       psi_DCA          = jpsi_cand->userFloat("DCA");
@@ -451,7 +456,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       reco::Candidate::LorentzVector vJpsiM = jpsi_cand->daughter("muon2")->p4();
 
       const pat::Muon *jpsiPatMuonP,  *jpsiPatMuonN, *phiPatMuonP, *phiPatMuonN;
-
+      std::cout<<"Deb 2.2"<<++debug<<std::endl;
       if (jpsi_cand->daughter("muon1")->charge() < 0) {
          vJpsiP = jpsi_cand->daughter("muon2")->p4();
          vJpsiM = jpsi_cand->daughter("muon1")->p4();
@@ -464,7 +469,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       }
       muonJpsiP_p4.SetPtEtaPhiM(vJpsiP.pt(), vJpsiP.eta(), vJpsiP.phi(), vJpsiP.mass());
       muonJpsiN_p4.SetPtEtaPhiM(vJpsiM.pt(), vJpsiM.eta(), vJpsiM.phi(), vJpsiM.mass());
-
+      std::cout<<"Deb 2.3"<<++debug<<std::endl;
       muonJpsiP_isLoose   =  jpsiPatMuonP->isLooseMuon();
       muonJpsiP_isSoft   =  jpsiPatMuonP->isSoftMuon(thePrimaryV);
       muonJpsiP_isMedium   = jpsiPatMuonP->isMediumMuon();
@@ -484,7 +489,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       jpsiphi_p4.SetPtEtaPhiM(jpsiphi_cand.pt(),jpsiphi_cand.eta(),jpsiphi_cand.phi(),jpsiphi_cand.mass());
       psi_p4.SetPtEtaPhiM(jpsi_cand->pt(),jpsi_cand->eta(),jpsi_cand->phi(),jpsi_cand->mass());
       phi_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
-
+      std::cout<<"Deb 2.4"<<++debug<<std::endl;
       reco::Candidate::LorentzVector vPhiP = phi_cand->daughter("muon1")->p4();
       reco::Candidate::LorentzVector vPhiM = phi_cand->daughter("muon2")->p4();
       if (phi_cand->daughter("muon1")->charge() < 0) {
@@ -497,7 +502,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
         phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon1"));
         phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon2"));
       }
-
+      std::cout<<"Deb 2.5"<<++debug<<std::endl;
       muonPhiP_isLoose   =  phiPatMuonP->isLooseMuon();
       muonPhiP_isSoft   =  phiPatMuonP->isSoftMuon(thePrimaryV);
       muonPhiP_isMedium   = phiPatMuonP->isMediumMuon();
@@ -515,7 +520,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
 
       muonPhiP_p4.SetPtEtaPhiM(vPhiP.pt(), vPhiP.eta(), vPhiP.phi(), vPhiP.mass());
       muonPhiN_p4.SetPtEtaPhiM(vPhiM.pt(), vPhiM.eta(), vPhiM.phi(), vPhiM.mass());
-
+      std::cout<<"Deb 2.6"<<++debug<<std::endl;
       jpsiphi_tree->Fill();
       if (OnlyBest_) break;  // jpsiphi candidates are sorted by vProb
     }
