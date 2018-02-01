@@ -63,6 +63,8 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
       void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
       void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
 
+      UInt_t isTriggerMatched(pat::CompositeCandidate *diMuon_cand)
+
   // ----------member data ---------------------------
   std::string file_name;
   edm::EDGetTokenT<pat::CompositeCandidateCollection> jpsiphi_cand_Label;
