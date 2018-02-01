@@ -381,17 +381,9 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       reco::Candidate::LorentzVector vJpsiP = jpsi_cand->daughter("muon1")->p4();
       reco::Candidate::LorentzVector vJpsiM = jpsi_cand->daughter("muon2")->p4();
 
-      const pat::Muon *jpsiPatMuonP,  *jpsiPatMuonN, *phiPatMuonP, *phiPatMuonN;
-
       if (jpsi_cand->daughter("muon1")->charge() < 0) {
          vJpsiP = jpsi_cand->daughter("muon2")->p4();
          vJpsiM = jpsi_cand->daughter("muon1")->p4();
-         jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon1"));
-         jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon2"));
-      } else
-      {
-        jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon1"));
-        jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon2"));
       }
       muonPhiN_rf_p4.SetPtEtaPhiM(vJpsiP.pt(), vJpsiP.eta(), vJpsiP.phi(), vJpsiP.mass());
       muonJpsiN_rf_p4.SetPtEtaPhiM(vJpsiM.pt(), vJpsiM.eta(), vJpsiM.phi(), vJpsiM.mass());
@@ -402,12 +394,6 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       if (phi_cand->daughter("muon1")->charge() < 0) {
          vPhiP = phi_cand->daughter("muon2")->p4();
          vPhiM = phi_cand->daughter("muon1")->p4();
-         phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon1"));
-         phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon2"));
-      } else
-      {
-        phiPatMuonP = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon1"));
-        phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon2"));
       }
 
       if (jpsiphi_rf_bindx<0 || jpsiphi_rf_bindx>(int) jpsiphi_cand_handle->size()) {
