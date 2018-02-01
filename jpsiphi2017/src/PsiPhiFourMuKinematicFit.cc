@@ -254,7 +254,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
             float B0s_en_fit = sqrt(B0sM_fit*B0sM_fit+B0sPx_fit*B0sPx_fit+
                                                        B0sPy_fit*B0sPy_fit+B0sPz_fit*B0sPz_fit);
 
-           if ( B0sM_fit < FourOniaMassCuts_[0] || B0sM_fit > FourOniaMassCuts_[1])
+            if ( B0sM_fit < FourOniaMassCuts_[0] || B0sM_fit > FourOniaMassCuts_[1])
             continue;
 
             TVector3 vtx;
