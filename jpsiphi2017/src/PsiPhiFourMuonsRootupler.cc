@@ -44,6 +44,7 @@
 // class declaration
 //
 
+
 class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
    public:
       explicit PsiPhiFourMuonsRootupler(const edm::ParameterSet&);
@@ -72,6 +73,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   int  jpsiphi_pdgid_, jpsi_pdgid_, phi_pdgid_;
   bool isMC_,OnlyBest_;
   std::vector<std::string>                            HLTs_;
+  std::vector<std::string>                            Filters_;
 
   UInt_t run,event,numPrimaryVertices, trigger;
 
@@ -87,10 +89,11 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   TLorentzVector psi_rf_p4;
   TLorentzVector phi_rf_p4;
 
-  Int_t    jpsiphi_charge, psi_triggerMatch, track_nvsh, track_nvph;
+  Int_t    jpsiphi_charge, psi_triggerMatch, phi_triggerMatch;
   Double_t jpsiphi_vProb,  jpsiphi_vChi2, jpsiphi_cosAlpha, jpsiphi_ctauPV, jpsiphi_ctauErrPV;
-  Double_t track_d0, track_d0Err, track_dz, track_dxy;
+  //Double_t track_d0, track_d0Err, track_dz, track_dxy;
   Double_t psi_vProb, psi_vChi2, psi_DCA, psi_ctauPV, psi_ctauErrPV, psi_cosAlpha, psi_nSigma;
+  Double_t phi_vProb, phi_vChi2, phi_DCA, phi_ctauPV, phi_ctauErrPV, phi_cosAlpha, phi_nSigma;
 
   Bool_t muonJpsiP_isLoose, muonJpsiP_isSoft, muonJpsiP_isMedium, muonJpsiP_isHighPt;
   Bool_t muonJpsiN_isLoose, muonJpsiN_isSoft, muonJpsiN_isMedium, muonJpsiN_isHighPt;
@@ -119,6 +122,23 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
 // constants, enums and typedefs
 //
 
+UInt_t PsiPhiFourMuonsRootupler::isTriggerMatched(pat::CompositeCandidate *diMuon_cand) {
+  const pat::Muon* muon1 = dynamic_cast<const pat::Muon*>(diMuon_cand->daughter("muon1"));
+  const pat::Muon* muon2 = dynamic_cast<const pat::Muon*>(diMuon_cand->daughter("muon2"));
+  UInt_t matched = 0;  // if no list is given, is not matched
+
+  // if matched a given trigger, set the bit, in the same order as listed
+  for (unsigned int iTr = 0; iTr<HLTFilters_.size(); iTr++ ) {
+    // std::cout << HLTFilters_[iTr] << std::endl;
+    const pat::TriggerObjectStandAloneCollection mu1HLTMatches = muon1->triggerObjectMatchesByFilter(HLTFilters_[iTr]);
+    const pat::TriggerObjectStandAloneCollection mu2HLTMatches = muon2->triggerObjectMatchesByFilter(HLTFilters_[iTr]);
+    if (!mu1HLTMatches.empty() && !mu2HLTMatches.empty()) matched += (1<<iTr);
+    // if (!mu1HLTMatches.empty() && !mu2HLTMatches.empty()) std::cout << std::endl << HLTFilters_[iTr] << std::endl;
+  }
+
+  return matched;
+}
+
 //
 // constructors and destructor
 //
@@ -130,9 +150,10 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
         triggerResults_Label(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("TriggerResults"))),
 	      isMC_(iConfig.getParameter<bool>("isMC")),
         OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
-        HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs"))
+        HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs")),
+        Filters_(iConfig.getParameter<std::vector<std::string>>("filters"))
 {
-	edm::Service<TFileService> fs;
+	      edm::Service<TFileService> fs;
         jpsiphi_tree = fs->make<TTree>("OniaPhiTree","Tree of Onia and Phi");
 
         jpsiphi_tree->Branch("run",                &run,                "run/I");
@@ -159,6 +180,14 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
         jpsiphi_tree->Branch("psi_ctauErrPV",    &psi_ctauErrPV,    "psi_ctauErrPV/D");
         jpsiphi_tree->Branch("psi_cosAlpha",     &psi_cosAlpha,     "psi_cosAlpha/D");
         jpsiphi_tree->Branch("psi_triggerMatch", &psi_triggerMatch, "psi_triggerMatch/I");
+
+        jpsiphi_tree->Branch("phi_vProb",        &phi_vProb,        "phi_vProb/D");
+        jpsiphi_tree->Branch("phi_vNChi2",       &phi_vChi2,        "phi_vNChi2/D");
+        jpsiphi_tree->Branch("phi_DCA",          &phi_DCA,          "phi_DCA/D");
+        jpsiphi_tree->Branch("phi_ctauPV",       &phi_ctauPV,       "phi_ctauPV/D");
+        jpsiphi_tree->Branch("phi_ctauErrPV",    &phi_ctauErrPV,    "phi_ctauErrPV/D");
+        jpsiphi_tree->Branch("phi_cosAlpha",     &phi_cosAlpha,     "phi_cosAlpha/D");
+        jpsiphi_tree->Branch("phi_triggerMatch", &phi_triggerMatch, "phi_triggerMatch/I");
 
         jpsiphi_tree->Branch("jpsiphi_vProb",      &jpsiphi_vProb,        "jpsiphi_vProb/D");
         jpsiphi_tree->Branch("jpsiphi_vChi2",      &jpsiphi_vChi2,        "jpsiphi_vChi2/D");
@@ -331,7 +360,15 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       psi_ctauPV       = jpsi_cand->userFloat("ppdlPV");
       psi_ctauErrPV    = jpsi_cand->userFloat("ppdlErrPV");
       psi_cosAlpha     = jpsi_cand->userFloat("cosAlpha");
-      psi_triggerMatch = 0; //jpsi_cand->userInt("isTriggerMatched");
+      psi_triggerMatch = isTriggerMatched(jpsi_cand);
+
+      phi_vProb        = phi_cand->userFloat("vProb");
+      phi_vChi2        = phi_cand->userFloat("vNChi2");
+      phi_DCA          = phi_cand->userFloat("DCA");
+      phi_ctauPV       = phi_cand->userFloat("ppdlPV");
+      phi_ctauErrPV    = phi_cand->userFloat("ppdlErrPV");
+      phi_cosAlpha     = phi_cand->userFloat("cosAlpha");
+      phi_triggerMatch = isTriggerMatched(jphi_cand);
 
       reco::Candidate::LorentzVector vJpsiP = jpsi_cand->daughter("muon1")->p4();
       reco::Candidate::LorentzVector vJpsiM = jpsi_cand->daughter("muon2")->p4();

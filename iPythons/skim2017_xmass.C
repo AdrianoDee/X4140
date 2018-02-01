@@ -532,7 +532,7 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
   // {
 
 
-  Double_t xmin = 5.0, xmax = 6.0;
+  Double_t xmin = 4.0, xmax = 6.0;
   Int_t xBin = ((xmax - xmin)/0.01);
 
   TTree *newtree = oldtree->CloneTree(0);
@@ -578,14 +578,14 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 
     float deltaEta = jP4->Eta() - pP4->Eta();
     float deltaPhi = std::fabs(jP4->Phi() - pP4->Phi());
-    if (deltaPhi>pi) deltaPhi-=pi;
+    // if (deltaPhi>pi) deltaPhi-=pi;
     float deltaR = deltaEta*deltaEta + deltaPhi*deltaPhi;
 
-    dRJpsiPhi->Fill(deltaR);
+    dRJpsiPhi->Fill(sqrt(deltaR)); //cut < 1
 
     x_ptHist->Fill(xP4->Pt());
     jpsi_ptHist->Fill(jP4->Pt());
-    phi_ptHist->Fill(pP4->Pt());
+
     jpsiMP_ptHist->Fill(mP_jpsi_P4->Pt());
     jpsiMM_ptHist->Fill(mM_jpsi_P4->Pt());
 
@@ -600,12 +600,13 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 
     bool test = false;
     bool jpsimass = jPsiM < 3.2 && jPsiM > 3.0;
-    bool phimass = phiM > 1.005 && phiM < 1.035;
+    bool phimass = phiM > 1.005 && phiM < 1.03;
     for (int j = 0; j < 13; j++){
       // if (tB.test(j) && cosA > 0.995 && vProb > 0.01 && xyl/xylErr > 2.0 && trigger > 0)
       // if (tB.test(j))
-      if (cosA > 0.995 && jP4->Pt() > 7.0 && mP_phi_P4->Pt() > 2.0 && mM_phi_P4->Pt() > 2.0 && pM.test(1) && pP.test(1) && tB.test(j) && vProb > 0.1 && deltaR < 0.1 && deltaR > 0.0 && jpsimass)
+      if (xyl/xylErr > 0.0 && xP4->Pt() > 6.0 && cosA > 0.997 && pP4->Pt() > 8.0 && jP4->Pt() > 5.0 && mP_phi_P4->Pt() > 2.0 && mM_phi_P4->Pt() > 2.0 && tB.test(j) && vProb > 0.05 && deltaR < 1.0 && deltaR > 0.0 && jpsimass && phimass)
       {
+        phi_ptHist->Fill(pP4->Pt());
         test = true;
         phiHists[j]->Fill(phiM);
         jpsiHists[j]->Fill(jPsiM);
