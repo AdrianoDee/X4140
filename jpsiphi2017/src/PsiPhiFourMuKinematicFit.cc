@@ -275,10 +275,10 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
             AlgebraicSymMatrix33 vXYe = v1e.matrix()+ v2e.matrix();
             double ctauErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*B0sM_fit/(pperp.Perp2());
 
-            reco::CompositeCandidate recoB0s(0, math::XYZTLorentzVector(B0sPx_fit, B0sPy_fit, B0sPz_fit,
-                                              sqrt(B0sM_fit*B0sM_fit + B0sPx_fit*B0sPx_fit + B0sPy_fit*B0sPy_fit +
-                                              B0sPz_fit*B0sPz_fit)), math::XYZPoint(B0sVtxX_fit,
-                                              B0sVtxY_fit, B0sVtxZ_fit), 50551);
+            reco::CompositeCandidate recoB0s(0, math::XYZTLorentzVector(B0sPx_fit, B0sPy_fit, B0sPz_fitB0s_en_fit), math::XYZPoint(B0sVtxX_fit,
+                                              B0sVtxY_fit, B0sVtxZ_fit), 531);
+
+
 
 	          pat::CompositeCandidate patB0s(recoB0s);
             patB0s.addUserFloat("vProb",B0sVtxP_fit);

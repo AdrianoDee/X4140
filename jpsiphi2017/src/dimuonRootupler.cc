@@ -120,8 +120,6 @@ bool diMuonRootupler::isAncestor(const reco::Candidate* ancestor, const reco::Ca
 // ------------ method called for each event  ------------
 void diMuonRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & iSetup) {
 
-  int debug = 0;
-
   edm::Handle < pat::CompositeCandidateCollection >jcand_hand;
   iEvent.getByToken(jcand_, jcand_hand);
 
@@ -214,8 +212,6 @@ void diMuonRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup &
          }
       }
     } else std::cout << "*** NO triggerResults found " << iEvent.id().run() << "," << iEvent.id().event() << std::endl;
-
-    bool bestCandidateOnly_ = false;
 
     j_rank = 0;
     // std::string getdata = "";
