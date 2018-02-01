@@ -139,10 +139,10 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
   edm::ESHandle<TransientTrackBuilder> theB;
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
 
-  int imdexB0s=-1;
+  int indexB0s=-1;
   for (pat::CompositeCandidateCollection::const_iterator oniat=PsiPhiCandHandle->begin(); oniat!=PsiPhiCandHandle->end(); ++oniat) {
 
-    imdexB0s++;
+    indexB0s++;
     reco::TrackRef JpsiPhiTk[4]={
       ( dynamic_cast<const pat::Muon*>(oniat->daughter("jpsi")->daughter("muon1") ) )->innerTrack(),
       ( dynamic_cast<const pat::Muon*>(oniat->daughter("jpsi")->daughter("muon2") ) )->innerTrack(),
@@ -287,7 +287,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
             patB0s.addUserFloat("ctauPV",ctauPV);
             patB0s.addUserFloat("ctauErrPV",ctauErrPV);
 
-            patB0s.addUserInt("bIndex",imdexB0s);
+            patB0s.addUserInt("bIndex",indexB0s);
             //get first muon
             bool child = B0sTree->movePointerToTheFirstChild();
             RefCountedKinematicParticle fitPhiMu1 = B0sTree->currentParticle();

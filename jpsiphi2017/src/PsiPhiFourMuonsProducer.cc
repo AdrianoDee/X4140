@@ -7,7 +7,7 @@ PsiPhiFourMuonsProducer::PsiPhiFourMuonsProducer(const edm::ParameterSet& ps):
   PhiMassCuts_(ps.getParameter<std::vector<double>>("PhiMassCuts")),
   FourOniaMassCuts_(ps.getParameter<std::vector<double>>("FourOniaMassCuts"))
 {
-  produces<pat::CompositeCandidateCollection>("FourOniaCandidates");
+  produces<pat::CompositeCandidateCollection>("PsiPhiFourMuonsCandidates");
   candidates = 0;
   nevents = 0;
   nPhi = 0;
