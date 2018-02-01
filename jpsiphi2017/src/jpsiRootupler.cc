@@ -215,8 +215,6 @@ void jpsiRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
       }
     } else std::cout << "*** NO triggerResults found " << iEvent.id().run() << "," << iEvent.id().event() << std::endl;
 
-    bool bestCandidateOnly_ = false;
-
     j_rank = 0;
     // std::string getdata = "";
     if (jcand_hand.isValid() && !jcand_hand->empty()) {

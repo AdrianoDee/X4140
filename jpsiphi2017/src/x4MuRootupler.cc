@@ -360,8 +360,6 @@ bool x4MuRootupler::isAncestor(const reco::Candidate* ancestor, const reco::Cand
 // ------------ method called for each event  ------------
 void x4MuRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & iSetup) {
 
-  int debug = 0;
-
   edm::Handle < pat::CompositeCandidateCollection >xcand_hand;
   iEvent.getByToken(xcand_, xcand_hand);
 

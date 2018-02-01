@@ -99,8 +99,6 @@ bool xMuMuKKRootupler::isAncestor(const reco::Candidate* ancestor, const reco::C
 // ------------ method called for each event  ------------
 void xMuMuKKRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & iSetup) {
 
-  int debug = 0;
-
   edm::Handle<pat::CompositeCandidateCollection> dimuonsPhi;
   iEvent.getByToken(phi_dimuon_Label,dimuonsPhi);
 
