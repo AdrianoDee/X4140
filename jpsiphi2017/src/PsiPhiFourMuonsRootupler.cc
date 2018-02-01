@@ -75,7 +75,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   int  jpsiphi_pdgid_, jpsi_pdgid_, phi_pdgid_;
   bool isMC_,OnlyBest_;
   std::vector<std::string>                            HLTs_;
-  std::vector<std::string>                            Filters_;
+  std::vector<std::string>                            HLTFilters_;
 
   UInt_t run,event,numPrimaryVertices, trigger;
 
@@ -153,7 +153,7 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
 	      isMC_(iConfig.getParameter<bool>("isMC")),
         OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
         HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs")),
-        Filters_(iConfig.getParameter<std::vector<std::string>>("filters"))
+        HLTFilters_(iConfig.getParameter<std::vector<std::string>>("filters"))
 {
 	      edm::Service<TFileService> fs;
         jpsiphi_tree = fs->make<TTree>("OniaPhiTree","Tree of Onia and Phi");
