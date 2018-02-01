@@ -113,6 +113,7 @@ filters = cms.vstring(
                                 )
 
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+
 process.CandidateSelectedTracks = cms.EDProducer("ConcreteChargedCandidateProducer",
                 src=cms.InputTag("oniaSelectedTracks"),
                 particleType=cms.string('K+')
@@ -128,8 +129,21 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         throw = cms.bool(False)
                                         )
 
+process.JPsi2MuMuPAT = cms.EDProducer('Onia2MuMuPAT',
+  muons = cms.InputTag("slimmedMuons"),
+  beamSpotTag = cms.InputTag("offlineBeamSpot"),
+  primaryVertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),
+  higherPuritySelection = cms.string(""), ## At least one muon must pass this selection
+  lowerPuritySelection  = cms.string(""), ## BOTH muons must pass this selection
+  dimuonSelection  = cms.string("2.8 < mass < 3.3"), ## The dimuon must pass this selection before vertexing
+  addCommonVertex = cms.bool(True), ## Embed the full reco::Vertex out of the common vertex fit
+  addMuonlessPrimaryVertex = cms.bool(True), ## Embed the primary vertex re-made from all the tracks except the two muons
+  addMCTruth = cms.bool(True),      ## Add the common MC mother of the two muons, if any
+  resolvePileUpAmbiguity = cms.bool(True)   ## Order PVs by their vicinity to the J/psi vertex, not by sumPt
+)
+
 process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
-    Onia = cms.InputTag('onia2MuMuPAT'),
+    Onia = cms.InputTag('JPsi2MuMuPAT'),
     Trak = cms.InputTag('patSelectedTracks'),
     OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
     TrakTrakMassCuts = cms.vdouble(1.004461,1.034461),  # phi mass window 1.019461 +/- .015
@@ -149,7 +163,7 @@ process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
 process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
     oniat_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
     oniat_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
-    primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+    primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
     TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
     isMC = cms.bool(False),
     OnlyBest = cms.bool(False),

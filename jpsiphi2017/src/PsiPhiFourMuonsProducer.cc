@@ -46,15 +46,16 @@ void PsiPhiFourMuonsProducer::produce(edm::Event& event, const edm::EventSetup& 
        for (pat::CompositeCandidateCollection::const_iterator phiCand = jPsiCand + 1; phiCand != phiOnia->end(); ++phiCand){
          std::cout<<"Deb2 "<<++debug<<std::endl;
           if ( phiCand->mass() < PhiMassMax_  && phiCand->mass() > PhiMassMin_ ) {
+            std::cout<<"Deb2.1 "<<++debug<<std::endl;
             const pat::Muon *phiMu1 = dynamic_cast<const pat::Muon*>(phiCand->daughter("muon1"));
             const pat::Muon *phiMu2 = dynamic_cast<const pat::Muon*>(phiCand->daughter("muon2"));
-
+            std::cout<<"Deb2.3 "<<++debug<<std::endl;
             if( phiMu1 == phiMu2 || phiMu1 == jPsiMu1 || phiMu1 == jPsiMu2 ) continue;
             if( phiMu2 == jPsiMu1 || phiMu2 == jPsiMu2 ) continue;
             if( jPsiMu1 == jPsiMu2 ) continue;
 
             pat::CompositeCandidate fourOniaCandidate = makeCandidate(*phiCand, *jPsiCand);
-
+            std::cout<<"Deb2.4 "<<++debug<<std::endl;
             if(fourOniaCandidate.charge() != 0.0) continue;
             std::cout<<"Deb3 "<<++debug<<std::endl;
             if ( fourOniaCandidate.mass() < FourOniaMassMax_ && fourOniaCandidate.mass() > FourOniaMassMin_)
