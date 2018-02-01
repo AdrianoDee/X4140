@@ -124,7 +124,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   TLorentzVector gen_muonJpsiP_p4;
   TLorentzVector gen_muonPhiN_p4;
 
-  TTree* jpsiphi_tree;
+  TTree* jpsiphi_tree, jpsiphi_tree_rf;
   edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
   edm::EDGetTokenT<pat::PackedGenParticleCollection> packCands_;
 };

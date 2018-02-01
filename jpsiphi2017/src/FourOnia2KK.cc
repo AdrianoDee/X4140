@@ -102,9 +102,6 @@ FourOnia2KKPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   Vertex thePrimaryV;
   Vertex theBeamSpotV;
 
-  ESHandle<MagneticField> magneticField;
-  iSetup.get<IdealMagneticFieldRecord>().get(magneticField);
-  const MagneticField* field = magneticField.product();
 
   Handle<BeamSpot> theBeamSpot;
   iEvent.getByToken(thebeamspot_,theBeamSpot);

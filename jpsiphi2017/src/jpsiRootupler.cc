@@ -119,8 +119,6 @@ bool jpsiRootupler::isAncestor(const reco::Candidate* ancestor, const reco::Cand
 // ------------ method called for each event  ------------
 void jpsiRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & iSetup) {
 
-  int debug = 0;
-
   edm::Handle < pat::CompositeCandidateCollection >jcand_hand;
   iEvent.getByToken(jcand_, jcand_hand);
 
