@@ -362,7 +362,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       psi_ctauPV       = jpsi_cand->userFloat("ppdlPV");
       psi_ctauErrPV    = jpsi_cand->userFloat("ppdlErrPV");
       psi_cosAlpha     = jpsi_cand->userFloat("cosAlpha");
-      psi_triggerMatch = isTriggerMatched(jpsi_cand);
+      psi_triggerMatch = PsiPhiFourMuonsRootupler::isTriggerMatched(jpsi_cand);
 
       phi_vProb        = phi_cand->userFloat("vProb");
       phi_vChi2        = phi_cand->userFloat("vNChi2");
@@ -370,7 +370,7 @@ void PsiPhiFourMuonsRootupler::analyze(const edm::Event& iEvent, const edm::Even
       phi_ctauPV       = phi_cand->userFloat("ppdlPV");
       phi_ctauErrPV    = phi_cand->userFloat("ppdlErrPV");
       phi_cosAlpha     = phi_cand->userFloat("cosAlpha");
-      phi_triggerMatch = isTriggerMatched(phi_cand);
+      phi_triggerMatch = PsiPhiFourMuonsRootupler::isTriggerMatched(phi_cand);
 
       reco::Candidate::LorentzVector vJpsiP = jpsi_cand->daughter("muon1")->p4();
       reco::Candidate::LorentzVector vJpsiM = jpsi_cand->daughter("muon2")->p4();
