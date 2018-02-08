@@ -387,8 +387,8 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       muonp_rf_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
       muonn_rf_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
 
-      kP = phi_cand_rf->daughter("trak1")->p4();
-      kM = phi_cand_rf->daughter("trak2")->p4();
+      reco::Candidate::LorentzVector kP = phi_cand_rf->daughter("trak1")->p4();
+      reco::Candidate::LorentzVector kM = phi_cand_rf->daughter("trak2")->p4();
 
       if (phi_cand_rf->daughter("trak1")->charge() < 0) {
          kP = phi_cand_rf->daughter("trak2")->p4();
@@ -435,8 +435,8 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       muonp_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
       muonn_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
 
-      reco::Candidate::LorentzVector kP = phi_cand->daughter("trak1")->p4();
-      reco::Candidate::LorentzVector kM = phi_cand->daughter("trak2")->p4();
+      kP = phi_cand->daughter("trak1")->p4();
+      kM = phi_cand->daughter("trak2")->p4();
 
       track_KN_d0      = phi_cand->userFloat("trak_d0_2");
       track_KN_d0Err   = phi_cand->userFloat("trak_d0err_2");
