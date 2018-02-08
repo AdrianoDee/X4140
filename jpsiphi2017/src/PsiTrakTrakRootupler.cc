@@ -61,7 +61,7 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
       void endRun(edm::Run const&, edm::EventSetup const&) override;
       void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
       void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
-      UInt_t PsiTrakTrakRootupler::isTriggerMatched(pat::CompositeCandidate *diMuon_cand);
+      UInt_t isTriggerMatched(pat::CompositeCandidate *diMuon_cand);
 
   // ----------member data ---------------------------
   std::string file_name;
