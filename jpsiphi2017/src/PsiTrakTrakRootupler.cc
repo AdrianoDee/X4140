@@ -375,12 +375,6 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       if (onia_cand_rf->daughter("muon1")->charge() < 0) {
          vP = onia_cand_rf->daughter("muon2")->p4();
          vM = onia_cand_rf->daughter("muon1")->p4();
-         muon_rf_N = dynamic_cast<const pat::Muon*>(onia_cand_rf->daughter("muon1"));
-         muon_rf_P = dynamic_cast<const pat::Muon*>(onia_cand_rf->daughter("muon2"));
-      } else
-      {
-        muon_rf_P = dynamic_cast<const pat::Muon*>(onia_cand_rf->daughter("muon1"));
-        muon_rf_N = dynamic_cast<const pat::Muon*>(onia_cand_rf->daughter("muon2"));
       }
 
 
