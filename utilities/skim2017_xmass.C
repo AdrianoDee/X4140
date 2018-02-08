@@ -626,11 +626,12 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 
 }
 
-int jpsiRuns(std::string path, std::string filename, std::string treename)
+int jpsiRuns(std::string path, std::string filename, std::string treename, std::string dirname)
 {
   UInt_t colors[13] = {1,2,3,6,7,8,30,40,46,38,29,34,9};
 
   TFile *oldfile = TFile::Open((path+"/"+filename).data());
+  TDirectory *directory = (TDirectory*)oldfile->Get(dirname.data());
   TTree *oldtree = (TTree*)oldfile->Get((treename).data());
 
 
