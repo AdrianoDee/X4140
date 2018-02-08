@@ -638,19 +638,19 @@ int jpsiRuns(std::string path, std::string filename, std::string treename, std::
   Long64_t nentries = oldtree->GetEntries();
   Double_t xM = 0.0, xDeltaM = 0.0;
 
-  Double_t cosA  = 0.0;
+  Float_t cosA  = 0.0;
 
   Double_t jPsiM  = 0.0;
 
-  Double_t ctau  = 0.0;
-  Double_t ctauErr  = 0.0;
+  Float_t ctau  = 0.0;
+  Float_t ctauErr  = 0.0;
 
-  Double_t vProb  = 0.0;
+  Float_t vProb  = 0.0;
   Double_t deltaR = 0.0;
 
-  Int_t n_jpsi = 0;
-  Int_t trigger = 0;
-  Int_t run = 0;
+  UInt_t n_jpsi = 0;
+  UInt_t trigger = 0;
+  UInt_t run = 0;
 
   TLorentzVector *xP4 = 0, *jP4 = 0, *pP4 = 0;
   TLorentzVector *muonp_p4 = 0, *muonn_p4 = 0, *kaonp_p4 = 0, *kaonn_p4 = 0;
