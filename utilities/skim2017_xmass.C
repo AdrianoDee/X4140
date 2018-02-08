@@ -12,24 +12,29 @@
 #include <TColor.h>
 #include <TLine.h>
 #include <TLorentzVector.h>
+#include <vector>
 
 int noHlts = 13;
 
 double pi = 3.14159265358979323846;
+double pdg_Phi_mass = 1.019455;
 
-std::string hltsName[13] = {"HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi",
-"HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi",
-"HLT_Mu20_TkMu0_Phi",
-"HLT_Dimuon14_Phi_Barrel_Seagulls",
-"HLT_Mu25_TkMu0_Phi",
-"HLT_Dimuon24_Phi_noCorrL1",
-"HLT_DoubleMu4_JpsiTrkTrk_Displaced",
-"HLT_DoubleMu4_JpsiTrk_Displaced",
-"HLT_DoubleMu4_Jpsi_Displaced",
-"HLT_DoubleMu4_3_Jpsi_Displaced",
-"HLT_Dimuon20_Jpsi_Barrel_Seagulls",
-"HLT_Dimuon25_Jpsi",
-"HLT_Dimuon0_Jpsi"};
+std::string hltsName[13] = {
+  "HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi", //0
+"HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi", //1
+"HLT_Mu20_TkMu0_Phi", //2
+"HLT_Dimuon14_Phi_Barrel_Seagulls", //3
+"HLT_Mu25_TkMu0_Phi", //4
+"HLT_Dimuon24_Phi_noCorrL1", //5
+"HLT_DoubleMu4_JpsiTrkTrk_Displaced", //6
+"HLT_DoubleMu4_JpsiTrk_Displaced", //7
+"HLT_DoubleMu4_Jpsi_Displaced", //8
+"HLT_DoubleMu4_3_Jpsi_Displaced", //9
+"HLT_Dimuon20_Jpsi_Barrel_Seagulls", //10
+"HLT_Dimuon25_Jpsi", //11
+"HLT_Dimuon0_Jpsi" //12
+};
+
 
 int skimXTree(std::string path, std::string filename, std::string treename = "xTree", std::string dirname = "rootuple")
 {
@@ -168,7 +173,7 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
   std::vector<TH1F*> phiHists;
 
 
-  for (size_t i = 0; i < 13; i++)
+  for (int i = 0; i < 13; i++)
   phiHists.push_back(new TH1F((hltsName[i] + "_phi").data(),(hltsName[i] + "_phi").data(),200,0.25,1.25));
 
 
@@ -209,7 +214,7 @@ int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 
   TLegend* leg = new TLegend(0.1,0.5,0.45,0.9);
   leg->AddEntry(phiHist,(phiHist->GetName()),"l");
-  for (size_t i = 0; i < 13; i++)
+  for (int i = 0; i < 13; i++)
   {
     phiHists[i]->SetLineColor(colors[i]);
     phiHists[i]->SetLineWidth(2);
@@ -298,7 +303,7 @@ int drawXXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iP
   std::vector<TH1F*> xHists;
 
 
-  for (size_t i = 0; i < 13; i++)
+  for (int i = 0; i < 13; i++)
   xHists.push_back(new TH1F((hltsName[i] + "_x").data(),(hltsName[i] + "_x").data(),600,3.9,6.1));
 
 
@@ -339,7 +344,7 @@ int drawXXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iP
 
   TLegend* leg = new TLegend(0.1,0.5,0.45,0.9);
   leg->AddEntry(xHist,(xHist->GetName()),"l");
-  for (size_t i = 0; i < 13; i++)
+  for (int i = 0; i < 13; i++)
   {
     xHists[i]->SetLineColor(colors[i]);
     xHists[i]->SetLineWidth(2);
@@ -359,114 +364,6 @@ int drawXXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iP
 
 }
 
-
-int drawJTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPythons/xTree.root",std::string treename = "xTree")
-{
-
-  UInt_t colors[13] = {1,2,3,6,7,8,30,40,46,38,29,34,9};
-
-  TFile *oldfile = TFile::Open(path.data());
-  TTree *oldtree = (TTree*)oldfile->Get(treename.data());
-
-  Long64_t nentries = oldtree->GetEntries();
-  Double_t jM = 0.0;
-  Double_t xyl   = 0.0;
-  Double_t xylErr   = 0.0;
-  Double_t cosA  = 0.0;
-
-  Double_t phiM  = 0.0;
-  Double_t jPsiM  = 0.0;
-
-  Double_t ctau  = 0.0;
-  Double_t ctauErr  = 0.0;
-
-  Double_t vProb  = 0.0;
-
-  Int_t phiMType = 0, phiPType = 0;
-  UInt_t phi_trigger = 0, jpsi_trigger = 0, trigger = 0;
-
-  oldtree->SetBranchAddress("jM",&jM);
-  oldtree->SetBranchAddress("j_vProb",&vProb);
-  oldtree->SetBranchAddress("trigger",&trigger);
-
-  //Create a new file + a clone of old tree in new file
-  TCanvas c("c","c",1200,1600);
-
-  TFile *newfile = new TFile("drawSkim.root","RECREATE");
-  // for(int j = 0; j < 1; j++)
-  // {
-
-
-  Double_t xmin = 5.0, xmax = 6.0;
-  Int_t xBin = ((xmax - xmin)/0.01);
-
-  TTree *newtree = oldtree->CloneTree(0);
-  // TH1F* phi_triggrHist = new TH1F("phi_triggrHist","phi_triggrHist",600,0.6,1.2);
-  TH1F* jpsiHist = new TH1F("jpsiHist","jpsiHist",140,2.6,3.3);
-
-  std::vector<TH1F*> jpsiHists;
-
-
-  for (size_t i = 0; i < 13; i++)
-  jpsiHists.push_back(new TH1F((hltsName[i] + "_jpsi").data(),(hltsName[i] + "_jpsi").data(),140,2.6,3.3));
-
-
-  for (Long64_t i=0;i<nentries; i++) {
-    oldtree->GetEntry(i);
-    std::bitset<16> tB(trigger);
-    // std::bitset<16> pM(phiMType);
-    // std::bitset<16> pP(phiPType);
-    bool test = false;
-    // bool jpsimass = jPsiM < 3.15 && jPsiM > 3.0;
-    // bool phimass = phiM < 1.06 && phiM > 0.98;
-    for (int j = 0; j < 13; j++){
-      // if (tB.test(j) && cosA > 0.995 && vProb > 0.01 && xyl/xylErr > 2.0 && trigger > 0)
-      if (tB.test(j))
-      {
-        test = true;
-        jpsiHists[j]->Fill(jM);
-
-      }
-    }
-    // if(cosA > 0.995 && phimass && jpsimass && vProb>0.02 && xyl/xylErr > 2.0)
-    if (test)
-    jpsiHist->Fill(jM);
-
-  }
-
-
-  //newtree->Draw("phi_M","","same");
-  // }
-  jpsiHist->SetMinimum(1.0);
-  jpsiHist->SetMaximum(jpsiHist->GetMaximum()*5.0);
-  //oldtree->Draw("phi_M");
-  // TH1F* phi_triggrHist = (TH1F*)gDirectory->Get("phi_triggrHist");
-
-  jpsiHist->SetLineColor(kBlue);
-  jpsiHist->Write();
-  jpsiHist->Draw();
-
-  TLegend* leg = new TLegend(0.1,0.5,0.45,0.9);
-  leg->AddEntry(jpsiHist,(jpsiHist->GetName()),"l");
-  for (size_t i = 0; i < 13; i++)
-  {
-    jpsiHists[i]->SetLineColor(colors[i]);
-    jpsiHists[i]->SetLineWidth(2);
-    if(i>5) jpsiHists[i]->SetLineStyle(kDashed);
-    jpsiHists[i]->Draw("same");
-    leg->AddEntry(jpsiHists[i],(jpsiHists[i]->GetName()),"l");
-    jpsiHists[i]->Write();
-  }
-
-  leg->Draw();
-  c.SetLogy(1);
-  c.SaveAs("phitriggerCheck.png");
-  c.SaveAs("phitriggerCheck.eps");
-  c.SaveAs("phitriggerCheck.root");
-
-  return 0;
-
-}
 
 
 int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPythons/xTree.root",std::string treename = "xTree")
@@ -562,7 +459,7 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
   std::vector<TH1F*> xHists;
 
 
-  for (size_t i = 0; i < noHlts; i++)
+  for (int i = 0; i < noHlts; i++)
   {
     phiHists.push_back(new TH1F((hltsName[i] + "_phi").data(),(hltsName[i] + "_phi").data(),500,0.25,1.25));
     jpsiHists.push_back(new TH1F((hltsName[i] + "_jpsi").data(),(hltsName[i] + "_jpsi").data(),140,2.6,3.3));
@@ -578,10 +475,10 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 
     float deltaEta = jP4->Eta() - pP4->Eta();
     float deltaPhi = std::fabs(jP4->Phi() - pP4->Phi());
-    // if (deltaPhi>pi) deltaPhi-=pi;
-    float deltaR = deltaEta*deltaEta + deltaPhi*deltaPhi;
+    if (deltaPhi>pi) deltaPhi-=pi;
+    float deltaR = sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
 
-    dRJpsiPhi->Fill(sqrt(deltaR)); //cut < 1
+    dRJpsiPhi->Fill(deltaR); //cut < 1
 
     x_ptHist->Fill(xP4->Pt());
     jpsi_ptHist->Fill(jP4->Pt());
@@ -648,7 +545,7 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 
   TLegend* leg = new TLegend(0.1,0.5,0.45,0.9);
   leg->AddEntry(phiHist,(phiHist->GetName()),"l");
-  for (size_t i = 0; i < 13; i++)
+  for (int i = 0; i < 13; i++)
   {
     phiHists[i]->SetLineColor(colors[i]);
     phiHists[i]->SetLineWidth(2);
@@ -675,7 +572,7 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 
   leg = new TLegend(0.1,0.5,0.4,0.9);
   leg->AddEntry(jpsiHist,(jpsiHist->GetName()),"l");
-  for (size_t i = 0; i < 13; i++)
+  for (int i = 0; i < 13; i++)
   {
     jpsiHists[i]->SetLineColor(colors[i]);
     jpsiHists[i]->SetLineWidth(2);
@@ -706,7 +603,500 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
 
   leg = new TLegend(0.1,0.55,0.35,0.9);
   leg->AddEntry(xHist,(xHist->GetName()),"l");
-  for (size_t i = 0; i < 13; i++)
+  for (int i = 0; i < 13; i++)
+  {
+    xHists[i]->SetLineColor(colors[i]);
+    xHists[i]->SetLineWidth(2);
+    if(i>5) xHists[i]->SetLineStyle(kDashed);
+    xHists[i]->Draw("same");
+    leg->AddEntry(xHists[i],(xHists[i]->GetName()),"l");
+    xHists[i]->Write();
+  }
+
+  // line.Draw();
+  // phi_triggrHist->Draw("same");
+  leg->Draw();
+  c.SetLogy(0);
+  c.SaveAs("xtriggerCheck.png");
+  c.SaveAs("xtriggerCheck.eps");
+  c.SaveAs("xtriggerCheck.root");
+
+  return 0;
+
+}
+
+int skimMMKKTree(std::string path, std::string filename, std::string treename)
+{
+  UInt_t colors[13] = {1,2,3,6,7,8,30,40,46,38,29,34,9};
+
+  TFile *oldfile = TFile::Open((path+"/"+filename).data());
+  TTree *oldtree = (TTree*)oldfile->Get((treename).data());
+
+
+  Long64_t nentries = oldtree->GetEntries();
+  Double_t xM = 0.0, xDeltaM = 0.0;
+
+  Double_t cosA  = 0.0;
+
+  Double_t phiM  = 0.0;
+  Double_t jPsiM  = 0.0;
+
+  Double_t ctau  = 0.0;
+  Double_t ctauErr  = 0.0;
+
+  Double_t vProb  = 0.0;
+  Double_t deltaR = 0.0;
+
+  Int_t phiMType = 0, phiPType = 0;
+  Int_t run = 0;
+  Int_t phi_trigger = 0, jpsi_trigger = 0, trigger = 0;
+
+  TLorentzVector *xP4 = 0, *jP4 = 0, *pP4 = 0;
+  TLorentzVector *muonp_p4 = 0, *muonn_p4 = 0, *kaonp_p4 = 0, *kaonn_p4 = 0;
+
+  //Output Variables
+  Int_t t = 0, evt = 0, r = 0;
+  Double_t jPt, xPt, mNPt, mPPt, kNPt, kPPt, cosAlpha, vP, pPt;
+  Double_t xyl   = 0.0;
+  Double_t xylErr   = 0.0;
+
+  oldtree->SetBranchAddress("oniat_vProb",&vProb);
+  oldtree->SetBranchAddress("trigger",&trigger);
+  oldtree->SetBranchAddress("run",&run);
+  // oldtree->SetBranchAddress("l_xy",&xyl);
+  // oldtree->SetBranchAddress("lErr_xy",&xylErr);
+  oldtree->SetBranchAddress("oniat_cosAlpha",&cosA);
+  // oldtree->SetBranchAddress("phi_M",&phiM);
+  // oldtree->SetBranchAddress("jpsi_M",&jPsiM);
+
+  // oldtree->SetBranchAddress("phi_muonM_type",&phiMType);
+  // oldtree->SetBranchAddress("phi_muonP_type",&phiPType);
+  //
+  oldtree->SetBranchAddress("oniat_ctauPV",&ctau);
+  oldtree->SetBranchAddress("oniat_ctauErrPV",&ctauErr);
+  //
+  // oldtree->SetBranchAddress("phi_trigger",&phi_trigger);
+  // oldtree->SetBranchAddress("jpsi_trigger",&jpsi_trigger);
+
+  oldtree->SetBranchAddress("oniat_p4",&xP4);
+
+  //oldtree->SetBranchAddress("oniat_rf_p4",&xP4);
+
+
+  oldtree->SetBranchAddress("phi_p4",&pP4);
+  oldtree->SetBranchAddress("kaonn_p4",&kaonn_p4);
+  oldtree->SetBranchAddress("kaonp_p4",&kaonp_p4);
+
+  oldtree->SetBranchAddress("psi_p4",&jP4);
+  oldtree->SetBranchAddress("muonp_p4",&muonp_p4);
+  oldtree->SetBranchAddress("muonn_p4",&muonn_p4);
+
+  oldtree->SetBranchAddress("oniat_p4",&xP4);
+
+  //oldtree->SetBranchAddress("oniat_rf_p4",&xP4);
+
+  TFile *newfile = new TFile((treename + "_skimMMKK_" + filename).data(),"RECREATE");
+
+  TTree *newtree = new TTree("skimmed_x_tree","skimmed_x_tree");
+
+  newtree->Branch("oniat_vProb",&vProb);
+  newtree->Branch("trigger",&trigger);
+  newtree->Branch("run",&run);
+
+  newtree->Branch("oniat_p4",&xP4);
+
+  newtree->Branch("phi_p4",&pP4);
+  newtree->Branch("kaonn_p4",&kaonn_p4);
+  newtree->Branch("kaonp_p4",&kaonp_p4);
+
+  newtree->Branch("psi_p4",&jP4);
+  newtree->Branch("muonp_p4",&muonp_p4);
+  newtree->Branch("muonn_p4",&muonn_p4);
+
+  newtree->Branch("evt",&evt,"evt/I");
+  newtree->Branch("run",&r,"run/I");
+  newtree->Branch("trigger",&t,"trigger/I");
+  newtree->Branch("xM",&xM,"xM/D");
+  newtree->Branch("xDeltaM",&xDeltaM,"xDeltaM/D");
+  newtree->Branch("phiM",&phiM,"phiM/D");
+  newtree->Branch("jPsiM",&jPsiM,"jPsiM/D");
+  newtree->Branch("deltaR",&deltaR,"deltaR/D");
+
+  newtree->Branch("jPt",&jPt,"jPt/D");
+  newtree->Branch("xPt",&xPt,"xPt/D");
+  newtree->Branch("pPt",&pPt,"pPt/D");
+  newtree->Branch("mNPt",&mNPt,"mNPt/D");
+  newtree->Branch("mPPt",&mPPt,"mPPt/D");
+  newtree->Branch("kNPt",&kNPt,"kNPt/D");
+  newtree->Branch("kPPt",&kPPt,"kPPt/D");
+  newtree->Branch("vProb",&vP,"vProb/D");
+  newtree->Branch("cosAlpha",&cosAlpha,"cosAlpha/D");
+  newtree->Branch("xyl",&xyl,"xyl/D");
+  newtree->Branch("xylErr",&xylErr,"xylErr/D");
+  newtree->Branch("xylErr",&xylErr,"xylErr/D");
+
+
+  for (Long64_t i=0;i<nentries; i++) {
+    oldtree->GetEntry(i);
+    std::bitset<16> tB(trigger);
+    // std::bitset<16> pM(phiKType);
+    // std::bitset<16> pP(phiPType);
+
+    float deltaEta = jP4->Eta() - pP4->Eta();
+    float deltaPhi = std::fabs(jP4->Phi() - pP4->Phi());
+    if (deltaPhi>pi) deltaPhi-=pi;
+
+    deltaR = sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
+
+    phiM = pP4->M();
+    jPsiM = jP4->M();
+    xM = xP4->M();
+    xDeltaM = xP4->M() - pP4->M() + pdg_Phi_mass;
+
+    // evt = event;
+    r = run;
+    t = trigger;
+
+    jPt  = jP4->Pt();
+    xPt  = xP4->Pt();
+    xPt  = pP4->Pt();
+    mNPt = muonn_p4->Pt();
+    mPPt = muonp_p4->Pt();
+    kNPt = kaonn_p4->Pt();
+    kPPt = kaonp_p4->Pt();
+    vP       = vProb;
+    cosAlpha = cosA;
+    xyl      = ctau;
+    xylErr   = ctauErr;
+
+    if(ctau/ctauErr > 3.0 && vProb > 0.1)
+      newtree->Fill();
+
+
+  }
+
+
+  return 0;
+
+}
+
+int drawMMKKTree(std::string path, std::string filename, std::string treename)
+{
+
+  UInt_t colors[13] = {1,2,3,6,7,8,30,40,46,38,29,34,9};
+
+  TFile *oldfile = TFile::Open((path+"/"+filename).data());
+  TTree *oldtree = (TTree*)oldfile->Get((treename).data());
+
+  Long64_t nentries = oldtree->GetEntries();
+  Double_t xM = 0.0, xDeltaM = 0.0;
+  Double_t xyl   = 0.0;
+  Double_t xylErr   = 0.0;
+  Double_t cosA  = 0.0;
+
+  Double_t phiM  = 0.0;
+  Double_t jPsiM  = 0.0;
+
+  Double_t ctau  = 0.0;
+  Double_t ctauErr  = 0.0;
+
+  Double_t vProb  = 0.0;
+
+  Int_t phiMType = 0, phiPType = 0;
+  Int_t run = 0;
+  Int_t phi_trigger = 0, jpsi_trigger = 0, trigger = 0;
+
+  TLorentzVector *xP4 = 0, *jP4 = 0, *pP4 = 0;
+  TLorentzVector *muonp_p4 = 0, *muonn_p4 = 0, *kaonp_p4 = 0, *kaonn_p4 = 0;
+
+
+  oldtree->SetBranchAddress("oniat_vProb",&vProb);
+  oldtree->SetBranchAddress("trigger",&trigger);
+  oldtree->SetBranchAddress("run",&run);
+  // oldtree->SetBranchAddress("l_xy",&xyl);
+  // oldtree->SetBranchAddress("lErr_xy",&xylErr);
+  oldtree->SetBranchAddress("oniat_cosAlpha",&cosA);
+  // oldtree->SetBranchAddress("phi_M",&phiM);
+  // oldtree->SetBranchAddress("jpsi_M",&jPsiM);
+
+  // oldtree->SetBranchAddress("phi_muonM_type",&phiMType);
+  // oldtree->SetBranchAddress("phi_muonP_type",&phiPType);
+  //
+  oldtree->SetBranchAddress("oniat_ctauPV",&ctau);
+  oldtree->SetBranchAddress("oniat_ctauErrPV",&ctauErr);
+  //
+  // oldtree->SetBranchAddress("phi_trigger",&phi_trigger);
+  // oldtree->SetBranchAddress("jpsi_trigger",&jpsi_trigger);
+
+  //oldtree->SetBranchAddress("oniat_p4",&xP4);
+
+  oldtree->SetBranchAddress("oniat_rf_p4",&xP4);
+
+
+  oldtree->SetBranchAddress("phi_p4",&pP4);
+  oldtree->SetBranchAddress("kaonn_p4",&kaonn_p4);
+  oldtree->SetBranchAddress("kaonp_p4",&kaonp_p4);
+
+  oldtree->SetBranchAddress("psi_p4",&jP4);
+  oldtree->SetBranchAddress("muonp_p4",&muonp_p4);
+  oldtree->SetBranchAddress("muonn_p4",&muonn_p4);
+
+  // oldtree->SetBranchAddress("muonM_jpsi_p4",&mM_phi_P4);
+  // oldtree->SetBranchAddress("muonP_jpsi_p4",&mP_phi_P4);
+  //Create a new file + a clone of old tree in new file
+  TCanvas c("c","c",1200,1600);
+
+  TFile *newfile = new TFile(("DrawSkim_"+ filename).data(),"RECREATE");
+  // for(int j = 0; j < 1; j++)
+  // {
+
+
+  Double_t xmin = 4.0, xmax = 6.0;
+  Int_t xBin = ((xmax - xmin)/0.001);
+
+  TTree *newtree = oldtree->CloneTree(0);
+  // TH1F* phi_triggrHist = new TH1F("phi_triggrHist","phi_triggrHist",600,0.6,1.2);
+  TH1F* phiHist = new TH1F("phiHist","phiHist",1000,0.9,1.15);
+  TH1F* jpsiHist = new TH1F("jpsiHist","jpsiHist",1000,2.9,3.3);
+  TH1F* xHist = new TH1F("xHist","xHist",xBin,xmin,xmax);
+  TH1F* xHistDeltaM = new TH1F("xHistDeltaM","xHistDeltaM",xBin,xmin,xmax);
+
+  TH1F* x_ptHist = new TH1F("x_ptHist","x_ptHist",1000,0.0,100.0);
+  TH1F* jpsi_ptHist = new TH1F("jpsi_ptHist","jpsi_ptHist",1000,0.0,100.0);
+  TH1F* phi_ptHist = new TH1F("phi_ptHist","phi_ptHist",1000,0.0,100.0);
+
+  TH1F* jpsiMP_ptHist = new TH1F("jpsiMP_ptHist","jpsiMP_ptHist",1000,0.0,100.0);
+  TH1F* jpsiMM_ptHist = new TH1F("jpsiMM_ptHist","jpsiMM_ptHist",1000,0.0,100.0);
+  TH1F* jpsiMHig_ptHist = new TH1F("jpsiMHig_ptHist","jpsiMHig_ptHist",1000,0.0,100.0);
+  TH1F* jpsiMLow_ptHist = new TH1F("jpsiMLow_ptHist","jpsiMLow_ptHist",1000,0.0,100.0);
+
+  TH1F* phiKP_ptHist = new TH1F("phiKP_ptHist","phiKP_ptHist",1000,0.0,100.0);
+  TH1F* phiKM_ptHist = new TH1F("phiKM_ptHist","phiKM_ptHist",1000,0.0,100.0);
+  TH1F* phiKHig_ptHist = new TH1F("phiKHig_ptHist","phiKHig_ptHist",1000,0.0,100.0);
+  TH1F* phiKLow_ptHist = new TH1F("phiKLow_ptHist","phiKLow_ptHist",1000,0.0,100.0);
+
+  TH1F* dRJpsiPhi = new TH1F("dRJpsiPhi","dRJpsiPhi",1000,-10.0,10.0);
+
+  std::vector<TH1F*> phiHists;
+  std::vector<TH1F*> jpsiHists;
+  std::vector<TH1F*> xHists;
+  std::vector<TH1F*> ptJHists;
+  std::vector<TH1F*> xHistsDeltaM;
+
+
+  for (int i = 0; i < noHlts; i++)
+  {
+    phiHists.push_back(new TH1F((hltsName[i] + "_phi").data(),(hltsName[i] + "_phi").data(),1000,0.9,1.15));
+    jpsiHists.push_back(new TH1F((hltsName[i] + "_jpsi").data(),(hltsName[i] + "_jpsi").data(),1000,2.9,3.3));
+    xHists.push_back(new TH1F((hltsName[i] + "_x").data(),(hltsName[i] + "_x").data(),xBin,xmin,xmax));
+    ptJHists.push_back(new TH1F((hltsName[i] + "_jpsi_pt").data(),(hltsName[i] + "_jpsi_pt").data(),1000,0.0,100.0));
+    xHistsDeltaM.push_back(new TH1F((hltsName[i] + "_x_deltam").data(),(hltsName[i] + "_x_deltam").data(),xBin,xmin,xmax));
+  }
+
+  // std::string hltsName[13] = {
+  //   "HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi", //0
+  // "HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi", //1
+  // "HLT_Mu20_TkMu0_Phi", //2
+  // "HLT_Dimuon14_Phi_Barrel_Seagulls", //3
+  // "HLT_Mu25_TkMu0_Phi", //4
+  // "HLT_Dimuon24_Phi_noCorrL1", //5
+  // "HLT_DoubleMu4_JpsiTrkTrk_Displaced", //6
+  // "HLT_DoubleMu4_JpsiTrk_Displaced", //7
+  // "HLT_DoubleMu4_Jpsi_Displaced", //8
+  // "HLT_DoubleMu4_3_Jpsi_Displaced", //9
+  // "HLT_Dimuon20_Jpsi_Barrel_Seagulls", //10
+  // "HLT_Dimuon25_Jpsi", //11
+  // "HLT_Dimuon0_Jpsi" //12
+  // };
+
+  std::vector <int> triggersToTest;
+
+  //OUR TRIGGERs
+  // triggersToTest.push_back(0);
+  triggersToTest.push_back(1);
+
+  //PHI INCLUSIVE TRIGGERs
+  // triggersToTest.push_back(2);
+  // triggersToTest.push_back(3);
+  // triggersToTest.push_back(4);
+  // triggersToTest.push_back(5);
+
+  //JPSI INCLUSIVE TRIGGERs
+  // triggersToTest.push_back(10);
+  // triggersToTest.push_back(11);
+  // triggersToTest.push_back(12);
+
+  //DISPLACED JPSI TRIGGERs
+  triggersToTest.push_back(6); //dis
+  triggersToTest.push_back(7); //dis
+  // triggersToTest.push_back(8); //dis
+  // triggersToTest.push_back(9); //dis
+
+  for (Long64_t i=0;i<nentries; i++) {
+    oldtree->GetEntry(i);
+    std::bitset<16> tB(trigger);
+    // std::bitset<16> pM(phiKType);
+    // std::bitset<16> pP(phiPType);
+
+    phiM = pP4->M();
+    jPsiM = jP4->M();
+    xM = xP4->M();
+    xDeltaM = xP4->M() - pP4->M() + pdg_Phi_mass;
+
+    float deltaEta = jP4->Eta() - pP4->Eta();
+    float deltaPhi = std::fabs(jP4->Phi() - pP4->Phi());
+    if (deltaPhi>pi) deltaPhi-=pi;
+    float deltaR = sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
+
+    // jpsiMP_ptHist->Fill(mP_jpsi_P4->Pt());
+    // jpsiMM_ptHist->Fill(mM_jpsi_P4->Pt());
+    //
+    // jpsiMHig_ptHist->Fill(std::max(mP_jpsi_P4->Pt(),mM_jpsi_P4->Pt()));
+    // jpsiMLow_ptHist->Fill(-std::max(-mP_jpsi_P4->Pt(),-mM_jpsi_P4->Pt()));
+    //
+    // phiKHig_ptHist->Fill(std::max(mP_phi_P4->Pt(),mM_phi_P4->Pt()));
+    // phiKLow_ptHist->Fill(-std::max(-mP_phi_P4->Pt(),-mM_phi_P4->Pt()));
+    //
+    // phiKP_ptHist->Fill(mP_phi_P4->Pt());
+    // phiKM_ptHist->Fill(mM_phi_P4->Pt());
+
+    bool test = false;
+    bool jpsimass = jPsiM < 3.19 && jPsiM > 3.0;
+    bool phimass = phiM > 0.95 && phiM < 1.3;
+    for (size_t j = 0; j < triggersToTest.size(); j++){
+
+      int testingTrigger = triggersToTest[j];
+      // if (tB.test(j) && cosA > 0.995 && vProb > 0.01 && xyl/xylErr > 2.0 && trigger > 0)
+      // if (tB.test(j))
+      //if (xyl/xylErr > 0.0 && xP4->Pt() > 6.0 && cosA > 0.997 && pP4->Pt() > 8.0 && jP4->Pt() > 5.0 && mP_phi_P4->Pt() > 2.0 && mM_phi_P4->Pt() > 2.0 && tB.test(j) && vProb > 0.05 && deltaR < 1.0 && deltaR > 0.0 && jpsimass && phiKass)
+// if (tB.test(testingTrigger) && run > 305388 && vProb > 0.5 && cosA > 0.997 && deltaR < 0.8  && jpsimass && phimass && ctau/ctauErr > 3.0)
+      // if (tB.test(testingTrigger) && run > 305388 && ctau/ctauErr > 3.0 && phimass && std::max(kaonn_p4->Pt(),kaonp_p4->Pt())>1.2 && -std::max(-kaonn_p4->Pt(),-kaonp_p4->Pt())>1.0 && jP4->Pt() > 4.0)
+      // if (tB.test(testingTrigger) && run > 305388 && ctau/ctauErr > 3.0 && phimass && kaonn_p4->Pt() >1.0 && kaonp_p4->Pt()>1.0)
+      // if (tB.test(testingTrigger) && ctau/ctauErr < 2.0 && phimass && vProb > 0.2 && cosA > 0.997 && deltaR < 2.0  && jpsimass)
+      if (tB.test(testingTrigger) && run > 305388 && ctau/ctauErr > 3.0 && jP4->Pt() > 7.0 && phimass)
+      {
+
+        test = true;
+        phiHists[testingTrigger]->Fill(phiM);
+        jpsiHists[testingTrigger]->Fill(jPsiM);
+        //  if(phiKass && jpsimass && cosA > 0.995 && vProb>0.02 && xyl/xylErr > 2.0)
+        ptJHists[testingTrigger]->Fill(jP4->Pt());
+        xHists[testingTrigger]->Fill(xM);
+        xHistsDeltaM[testingTrigger]->Fill(xDeltaM);
+      }
+    }
+    // if(cosA > 0.995 && phiKass && jpsimass && vProb>0.02 && xyl/xylErr > 2.0)
+    if (test){
+      xHist->Fill(xM);
+      xHistDeltaM->Fill(xDeltaM);
+      phiHist->Fill(phiM);
+      jpsiHist->Fill(jPsiM);
+      phi_ptHist->Fill(pP4->Pt());
+      dRJpsiPhi->Fill(deltaR); //cut < 1
+      x_ptHist->Fill(xP4->Pt());
+      jpsi_ptHist->Fill(jP4->Pt());
+
+      jpsiMP_ptHist->Fill(muonp_p4->Pt());
+      jpsiMM_ptHist->Fill(muonn_p4->Pt());
+
+      jpsiMHig_ptHist->Fill(std::max(muonp_p4->Pt(),muonn_p4->Pt()));
+      jpsiMLow_ptHist->Fill(-std::max(-muonp_p4->Pt(),-muonn_p4->Pt()));
+
+      phiKHig_ptHist->Fill(std::max(kaonn_p4->Pt(),kaonp_p4->Pt()));
+      phiKLow_ptHist->Fill(-std::max(-kaonn_p4->Pt(),-kaonp_p4->Pt()));
+
+      phiKP_ptHist->Fill(kaonp_p4->Pt());
+      phiKM_ptHist->Fill(kaonn_p4->Pt());
+    }
+  }
+
+  xHistDeltaM->Write();
+  dRJpsiPhi->Write();
+  x_ptHist->Write();
+  jpsi_ptHist->Write();
+  phi_ptHist->Write();
+  jpsiMP_ptHist->Write();
+  jpsiMM_ptHist->Write();
+  jpsiMHig_ptHist->Write();
+  jpsiMLow_ptHist->Write();
+  phiKHig_ptHist->Write();
+  phiKLow_ptHist->Write();
+  phiKP_ptHist->Write();
+  phiKM_ptHist->Write();
+  //newtree->Draw("phi_M","","same");
+  // }
+  phiHist->SetMinimum(1.0);
+  phiHist->SetMaximum(phiHist->GetMaximum()*5.0);
+  //oldtree->Draw("phi_M");
+  // TH1F* phi_triggrHist = (TH1F*)gDirectory->Get("phi_triggrHist");
+
+  phiHist->SetLineColor(kBlue);
+  phiHist->Write();
+  phiHist->Draw();
+
+  TLegend* leg = new TLegend(0.1,0.5,0.45,0.9);
+  leg->AddEntry(phiHist,(phiHist->GetName()),"l");
+  for (int i = 0; i < 13; i++)
+  {
+    phiHists[i]->SetLineColor(colors[i]);
+    phiHists[i]->SetLineWidth(2);
+    if(i>5) phiHists[i]->SetLineStyle(kDashed);
+    phiHists[i]->Draw("same");
+    leg->AddEntry(phiHists[i],(phiHists[i]->GetName()),"l");
+    phiHists[i]->Write();
+    ptJHists[i]->Write();
+    xHistsDeltaM[i]->Write();
+  }
+
+  leg->Draw();
+  c.SetLogy(1);
+  c.SaveAs("phitriggerCheck.png");
+  c.SaveAs("phitriggerCheck.eps");
+  c.SaveAs("phitriggerCheck.root");
+
+  jpsiHist->SetMinimum(1.0);
+  jpsiHist->SetMaximum(jpsiHist->GetMaximum()*5.0);
+  //oldtree->Draw("phi_M");
+  // TH1F* phi_triggrHist = (TH1F*)gDirectory->Get("phi_triggrHist");
+
+  jpsiHist->SetLineColor(kBlue);
+  jpsiHist->Write();
+  jpsiHist->Draw();
+
+  leg = new TLegend(0.1,0.5,0.4,0.9);
+  leg->AddEntry(jpsiHist,(jpsiHist->GetName()),"l");
+  for (int i = 0; i < 13; i++)
+  {
+    jpsiHists[i]->SetLineColor(colors[i]);
+    jpsiHists[i]->SetLineWidth(2);
+    if(i>5) jpsiHists[i]->SetLineStyle(kDashed);
+    jpsiHists[i]->Draw("same");
+    leg->AddEntry(jpsiHists[i],(jpsiHists[i]->GetName()),"l");
+    jpsiHists[i]->Write();
+  }
+
+
+  // phi_triggrHist->Draw("same");
+  leg->Draw();
+  c.SetLogy(1);
+  c.SaveAs("jpsitriggerCheck.png");
+  c.SaveAs("jpsitriggerCheck.eps");
+  c.SaveAs("jpsitriggerCheck.root");
+
+  xHist->SetMinimum(0.1);
+  xHist->SetMaximum(xHist->GetMaximum());//*5.0);
+
+  TLine line (5.35,0.1,5.35,xHist->GetMaximum());
+  line.SetLineColor(kRed);
+  line.SetLineWidth(2);
+
+  xHist->SetLineColor(kBlue);
+  xHist->Write();
+  xHist->Draw();
+
+  leg = new TLegend(0.1,0.55,0.35,0.9);
+  leg->AddEntry(xHist,(xHist->GetName()),"l");
+  for (int i = 0; i < 13; i++)
   {
     xHists[i]->SetLineColor(colors[i]);
     xHists[i]->SetLineWidth(2);

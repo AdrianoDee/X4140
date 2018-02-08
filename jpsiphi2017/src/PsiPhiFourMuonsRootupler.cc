@@ -103,8 +103,8 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   Double_t jpsiphi_rf_vProb,  jpsiphi_rf_vChi2, jpsiphi_rf_cosAlpha, jpsiphi_rf_ctauPV, jpsiphi_rf_ctauErrPV;
 
   //Double_t track_d0, track_d0Err, track_dz, track_dxy;
-  Double_t psi_vProb, psi_vChi2, psi_DCA, psi_ctauPV, psi_ctauErrPV, psi_cosAlpha, psi_nSigma;
-  Double_t phi_vProb, phi_vChi2, phi_DCA, phi_ctauPV, phi_ctauErrPV, phi_cosAlpha, phi_nSigma;
+  Double_t psi_vProb, psi_vChi2, psi_DCA, psi_ctauPV, psi_ctauErrPV, psi_cosAlpha;
+  Double_t phi_vProb, phi_vChi2, phi_DCA, phi_ctauPV, phi_ctauErrPV, phi_cosAlpha;
 
   Bool_t muonJpsiP_isLoose, muonJpsiP_isSoft, muonJpsiP_isMedium, muonJpsiP_isHighPt;
   Bool_t muonJpsiN_isLoose, muonJpsiN_isSoft, muonJpsiN_isMedium, muonJpsiN_isHighPt;

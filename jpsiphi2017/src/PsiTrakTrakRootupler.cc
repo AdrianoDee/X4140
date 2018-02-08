@@ -88,7 +88,14 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   Int_t    oniat_charge, psi_triggerMatch, track_nvsh, track_nvph;
   Double_t oniat_vProb,  oniat_vChi2, oniat_cosAlpha, oniat_ctauPV, oniat_ctauErrPV;
   Double_t track_d0, track_d0Err, track_dz, track_dxy;
-  Double_t psi_vProb, psi_vChi2, psi_DCA, psi_ctauPV, psi_ctauErrPV, psi_cosAlpha, psi_nSigma;
+
+  Double_t psi_vProb, psi_vChi2, psi_DCA, psi_ctauPV, psi_ctauErrPV, psi_cosAlpha;
+  Double_t phi_vProb, phi_vChi2, phi_DCA, phi_ctauPV, phi_ctauErrPV, phi_cosAlpha;
+
+  Bool_t muonP_isLoose, muonP_isSoft, muonP_isMedium, muonP_isHighPt;
+  Bool_t muonN_isLoose, muonN_isSoft, muonN_isMedium, muonN_isHighPt;
+
+  UInt_t muonP_type, muonN_type;
 
   Int_t          gen_oniat_pdgId;
   TLorentzVector gen_oniat_p4;
@@ -99,7 +106,7 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   TLorentzVector gen_kaonp_p4;
   TLorentzVector gen_kaonn_p4;
 
-  TTree* oniat_tree;
+  TTree* oniat_tree, *oniat_rf_tree;
   edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
   edm::EDGetTokenT<pat::PackedGenParticleCollection> packCands_;
 };
@@ -164,7 +171,6 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         oniat_tree->Branch("psi_ctauPV",       &psi_ctauPV,       "psi_ctauPV/D");
         oniat_tree->Branch("psi_ctauErrPV",    &psi_ctauErrPV,    "psi_ctauErrPV/D");
         oniat_tree->Branch("psi_cosAlpha",     &psi_cosAlpha,     "psi_cosAlpha/D");
-        oniat_tree->Branch("psi_nSigma",       &psi_nSigma,       "psi_nSigma/D");
         oniat_tree->Branch("psi_triggerMatch", &psi_triggerMatch, "psi_triggerMatch/I");
 
         oniat_tree->Branch("oniat_vProb",      &oniat_vProb,        "oniat_vProb/D");
@@ -173,6 +179,27 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         oniat_tree->Branch("oniat_ctauPV",     &oniat_ctauPV,       "oniat_ctauPV/D");
         oniat_tree->Branch("oniat_ctauErrPV",  &oniat_ctauErrPV,    "oniat_ctauErrPV/D");
         oniat_tree->Branch("oniat_charge",     &oniat_charge,       "oniat_charge/I");
+
+        oniat_tree->Branch("muonP_isLoose",        &muonP_isLoose,        "muonP_isLoose/O");
+        oniat_tree->Branch("muonP_isSoft",        &muonP_isSoft,        "muonP_isSoft/O");
+        oniat_tree->Branch("muonP_isMedium",        &muonP_isMedium,        "muonP_isMedium/O");
+        oniat_tree->Branch("muonP_isHighPt",        &muonP_isHighPt,        "muonP_isHighPt/O");
+
+        oniat_tree->Branch("muonP_isTracker",        &muonP_isTracker,        "muonP_isTracker/O");
+        oniat_tree->Branch("muonP_isGlobal",        &muonP_isGlobal,        "muonP_isGlobal/O");
+
+        oniat_tree->Branch("muonN_isLoose",        &muonN_isLoose,        "muonN_isLoose/O");
+        oniat_tree->Branch("muonN_isSoft",        &muonN_isSoft,        "muonN_isSoft/O");
+        oniat_tree->Branch("muonN_isMedium",        &muonN_isMedium,        "muonN_isMedium/O");
+        oniat_tree->Branch("muonN_isHighPt",        &muonN_isHighPt,        "muonN_isHighPt/O");
+
+        oniat_tree->Branch("muonN_isTracker",        &muonN_isTracker,        "muonN_isTracker/O");
+        oniat_tree->Branch("muonN_isGlobal",        &muonN_isGlobal,        "muonN_isGlobal/O");
+
+        oniat_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
+        oniat_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
+
+        oniat_rf_tree
 
 	if(isMC_)
 	  {
@@ -370,11 +397,6 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
 
       kaonp_p4.SetPtEtaPhiM(kP.pt(), kP.eta(), kP.phi(), kP.mass());
       kaonn_p4.SetPtEtaPhiM(kM.pt(), kM.eta(), kM.phi(), kM.mass());
-
-      double sigma = Y_sig_par_A + Y_sig_par_B*pow(fabs(psi_p4.Rapidity()),2) + Y_sig_par_C*pow(fabs(psi_p4.Rapidity()),3);
-      sigma /= 1000.;
-      sigma *= psi1SMass/ups1SMass;
-      psi_nSigma = fabs(psi_p4.M() - psi1SMass) / sigma;
 
       oniat_tree->Fill();
       if (OnlyBest_) break;  // oniat candidates are sorted by vProb

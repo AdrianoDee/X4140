@@ -132,7 +132,7 @@ process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
     Onia = cms.InputTag('onia2MuMuPAT'),
     Trak = cms.InputTag('patSelectedTracks'),
     OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
-    TrakTrakMassCuts = cms.vdouble(1.004461,1.034461),  # phi mass window 1.019461 +/- .015
+    TrakTrakMassCuts = cms.vdouble(0.919461,1.119461),  # phi mass window 1.019461 +/- .015
     OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     OnlyBest  = cms.bool(False)
@@ -141,7 +141,7 @@ process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
 process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
     PsiTrakTrak     = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
     mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
-    OniaTrakTrakMassCuts = cms.vdouble(5.0,5.7),            # b-hadron mass window
+    OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     product_name    = cms.string('PsiPhiCandidates')
 )
