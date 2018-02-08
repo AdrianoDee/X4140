@@ -723,7 +723,22 @@ int jpsiRuns(std::string path, std::string filename, std::string treename, std::
   TH1F* JPsi_vs_run = new TH1F ("JPsi_vs_run", "JPsi_vs_run; Run[#];J/Psi[#]",20000, 190000, 210000);
 
 
+
   for (Long64_t i=0;i<nentries; i++) {
+
+    int barWidth = 70;
+
+    float progress = float(i)/float(nentries);
+
+    std::cout << "[";
+    int pos = barWidth * progress;
+    for (int i = 0; i < barWidth; ++i) {
+        if (i < pos) std::cout << "=";
+        else if (i == pos) std::cout << ">";
+        else std::cout << " ";
+    }
+    std::cout << "] " << int(progress * 100.0) << " %\r";
+    std::cout.flush();
 
     oldtree->GetEntry(i);
 
