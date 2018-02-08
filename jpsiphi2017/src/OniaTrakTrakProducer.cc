@@ -80,7 +80,7 @@ void OniaTrakTrakProducer::produce(edm::Event& event, const edm::EventSetup& ese
                 TTCand.addUserInt("trak_nvph_2",nvpixelhits_2);
 
                 OniaTTCand.addDaughter(*oniaCand,"onia");
-          	    OniaTTCand.addDaughter(*TTCand,"ditrak");
+          	    OniaTTCand.addDaughter(&TTCand,"ditrak");
 
 	              OniaTTCandColl->push_back(OniaTTCand);
 	              candidates++;
