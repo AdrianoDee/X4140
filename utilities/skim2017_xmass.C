@@ -648,6 +648,7 @@ int jpsiRuns(std::string path, std::string filename, std::string treename)
   Double_t deltaR = 0.0;
 
   Int_t n_jpsi = 0;
+  Int_t trigger = 0;
 
   TLorentzVector *xP4 = 0, *jP4 = 0, *pP4 = 0;
   TLorentzVector *muonp_p4 = 0, *muonn_p4 = 0, *kaonp_p4 = 0, *kaonn_p4 = 0;
