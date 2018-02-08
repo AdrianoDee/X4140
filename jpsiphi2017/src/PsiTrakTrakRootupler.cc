@@ -370,13 +370,10 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       reco::Candidate::LorentzVector vP = onia_cand_rf->daughter("muon1")->p4();
       reco::Candidate::LorentzVector vM = onia_cand_rf->daughter("muon2")->p4();
 
-      const pat::Muon *muon_rf_P, *muon_rf_N;
-
       if (onia_cand_rf->daughter("muon1")->charge() < 0) {
          vP = onia_cand_rf->daughter("muon2")->p4();
          vM = onia_cand_rf->daughter("muon1")->p4();
       }
-
 
       muonp_rf_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
       muonn_rf_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
