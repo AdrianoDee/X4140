@@ -347,7 +347,7 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       jpsitrktrk_rf_bindx = jpsitrktrk_rf_cand.userInt("bIndex");
 
       if (jpsitrktrk_rf_bindx<0 || jpsitrktrk_rf_bindx>(int) jpsitrktrk_cand_handle->size()) {
-        std::cout << "Incorrect index for oniat combination " << run << "," << event <<"," << bindx << std::endl;
+        std::cout << "Incorrect index for oniat combination " << run << "," << event <<"," << jpsitrktrk_rf_bindx << std::endl;
         continue;
       }
 
