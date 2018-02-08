@@ -739,6 +739,7 @@ int jpsiRuns(std::string path, std::string filename, std::string treename)
         tested = true;
         JPsi_vs_run_hists[j]->Fill(run);
       }
+    }
 
       if(tested)
         JPsi_vs_run->Fill(run);
