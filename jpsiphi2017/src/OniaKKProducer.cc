@@ -6,7 +6,7 @@ OniaKKProducer::OniaKKProducer(const edm::ParameterSet& ps):
   OniaMassCuts_(ps.getParameter<std::vector<double>>("OniaMassCuts")),
   TrakTrakMassCuts_(ps.getParameter<std::vector<double>>("TrakTrakMassCuts")),
   OniaTrakTrakMassCuts_(ps.getParameter<std::vector<double>>("OniaTrakTrakMassCuts")),
-  MassTraks_(ps.getParameter<std::vector<double>>("MassTraks")),
+  MassTraks_(ps.getParameter<std::vector<double>>("MassTraks"))
 {
   produces<pat::CompositeCandidateCollection>("OniaTrakTrakCandidates");
   candidates = 0;
