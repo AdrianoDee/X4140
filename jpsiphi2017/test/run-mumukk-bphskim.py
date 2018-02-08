@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 process = cms.Process('PSIKK')
 
-input_file = "file:1AC81AA9-36B2-E711-AEDB-02163E01A6C9.root"
+input_file = "file:1AC81AA9-36B2-E711-AEDB-02163E01A6C9_bphskim.root"
 
 process.load("TrackingTools.TransientTrack.TransientTrackBuilder_cfi")
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
@@ -147,8 +147,9 @@ process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
 )
 
 process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
-    oniat_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
-    oniat_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
+    jpsitrktrk_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
+    jpsitrktrk_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
     primaryVertices = cms.InputTag("offlinePrimaryVertices"),
     TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
     isMC = cms.bool(False),
