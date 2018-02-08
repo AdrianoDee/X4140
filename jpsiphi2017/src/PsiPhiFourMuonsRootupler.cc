@@ -466,9 +466,12 @@ int debug = 0;
       jpsiphi_p4.SetPtEtaPhiM(jpsiphi_cand.pt(),jpsiphi_cand.eta(),jpsiphi_cand.phi(),jpsiphi_cand.mass());
       jpsi_p4.SetPtEtaPhiM(jpsi_cand->pt(),jpsi_cand->eta(),jpsi_cand->phi(),jpsi_cand->mass());
       phi_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
+
       std::cout<<"Deb 2.4"<<++debug<<std::endl;
-      reco::Candidate::LorentzVector vPhiP = phi_cand->daughter("muon1")->p4();
-      reco::Candidate::LorentzVector vPhiM = phi_cand->daughter("muon2")->p4();
+
+      vPhiP = phi_cand->daughter("muon1")->p4();
+      vPhiM = phi_cand->daughter("muon2")->p4();
+
       if (phi_cand->daughter("muon1")->charge() < 0) {
          vPhiP = phi_cand->daughter("muon2")->p4();
          vPhiM = phi_cand->daughter("muon1")->p4();
