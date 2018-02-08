@@ -429,7 +429,7 @@ int debug = 0;
       reco::Candidate::LorentzVector vPhiP = phi_cand_rf->daughter("muon1")->p4();
       reco::Candidate::LorentzVector vPhiM = phi_cand_rf->daughter("muon2")->p4();
 
-      if (phi_cand->daughter("muon1")->charge() < 0) {
+      if (phi_cand_rf->daughter("muon1")->charge() < 0) {
          vPhiP = phi_cand_rf->daughter("muon2")->p4();
          vPhiM = phi_cand_rf->daughter("muon1")->p4();
       }

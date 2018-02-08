@@ -61,6 +61,7 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
       void endRun(edm::Run const&, edm::EventSetup const&) override;
       void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
       void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
+      UInt_t PsiTrakTrakRootupler::isTriggerMatched(pat::CompositeCandidate *diMuon_cand)
 
   // ----------member data ---------------------------
   std::string file_name;
@@ -190,10 +191,7 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         jpsitrktrk_tree->Branch("kaonp_p4",   "TLorentzVector", &kaonp_p4);
         jpsitrktrk_tree->Branch("kaonn_p4",   "TLorentzVector", &kaonn_p4);
 
-        jpsitrktrk_tree->Branch("jpsitrktrk_rf_p4", "TLorentzVector", &jpsitrktrk_rf_p4);
-        jpsitrktrk_tree->Branch("jpsi_rf_p4",   "TLorentzVector", &jpsi_rf_p4);
-        jpsitrktrk_tree->Branch("phi_rf_p4",   "TLorentzVector", &phi_rf_p4);
-
+        //2mu vertexing
         jpsitrktrk_tree->Branch("jpsi_vProb",        &jpsi_vProb,        "jpsi_vProb/D");
         jpsitrktrk_tree->Branch("jpsi_vNChi2",       &jpsi_vChi2,        "jpsi_vNChi2/D");
         jpsitrktrk_tree->Branch("jpsi_DCA",          &jpsi_DCA,          "jpsi_DCA/D");
@@ -202,6 +200,7 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         jpsitrktrk_tree->Branch("jpsi_cosAlpha",     &jpsi_cosAlpha,     "jpsi_cosAlpha/D");
         jpsitrktrk_tree->Branch("jpsi_triggerMatch", &jpsi_triggerMatch, "jpsi_triggerMatch/I");
 
+        //2mu+2Trk vertexing
         jpsitrktrk_tree->Branch("jpsitrktrk_vProb",      &jpsitrktrk_vProb,        "jpsitrktrk_vProb/D");
         jpsitrktrk_tree->Branch("jpsitrktrk_vChi2",      &jpsitrktrk_vChi2,        "jpsitrktrk_vChi2/D");
         jpsitrktrk_tree->Branch("jpsitrktrk_cosAlpha",   &jpsitrktrk_cosAlpha,     "jpsitrktrk_cosAlpha/D");
@@ -209,6 +208,7 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         jpsitrktrk_tree->Branch("jpsitrktrk_ctauErrPV",  &jpsitrktrk_ctauErrPV,    "jpsitrktrk_ctauErrPV/D");
         jpsitrktrk_tree->Branch("jpsitrktrk_charge",     &jpsitrktrk_charge,       "jpsitrktrk_charge/I");
 
+        //Muon flags
         jpsitrktrk_tree->Branch("muonP_isLoose",        &muonP_isLoose,        "muonP_isLoose/O");
         jpsitrktrk_tree->Branch("muonP_isSoft",        &muonP_isSoft,        "muonP_isSoft/O");
         jpsitrktrk_tree->Branch("muonP_isMedium",        &muonP_isMedium,        "muonP_isMedium/O");
@@ -225,6 +225,15 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         jpsitrktrk_tree->Branch("muonN_isTracker",        &muonN_isTracker,        "muonN_isTracker/O");
         jpsitrktrk_tree->Branch("muonN_isGlobal",        &muonN_isGlobal,        "muonN_isGlobal/O");
 
+        jpsitrktrk_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
+        jpsitrktrk_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
+
+        //Track flags
+
+        jpsitrktrk_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
+        jpsitrktrk_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
+        jpsitrktrk_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
+        jpsitrktrk_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
         jpsitrktrk_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
         jpsitrktrk_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
 
