@@ -190,8 +190,6 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         oniat_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
         oniat_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
 
-        oniat_rf_tree
-
 	if(isMC_)
 	  {
             oniat_tree->Branch("gen_oniat_pdgId", &gen_oniat_pdgId, "gen_oniat_pdgId/I");
