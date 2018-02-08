@@ -717,7 +717,7 @@ int jpsiRuns(std::string path, std::string filename, std::string treename)
   std::vector <TH1F*> JPsi_vs_run_hists;
 
   for (size_t i = 0; i < triggersToTest.size(); i++)
-    JPsi_vs_run_hists.push_back(new TH1F (("JPsi_vs_run_" + std::to_string(triggersToTest[i])).data(), "JPsi_vs_run; Run[#];J/Psi[#]",40000, 280000, 320000););
+    JPsi_vs_run_hists.push_back(new TH1F (("JPsi_vs_run_" + std::to_string(triggersToTest[i])).data(), "JPsi_vs_run; Run[#];J/Psi[#]",40000, 280000, 320000));
 
   TH1F* JPsi_vs_run = new TH1F ("JPsi_vs_run", "JPsi_vs_run; Run[#];J/Psi[#]",20000, 190000, 210000);
 
