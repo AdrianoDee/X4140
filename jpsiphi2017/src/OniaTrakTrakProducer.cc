@@ -51,9 +51,40 @@ void OniaTrakTrakProducer::produce(edm::Event& event, const edm::EventSetup& ese
            if ( TTCand.mass() < TrakTrakMassMax_ && TTCand.mass() > TrakTrakMassMin_ ) {
 	      pat::CompositeCandidate OniaTTCand = makeOniaTTCandidate(*oniaCand, *&TTCand);
               if ( OniaTTCand.mass() < OniaTrakTrakMassMax_ && OniaTTCand.mass() > OniaTrakTrakMassMin_) {
-	         OniaTTCandColl->push_back(OniaTTCand);
-	         candidates++;
-                 ncombo++;
+                float d0_1 = trakCand->track()->d0();
+                float d0err_1 = trakCand->track()->d0Error();
+                float dz_1 = trakCand->track()->dz(oniaCand->vertex());
+                float dxy_1 = trakCand->track()->dxy(oniaCand->vertex());
+                int   nvstriphits_1 = trakCand->track()->hitPattern().numberOfValidStripHits();
+                int   nvpixelhits_1 = trakCand->track()->hitPattern().numberOfValidPixelHits();
+
+                TTCand.addUserFloat("trak_d0_1",d0_1);
+                TTCand.addUserFloat("trak_d0err_1",d0err_1);
+                TTCand.addUserFloat("trak_dz_1",dz_1);
+                TTCand.addUserFloat("trak_dxy_1",dxy_1);
+                TTCand.addUserInt("trak_nvsh_1",nvstriphits_1);
+                TTCand.addUserInt("trak_nvph_1",nvpixelhits_1);
+
+                float d0_2 = trakCand->track()->d0();
+                float d0err_2 = trakCand->track()->d0Error();
+                float dz_2 = trakCand->track()->dz(oniaCand->vertex());
+                float dxy_2 = trakCand->track()->dxy(oniaCand->vertex());
+                int   nvstriphits_2 = trakCand->track()->hitPattern().numberOfValidStripHits();
+                int   nvpixelhits_2 = trakCand->track()->hitPattern().numberOfValidPixelHits();
+
+                TTCand.addUserFloat("trak_d0_2",d0_2);
+                TTCand.addUserFloat("trak_d0err_2",d0err_2);
+                TTCand.addUserFloat("trak_dz_2",dz_2);
+                TTCand.addUserFloat("trak_dxy_2",dxy_2);
+                TTCand.addUserInt("trak_nvsh_2",nvstriphits_2);
+                TTCand.addUserInt("trak_nvph_2",nvpixelhits_2);
+
+                OniaTTCand.addDaughter(oniaCand,"onia");
+          	    OniaTTCand.addDaughter(TTCand,"ditrak");
+
+	              OniaTTCandColl->push_back(OniaTTCand);
+	              candidates++;
+                ncombo++;
               }
            }
          } // loop over second track

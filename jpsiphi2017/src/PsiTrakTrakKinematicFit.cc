@@ -179,6 +179,7 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
     KinematicConstrainedVertexFitter constVertexFitter;
     MultiTrackKinematicConstraint *onia_mtc = new  TwoTrackMassKinematicConstraint(mass_);
     RefCountedKinematicTree PsiTTree = constVertexFitter.fit(allPsiTDaughters,onia_mtc);
+    
     if (!PsiTTree->isEmpty()) {
        PsiTTree->movePointerToTheTop();
        RefCountedKinematicParticle fitPsiT = PsiTTree->currentParticle();
@@ -187,13 +188,14 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
        double oniat_ma_fit = 14000.;
        double oniat_vp_fit = -9999.;
        double oniat_x2_fit = 10000.;
+
        if (fitPsiT->currentState().isValid()) {
          oniat_ma_fit = fitPsiT->currentState().mass();
          oniat_x2_fit = PsiTDecayVertex->chiSquared();
          oniat_vp_fit = ChiSquaredProbability(oniat_x2_fit,
                                               (double)(PsiTDecayVertex->degreesOfFreedom()));
        }
-       if ( oniat_ma_fit > OniaTrakTrakMassCuts_[0] && oniat_ma_fit < OniaTrakTrakMassCuts_[1] && oniat_vp_fit > 0.1 ) {
+       if ( oniat_ma_fit > OniaTrakTrakMassCuts_[0] && oniat_ma_fit < OniaTrakTrakMassCuts_[1] && oniat_vp_fit > 0.0 ) {
             TVector3 vtx;
             TVector3 pvtx;
             VertexDistanceXY vdistXY;
@@ -204,7 +206,7 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
             double oniat_en_fit = sqrt(oniat_ma_fit*oniat_ma_fit+oniat_px_fit*oniat_px_fit+
                                       oniat_py_fit*oniat_py_fit+oniat_pz_fit*oniat_pz_fit);
             double oniat_vx_fit = PsiTDecayVertex->position().x();
-	    double oniat_vy_fit = PsiTDecayVertex->position().y();
+	          double oniat_vy_fit = PsiTDecayVertex->position().y();
             double oniat_vz_fit = PsiTDecayVertex->position().z();
 
             vtx.SetXYZ(oniat_vx_fit,oniat_vy_fit,0);

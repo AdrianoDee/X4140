@@ -61,7 +61,7 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
       void endRun(edm::Run const&, edm::EventSetup const&) override;
       void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
       void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
-      UInt_t PsiTrakTrakRootupler::isTriggerMatched(pat::CompositeCandidate *diMuon_cand)
+      UInt_t PsiTrakTrakRootupler::isTriggerMatched(pat::CompositeCandidate *diMuon_cand);
 
   // ----------member data ---------------------------
   std::string file_name;
@@ -73,6 +73,7 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   int  jpsitrktrk_pdgid_, onia_pdgid_, trak_pdgid_;
   bool isMC_,OnlyBest_;
   std::vector<std::string>  HLTs_;
+  std::vector<std::string>  HLTFilters_;
 
   UInt_t run,event,numPrimaryVertices, trigger;
 
@@ -115,6 +116,12 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
 
   Bool_t muonP_rf_isTracker, muonP_rf_isGlobal, muonN_rf_isTracker, muonN_rf_isGlobal;
   UInt_t muonP_rf_type, muonN_rf_type;
+
+  Doublet_t track_KP_d0, track_KP_d0Err, track_KP_dz, track_KP_dxy;
+  Int_t track_KP_nvsh, track_KP_nvph;
+
+  Doublet_t track_KP_d0_rf, track_KP_d0Err_rf, track_KP_dz_rf, track_KP_dxy_rf;
+  Int_t track_KP_nvsh_rf, track_KP_nvph_rf;
 
   Int_t jpsitrktrk_rf_bindx;
 
@@ -172,17 +179,18 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         triggerResults_Label(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("TriggerResults"))),
 	      isMC_(iConfig.getParameter<bool>("isMC")),
         OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
-        HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs"))
+        HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs")),
+        HLTFilters_(iConfig.getParameter<std::vector<std::string>>("filters"))
 {
 	      edm::Service<TFileService> fs;
         jpsitrktrk_tree = fs->make<TTree>("OniaTrkTrkTree","Tree of Onia and Phi");
-        jpsitrktrk_tree_rf = fs->make<TTree>("OniaTrkTrkTreeRefit","Tree of Onia and Phi Refitted");
 
         jpsitrktrk_tree->Branch("run",                &run,                "run/I");
         jpsitrktrk_tree->Branch("event",              &event,              "event/I");
         jpsitrktrk_tree->Branch("numPrimaryVertices", &numPrimaryVertices, "numPrimaryVertices/I");
         jpsitrktrk_tree->Branch("trigger",            &trigger,            "trigger/I");
 
+        //p4s
         jpsitrktrk_tree->Branch("jpsitrktrk_p4",   "TLorentzVector", &jpsitrktrk_p4);
         jpsitrktrk_tree->Branch("phi_p4",     "TLorentzVector", &phi_p4);
         jpsitrktrk_tree->Branch("jpsi_p4",     "TLorentzVector", &jpsi_p4);
@@ -190,6 +198,15 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         jpsitrktrk_tree->Branch("muonn_p4",   "TLorentzVector", &muonn_p4);
         jpsitrktrk_tree->Branch("kaonp_p4",   "TLorentzVector", &kaonp_p4);
         jpsitrktrk_tree->Branch("kaonn_p4",   "TLorentzVector", &kaonn_p4);
+
+        //refitted p4s
+        jpsitrktrk_tree->Branch("jpsitrktrk_rf_p4",   "TLorentzVector", &jpsitrktrk_rf_p4);
+        jpsitrktrk_tree->Branch("phi_rf_p4",     "TLorentzVector", &phi_rf_p4);
+        jpsitrktrk_tree->Branch("jpsi_rf_p4",     "TLorentzVector", &jpsi_rf_p4);
+        jpsitrktrk_tree->Branch("muonp_rf_p4",   "TLorentzVector", &muonp_rf_p4);
+        jpsitrktrk_tree->Branch("muonn_rf_p4",   "TLorentzVector", &muonn_rf_p4);
+        jpsitrktrk_tree->Branch("kaonp_rf_p4",   "TLorentzVector", &kaonp_rf_p4);
+        jpsitrktrk_tree->Branch("kaonn_rf_p4",   "TLorentzVector", &kaonn_rf_p4);
 
         //2mu vertexing
         jpsitrktrk_tree->Branch("jpsi_vProb",        &jpsi_vProb,        "jpsi_vProb/D");
@@ -230,65 +247,19 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
 
         //Track flags
 
-        jpsitrktrk_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
-        jpsitrktrk_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
-        jpsitrktrk_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
-        jpsitrktrk_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
-        jpsitrktrk_tree->Branch("muonP_type",     &muonP_type,       "muonP_type/i");
-        jpsitrktrk_tree->Branch("muonN_type",     &muonN_type,       "muonN_type/i");
+        jpsitrktrk_tree->Branch("track_KN_d0",    &track_KN_d0,    "track_KN_d0/D");
+        jpsitrktrk_tree->Branch("track_KN_d0Err", &track_KN_d0Err, "track_KN_d0Err/D");
+        jpsitrktrk_tree->Branch("track_KN_dz",    &track_KN_dz,    "track_KN_dz/D");
+        jpsitrktrk_tree->Branch("track_KN_dxy",   &track_KN_dxy,   "track_KN_dxy/D");
+        jpsitrktrk_tree->Branch("track_KN_nvsh",  &track_KN_nvsh,  "track_KN_nvsh/I");
+        jpsitrktrk_tree->Branch("track_KN_nvph",  &track_KN_nvph,  "track_KN_nvph/I");
 
-        //Kinematic refit tree
-
-        jpsitrktrk_tree_rf->Branch("run",                &run,                "run/I");
-        jpsitrktrk_tree_rf->Branch("event",              &event,              "event/I");
-        jpsitrktrk_tree_rf->Branch("numPrimaryVertices", &numPrimaryVertices, "numPrimaryVertices/I");
-        jpsitrktrk_tree_rf->Branch("trigger",            &trigger,            "trigger/I");
-
-        jpsitrktrk_tree_rf->Branch("jpsitrktrk_rf_bindx",      &jpsitrktrk_rf_bindx, "jpsitrktrk_rf_bindx/I");
-        jpsitrktrk_tree_rf->Branch("jpsitrktrk_rf_vProb",      &jpsitrktrk_rf_vProb,        "jpsitrktrk_rf_vProb/D");
-        jpsitrktrk_tree_rf->Branch("jpsitrktrk_rf_vChi2",      &jpsitrktrk_rf_vChi2,        "jpsitrktrk_rf_vChi2/D");
-        jpsitrktrk_tree_rf->Branch("jpsitrktrk_rf_cosAlpha",   &jpsitrktrk_rf_cosAlpha,     "jpsitrktrk_rf_cosAlpha/D");
-        jpsitrktrk_tree_rf->Branch("jpsitrktrk_rf_ctauPV",     &jpsitrktrk_rf_ctauPV,       "jpsitrktrk_rf_ctauPV/D");
-        jpsitrktrk_tree_rf->Branch("jpsitrktrk_rf_ctauErrPV",  &jpsitrktrk_rf_ctauErrPV,    "jpsitrktrk_rf_ctauErrPV/D");
-
-        jpsitrktrk_tree_rf->Branch("jpsitrktrk_rf_p4",   "TLorentzVector", &jpsitrktrk_rf_p4);
-        jpsitrktrk_tree_rf->Branch("phi_rf_p4",     "TLorentzVector", &phi_rf_p4);
-        jpsitrktrk_tree_rf->Branch("jpsi_rf_p4",     "TLorentzVector", &jpsi_rf_p4);
-        jpsitrktrk_tree_rf->Branch("muonp_rf_p4",   "TLorentzVector", &muonp_rf_p4);
-        jpsitrktrk_tree_rf->Branch("muonn_rf_p4",   "TLorentzVector", &muonn_rf_p4);
-        jpsitrktrk_tree_rf->Branch("kaonp_rf_p4",   "TLorentzVector", &kaonp_rf_p4);
-        jpsitrktrk_tree_rf->Branch("kaonn_rf_p4",   "TLorentzVector", &kaonn_rf_p4);
-
-        jpsitrktrk_tree_rf->Branch("jpsitrktrk_not_rf_p4",   "TLorentzVector", &jpsitrktrk_not_rf_p4);
-        jpsitrktrk_tree_rf->Branch("phi_not_rf_p4",     "TLorentzVector", &phi_not_rf_p4);
-        jpsitrktrk_tree_rf->Branch("jpsi_not_rf_p4",     "TLorentzVector", &jpsi_not_rf_p4);
-
-        jpsitrktrk_tree_rf->Branch("jpsi_vProb_rf",        &jpsi_vProb_rf,        "jpsi_vProb/D");
-        jpsitrktrk_tree_rf->Branch("jpsi_vNChi2_rf",       &jpsi_vChi2_rf,        "jpsi_vNChi2_rf/D");
-        jpsitrktrk_tree_rf->Branch("jpsi_DCA_rf",          &jpsi_DCA_rf,          "jpsi_DCA_rf/D");
-        jpsitrktrk_tree_rf->Branch("jpsi_ctauPV_rf",       &jpsi_ctauPV_rf,       "jpsi_ctau_rfPV/D");
-        jpsitrktrk_tree_rf->Branch("jpsi_ctauErrPV_rf",    &jpsi_ctauErrPV_rf,    "jpsi_ctauErrPV_rf/D");
-        jpsitrktrk_tree_rf->Branch("jpsi_cosAlpha_rf",     &jpsi_cosAlpha_rf,     "jpsi_cosAlpha_rf/D");
-        jpsitrktrk_tree_rf->Branch("jpsi_triggerMatch_rf", &jpsi_triggerMatch_rf, "jpsi_triggerMatch_rf/I");
-
-        jpsitrktrk_tree_rf->Branch("muonP_rf_isLoose",        &muonP_rf_isLoose,        "muonP_rf_isLoose/O");
-        jpsitrktrk_tree_rf->Branch("muonP_rf_isSoft",        &muonP_rf_isSoft,        "muonP_rf_isSoft/O");
-        jpsitrktrk_tree_rf->Branch("muonP_rf_isMedium",        &muonP_rf_isMedium,        "muonP_rf_isMedium/O");
-        jpsitrktrk_tree_rf->Branch("muonP_rf_isHighPt",        &muonP_rf_isHighPt,        "muonP_rf_isHighPt/O");
-
-        jpsitrktrk_tree_rf->Branch("muonP_rf_isTracker",        &muonP_rf_isTracker,        "muonP_rf_isTracker/O");
-        jpsitrktrk_tree_rf->Branch("muonP_rf_isGlobal",        &muonP_rf_isGlobal,        "muonP_rf_isGlobal/O");
-
-        jpsitrktrk_tree_rf->Branch("muonN_rf_isLoose",        &muonN_rf_isLoose,        "muonN_rf_isLoose/O");
-        jpsitrktrk_tree_rf->Branch("muonN_rf_isSoft",        &muonN_rf_isSoft,        "muonN_rf_isSoft/O");
-        jpsitrktrk_tree_rf->Branch("muonN_rf_isMedium",        &muonN_rf_isMedium,        "muonN_rf_isMedium/O");
-        jpsitrktrk_tree_rf->Branch("muonN_rf_isHighPt",        &muonN_rf_isHighPt,        "muonN_rf_isHighPt/O");
-
-        jpsitrktrk_tree_rf->Branch("muonN_rf_isTracker",        &muonN_rf_isTracker,        "muonN_rf_isTracker/O");
-        jpsitrktrk_tree_rf->Branch("muonN_rf_isGlobal",        &muonN_rf_isGlobal,        "muonN_rf_isGlobal/O");
-
-        jpsitrktrk_tree_rf->Branch("muonP_rf_type",     &muonP_rf_type,       "muonP_rf_type/i");
-        jpsitrktrk_tree_rf->Branch("muonN_rf_type",     &muonN_rf_type,       "muonN_rf_type/i");
+        jpsitrktrk_tree->Branch("track_KP_d0",    &track_KP_d0,    "track_KP_d0/D");
+        jpsitrktrk_tree->Branch("track_KP_d0Err", &track_KP_d0Err, "track_KP_d0Err/D");
+        jpsitrktrk_tree->Branch("track_KP_dz",    &track_KP_dz,    "track_KP_dz/D");
+        jpsitrktrk_tree->Branch("track_KP_dxy",   &track_KP_dxy,   "track_KP_dxy/D");
+        jpsitrktrk_tree->Branch("track_KP_nvsh",  &track_KP_nvsh,  "track_KP_nvsh/I");
+        jpsitrktrk_tree->Branch("track_KP_nvph",  &track_KP_nvph,  "track_KP_nvph/I");
 
 }
 
@@ -371,19 +342,21 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
 
     //Refitted Handle
     for (unsigned int i=0; i< jpsitrktrk_rf_cand_handle->size(); i++){
+
       jpsitrktrk_rf_cand   = jpsitrktrk_rf_cand_handle->at(i);
       jpsitrktrk_rf_bindx = jpsitrktrk_rf_cand.userInt("bIndex");
 
-      if (bindx<0 || bindx>(int) jpsitrktrk_cand_handle->size()) {
+      if (jpsitrktrk_rf_bindx<0 || jpsitrktrk_rf_bindx>(int) jpsitrktrk_cand_handle->size()) {
         std::cout << "Incorrect index for oniat combination " << run << "," << event <<"," << bindx << std::endl;
         continue;
       }
 
-      jpsitrktrk_rf_vProb     = jpsitrktrk_rf_cand.userFloat("vProb");
-      jpsitrktrk_rf_vChi2     = jpsitrktrk_rf_cand.userFloat("vChi2");
-      jpsitrktrk_rf_cosAlpha  = jpsitrktrk_rf_cand.userFloat("cosAlpha");
-      jpsitrktrk_rf_ctauPV    = jpsitrktrk_rf_cand.userFloat("ctauPV");
-      jpsitrktrk_rf_ctauErrPV = jpsitrktrk_rf_cand.userFloat("ctauErrPV");
+      jpsitrktrk_vProb     = jpsitrktrk_rf_cand.userFloat("vProb");
+      jpsitrktrk_vChi2     = jpsitrktrk_rf_cand.userFloat("vChi2");
+      jpsitrktrk_cosAlpha  = jpsitrktrk_rf_cand.userFloat("cosAlpha");
+      jpsitrktrk_ctauPV    = jpsitrktrk_rf_cand.userFloat("ctauPV");
+      jpsitrktrk_ctauErrPV = jpsitrktrk_rf_cand.userFloat("ctauErrPV");
+      jpsitrktrk_charge    = jpsitrktrk_cand.charge();
 
       jpsitrktrk_rf_p4.SetPtEtaPhiM(jpsitrktrk_rf_cand.pt(),jpsitrktrk_rf_cand.eta(),jpsitrktrk_rf_cand.phi(),jpsitrktrk_rf_cand.mass());
       jpsi_rf_p4.SetPtEtaPhiM(jpsitrktrk_rf_cand.daughter("onia")->pt(),jpsitrktrk_rf_cand.daughter("onia")->eta(),
@@ -414,25 +387,10 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       muonp_rf_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
       muonn_rf_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
 
-      muonP_rf_isLoose    =  muon_rf_P->isLooseMuon();
-      muonP_rf_isSoft     =  muon_rf_P->isSoftMuon(thePrimaryV);
-      muonP_rf_isMedium   = muon_rf_P->isMediumMuon();
-      muonP_rf_isHighPt   = muon_rf_P->isHighPtMuon(thePrimaryV);
-      muonP_rf_isTracker  = muon_rf_P->isTrackerMuon();
-      muonP_rf_isGlobal   = muon_rf_P->isGlobalMuon();
-      muonN_rf_isLoose    = muon_rf_N->isLooseMuon();
-      muonN_rf_isSoft     = muon_rf_N->isSoftMuon(thePrimaryV);
-      muonN_rf_isMedium   = muon_rf_N->isMediumMuon();
-      muonN_rf_isHighPt   = muon_rf_N->isHighPtMuon(thePrimaryV);
-      muonN_rf_isTracker  = muon_rf_N->isTrackerMuon();
-      muonN_rf_isGlobal   = muon_rf_N->isGlobalMuon();
-      muonP_rf_type       = muon_rf_P->type();
-      muonN_rf_type       = muon_rf_N->type();
-
       reco::Candidate::LorentzVector kP = phi_cand_rf->daughter("trak1")->p4();
       reco::Candidate::LorentzVector kM = phi_cand_rf->daughter("trak2")->p4();
 
-      if (phi_cand->daughter("trak1")->charge() < 0) {
+      if (phi_cand_rf->daughter("trak1")->charge() < 0) {
          kP = phi_cand_rf->daughter("trak2")->p4();
          kM = phi_cand_rf->daughter("trak1")->p4();
       }
@@ -440,9 +398,85 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       kaonp_rf_p4.SetPtEtaPhiM(kP.pt(), kP.eta(), kP.phi(), kP.mass());
       kaonn_rf_p4.SetPtEtaPhiM(kM.pt(), kM.eta(), kM.phi(), kM.mass());
 
-      jpsitrktrk_cand = jpsitrktrk_cand_handle->at(bindx);
+      //unref corresponding
+
+      jpsitrktrk_cand = jpsitrktrk_cand_handle->at(jpsitrktrk_rf_bindx);
       onia_cand = dynamic_cast <pat::CompositeCandidate *>(jpsitrktrk_cand.daughter("onia"));
       phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsitrktrk_cand.daughter("ditrak"));
+
+      const pat::Muon *muonP, *muonN;
+
+      if (onia_cand_rf->daughter("muon1")->charge() < 0) {
+         vP = onia_cand->daughter("muon2")->p4();
+         vM = onia_cand->daughter("muon1")->p4();
+         muonN = dynamic_cast<const pat::Muon*>(onia_cand->daughter("muon1"));
+         muonP = dynamic_cast<const pat::Muon*>(onia_cand->daughter("muon2"));
+      } else
+      {
+        muonP = dynamic_cast<const pat::Muon*>(onia_cand->daughter("muon1"));
+        muonN = dynamic_cast<const pat::Muon*>(onia_cand->daughter("muon2"));
+      }
+
+      muonP_isLoose    =  muonP->isLooseMuon();
+      muonP_isSoft     =  muonP->isSoftMuon(thePrimaryV);
+      muonP_isMedium   = muonP->isMediumMuon();
+      muonP_isHighPt   = muonP->isHighPtMuon(thePrimaryV);
+      muonP_isTracker  = muonP->isTrackerMuon();
+      muonP_isGlobal   = muonP->isGlobalMuon();
+      muonN_isLoose    = muonN->isLooseMuon();
+      muonN_isSoft     = muonN->isSoftMuon(thePrimaryV);
+      muonN_isMedium   = muonN->isMediumMuon();
+      muonN_isHighPt   = muonN->isHighPtMuon(thePrimaryV);
+      muonN_isTracker  = muonN->isTrackerMuon();
+      muonN_isGlobal   = muonN->isGlobalMuon();
+      muonP_type       = muonP->type();
+      muonN_type       = muonN->type();
+
+      muonp_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
+      muonn_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
+
+      reco::Candidate::LorentzVector kP = phi_cand->daughter("trak1")->p4();
+      reco::Candidate::LorentzVector kM = phi_cand->daughter("trak2")->p4();
+
+      track_KN_d0      = phi_cand->userFloat("trak_d0_2");
+      track_KN_d0Err   = phi_cand->userFloat("trak_d0err_2");
+      track_KN_dz      = phi_cand->userFloat("trak_dz_2");
+      track_KN_dxy     = phi_cand->userFloat("trak_dxy_2");
+      track_KN_nvsh    = phi_cand->userInt("trak_nvsh_2");
+      track_KN_nvph    = phi_cand->userInt("trak_nvph_2");
+
+      track_KP_d0      = phi_cand->userFloat("trak_d0_1");
+      track_KP_d0Err   = phi_cand->userFloat("trak_d0err_1");
+      track_KP_dz      = phi_cand->userFloat("trak_dz_1");
+      track_KP_dxy     = phi_cand->userFloat("trak_dxy_1");
+      track_KP_nvsh    = phi_cand->userInt("trak_nvsh_1");
+      track_KP_nvph    = phi_cand->userInt("trak_nvph_1");
+
+      if (phi_cand->daughter("trak1")->charge() < 0) {
+         kP = phi_cand->daughter("trak2")->p4();
+         kM = phi_cand->daughter("trak1")->p4();
+         track_KN_d0      = phi_cand->userFloat("trak_d0_1");
+         track_KN_d0Err   = phi_cand->userFloat("trak_d0err_1");
+         track_KN_dz      = phi_cand->userFloat("trak_dz_1");
+         track_KN_dxy     = phi_cand->userFloat("trak_dxy_1");
+         track_KN_nvsh    = phi_cand->userInt("trak_nvsh_1");
+         track_KN_nvph    = phi_cand->userInt("trak_nvph_1");
+
+         track_KP_d0      = phi_cand->userFloat("trak_d0_2");
+         track_KP_d0Err   = phi_cand->userFloat("trak_d0err_2");
+         track_KP_dz      = phi_cand->userFloat("trak_dz_2");
+         track_KP_dxy     = phi_cand->userFloat("trak_dxy_2");
+         track_KP_nvsh    = phi_cand->userInt("trak_nvsh_2");
+         track_KP_nvph    = phi_cand->userInt("trak_nvph_2");
+      }
+
+      kaonp_p4.SetPtEtaPhiM(kP.pt(), kP.eta(), kP.phi(), kP.mass());
+      kaonn_p4.SetPtEtaPhiM(kM.pt(), kM.eta(), kM.phi(), kM.mass());
+
+      //double kmass = 0.4936770;
+      jpsitrktrk_p4.SetPtEtaPhiM(jpsitrktrk_cand.pt(),jpsitrktrk_cand.eta(),jpsitrktrk_cand.phi(),jpsitrktrk_cand.mass());
+      jpsi_p4.SetPtEtaPhiM(onia_cand->pt(),onia_cand->eta(),onia_cand->phi(),onia_cand->mass());
+      phi_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
 
       jpsi_vProb_rf        = onia_cand->userFloat("vProb");
       jpsi_vChi2_rf        = onia_cand->userFloat("vNChi2");
@@ -450,101 +484,10 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       jpsi_ctauPV_rf       = onia_cand->userFloat("ppdlPV");
       jpsi_ctauErrPV_rf    = onia_cand->userFloat("ppdlErrPV");
       jpsi_cosAlpha_rf     = onia_cand->userFloat("cosAlpha");
-
-      //double kmass = 0.4936770;
-      jpsiphi_not_rf_p4.SetPtEtaPhiM(jpsitrktrk_cand.pt(),jpsitrktrk_cand.eta(),jpsitrktrk_cand.phi(),jpsitrktrk_cand.mass());
-      jpsi_not_rf_p4.SetPtEtaPhiM(onia_cand->pt(),onia_cand->eta(),onia_cand->phi(),onia_cand->mass());
-      phi_not_rf_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
-
-      jpsitrktrk_tree_rf->Fill();
-      if (OnlyBest_) break;  // oniat candidates are sorted by vProb
-    }
-
-    //Not Refitted Handle
-    for (unsigned int i=0; i< jpsitrktrk_cand_handle->size(); i++){
-
-      jpsitrktrk_cand   = jpsitrktrk_cand_handle->at(i);
-
-      jpsitrktrk_vProb     = jpsitrktrk_cand.userFloat("vProb");
-      jpsitrktrk_vChi2     = jpsitrktrk_cand.userFloat("vChi2");
-      jpsitrktrk_cosAlpha  = jpsitrktrk_cand.userFloat("cosAlpha");
-      jpsitrktrk_ctauPV    = jpsitrktrk_cand.userFloat("ctauPV");
-      jpsitrktrk_ctauErrPV = jpsitrktrk_cand.userFloat("ctauErrPV");
-      jpsitrktrk_charge    = jpsitrktrk_cand.charge();
       jpsi_triggerMatch = PsiTrakTrakRootupler::isTriggerMatched(onia_cand);
 
+      jpsitrktrk_tree->Fill();
 
-      jpsitrktrk_p4.SetPtEtaPhiM(jpsitrktrk_cand.pt(),jpsitrktrk_cand.eta(),jpsitrktrk_cand.phi(),jpsitrktrk_cand.mass());
-      jpsi_p4.SetPtEtaPhiM(jpsitrktrk_cand.daughter("onia")->pt(),jpsitrktrk_cand.daughter("onia")->eta(),
-                              jpsitrktrk_cand.daughter("onia")->phi(),jpsitrktrk_cand.daughter("onia")->mass());
-      phi_p4.SetPtEtaPhiM(jpsitrktrk_cand.daughter("ditrak")->pt(),jpsitrktrk_cand.daughter("ditrak")->eta(),
-                              jpsitrktrk_cand.daughter("ditrak")->phi(),jpsitrktrk_cand.daughter("ditrak")->mass());
-
-      onia_cand = dynamic_cast <pat::CompositeCandidate *>(jpsitrktrk_cand.daughter("onia"));
-      phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsitrktrk_cand.daughter("ditrak"));
-
-      reco::Candidate::LorentzVector vP = onia_cand->daughter("muon1")->p4();
-      reco::Candidate::LorentzVector vM = onia_cand->daughter("muon2")->p4();
-
-      const pat::Muon *muonP, *muonN;
-
-      if (onia_cand_rf->daughter("muon1")->charge() < 0) {
-         vP = onia_cand_rf->daughter("muon2")->p4();
-         vM = onia_cand_rf->daughter("muon1")->p4();
-         muonN = dynamic_cast<const pat::Muon*>(onia_cand_rf->daughter("muon1"));
-         muonP = dynamic_cast<const pat::Muon*>(onia_cand_rf->daughter("muon2"));
-      } else
-      {
-        muonP = dynamic_cast<const pat::Muon*>(onia_cand_rf->daughter("muon1"));
-        muonN = dynamic_cast<const pat::Muon*>(onia_cand_rf->daughter("muon2"));
-      }
-
-      muonP_rf_isLoose    =  muonP->isLooseMuon();
-      muonP_rf_isSoft     =  muonP->isSoftMuon(thePrimaryV);
-      muonP_rf_isMedium   = muonP->isMediumMuon();
-      muonP_rf_isHighPt   = muonP->isHighPtMuon(thePrimaryV);
-      muonP_rf_isTracker  = muonP->isTrackerMuon();
-      muonP_rf_isGlobal   = muonP->isGlobalMuon();
-      muonN_rf_isLoose    = muonN->isLooseMuon();
-      muonN_rf_isSoft     = muonN->isSoftMuon(thePrimaryV);
-      muonN_rf_isMedium   = muonN->isMediumMuon();
-      muonN_rf_isHighPt   = muonN->isHighPtMuon(thePrimaryV);
-      muonN_rf_isTracker  = muonN->isTrackerMuon();
-      muonN_rf_isGlobal   = muonN->isGlobalMuon();
-      muonP_rf_type       = muonP->type();
-      muonN_rf_type       = muonN->type();
-
-      muonp_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
-      muonn_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
-
-      reco::Candidate::LorentzVector kP = phi_cand->daughter("trak1")->p4();
-      reco::Candidate::LorentzVector kM = phi_cand->daughter("trak2")->p4();
-      if (phi_cand->daughter("trak1")->charge() < 0) {
-         kP = phi_cand->daughter("trak2")->p4();
-         kM = phi_cand->daughter("trak1")->p4();
-      }
-
-      kaonp_p4.SetPtEtaPhiM(kP.pt(), kP.eta(), kP.phi(), kP.mass());
-      kaonn_p4.SetPtEtaPhiM(kM.pt(), kM.eta(), kM.phi(), kM.mass());
-
-      jpsitrktrk_cand = jpsitrktrk_cand_handle->at(bindx);
-      onia_cand = dynamic_cast <pat::CompositeCandidate *>(jpsitrktrk_cand.daughter("onia"));
-      phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsitrktrk_cand.daughter("ditrak"));
-
-      jpsi_vProb        = onia_cand->userFloat("vProb");
-      jpsi_vChi2        = onia_cand->userFloat("vNChi2");
-      jpsi_DCA          = onia_cand->userFloat("DCA");
-      jpsi_ctauPV       = onia_cand->userFloat("ppdlPV");
-      jpsi_ctauErrPV    = onia_cand->userFloat("ppdlErrPV");
-      jpsi_cosAlpha     = onia_cand->userFloat("cosAlpha");
-      jpsi_triggerMatch = PsiTrakTrakRootupler::isTriggerMatched(onia_cand);
-
-      //double kmass = 0.4936770;
-      jpsitrktrk_p4.SetPtEtaPhiM(jpsitrktrk_cand.pt(),jpsitrktrk_cand.eta(),jpsitrktrk_cand.phi(),jpsitrktrk_cand.mass());
-      jpsi_p4.SetPtEtaPhiM(onia_cand->pt(),onia_cand->eta(),onia_cand->phi(),onia_cand->mass());
-      phi_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
-
-      jpsitrktrk_tree_rf->Fill();
       if (OnlyBest_) break;  // oniat candidates are sorted by vProb
     }
 
