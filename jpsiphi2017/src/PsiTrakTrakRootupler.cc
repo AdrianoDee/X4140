@@ -29,6 +29,7 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/PatCandidates/interface/UserData.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
 
 #include "TLorentzVector.h"
 #include "TTree.h"
@@ -83,15 +84,20 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   TLorentzVector kaonn_p4;
 
   TLorentzVector jpsitrktrk_rf_p4;
-  TLorentzVector jpsi_rf_p4;
-  TLorentzVector phi_rf_p4;
+  TLorentzVector jpsitrktrk_not_rf_p4;
+  TLorentzVector jpsi_rf_p4, jpsi_not_rf_p4;
+  TLorentzVector phi_rf_p4, phi_not_rf_p4;
   TLorentzVector muonp_rf_p4;
   TLorentzVector muonn_rf_p4;
   TLorentzVector kaonp_rf_p4;
   TLorentzVector kaonn_rf_p4;
 
-  Int_t    jpsitrktrk_charge, jpsi_triggerMatch, jpsi_triggerMatch_rf, phi_triggerMatch, phi_triggerMatch_rf;
+  Int_t    jpsitrktrk_charge;
+
+  UInt_t jpsi_triggerMatch, jpsi_triggerMatch_rf;
+
   Double_t jpsitrktrk_vProb,  jpsitrktrk_vChi2, jpsitrktrk_cosAlpha, jpsitrktrk_ctauPV, jpsitrktrk_ctauErrPV;
+  Double_t jpsitrktrk_rf_vProb,  jpsitrktrk_rf_vChi2, jpsitrktrk_rf_cosAlpha, jpsitrktrk_rf_ctauPV, jpsitrktrk_rf_ctauErrPV;
   Double_t track_d0, track_d0Err, track_dz, track_dxy;
 
   Double_t jpsi_vProb, jpsi_vChi2, jpsi_DCA, jpsi_ctauPV, jpsi_ctauErrPV, jpsi_cosAlpha;
@@ -120,7 +126,7 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   TLorentzVector gen_kaonp_p4;
   TLorentzVector gen_kaonn_p4;
 
-  TTree* jpsitrktrk_tree, *jpsitrktrk_rf_tree;
+  TTree* jpsitrktrk_tree, *jpsitrktrk_tree_rf;
   edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
   edm::EDGetTokenT<pat::PackedGenParticleCollection> packCands_;
 };
@@ -437,9 +443,9 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       jpsi_cosAlpha_rf     = onia_cand->userFloat("cosAlpha");
 
       //double kmass = 0.4936770;
-      jpsitrktrk_p4.SetPtEtaPhiM(jpsitrktrk_cand.pt(),jpsitrktrk_cand.eta(),jpsitrktrk_cand.phi(),jpsitrktrk_cand.mass());
-      jpsi_p4.SetPtEtaPhiM(onia_cand->pt(),onia_cand->eta(),onia_cand->phi(),onia_cand->mass());
-      phi_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
+      jpsiphi_not_rf_p4.SetPtEtaPhiM(jpsitrktrk_cand.pt(),jpsitrktrk_cand.eta(),jpsitrktrk_cand.phi(),jpsitrktrk_cand.mass());
+      jpsi_not_rf_p4.SetPtEtaPhiM(onia_cand->pt(),onia_cand->eta(),onia_cand->phi(),onia_cand->mass());
+      phi_not_rf_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
 
       jpsitrktrk_tree_rf->Fill();
       if (OnlyBest_) break;  // oniat candidates are sorted by vProb
