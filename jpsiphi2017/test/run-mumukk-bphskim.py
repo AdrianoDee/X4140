@@ -191,7 +191,7 @@ process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
                           onia_mass_cuts = cms.vdouble(2.5,3.5),
                           isMC = cms.bool(False),
                           OnlyBest = cms.bool(False),
-                          OnlyGen = cms.bool(False)
+                          OnlyGen = cms.bool(False),
                           HLTs = hltpaths
                           )
 
