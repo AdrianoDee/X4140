@@ -170,7 +170,6 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
 {
 	      edm::Service<TFileService> fs;
         jpsiphi_tree = fs->make<TTree>("OniaPhiTree","Tree of Onia and Phi");
-        jpsiphi_tree_rf = fs->make<TTree>("OniaPhiTreeRefit","Tree of Onia and Phi Refitted");
 
         jpsiphi_tree->Branch("run",                &run,                "run/I");
         jpsiphi_tree->Branch("event",              &event,              "event/I");
@@ -184,6 +183,16 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
         jpsiphi_tree->Branch("muonJpsiN_p4",   "TLorentzVector", &muonJpsiN_p4);
         jpsiphi_tree->Branch("muonJpsiP_p4",   "TLorentzVector", &muonJpsiP_p4);
         jpsiphi_tree->Branch("muonPhiN_p4",   "TLorentzVector", &muonPhiN_p4);
+
+        jpsiphi_tree->Branch("jpsiphi_rf_p4",   "TLorentzVector", &jpsiphi_rf_p4);
+        jpsiphi_tree->Branch("phi_rf_p4",     "TLorentzVector", &phi_rf_p4);
+        jpsiphi_tree->Branch("jpsi_rf_p4",     "TLorentzVector", &jpsi_rf_p4);
+        jpsiphi_tree->Branch("muonPhiN_rf_p4",   "TLorentzVector", &muonPhiN_rf_p4);
+        jpsiphi_tree->Branch("muonJpsiN_rf_p4",   "TLorentzVector", &muonJpsiN_rf_p4);
+        jpsiphi_tree->Branch("muonJpsiP_rf_p4",   "TLorentzVector", &muonJpsiP_rf_p4);
+        jpsiphi_tree->Branch("muonPhiN_rf_p4",   "TLorentzVector", &muonPhiN_rf_p4);
+
+        jpsiphi_tree->Branch("jpsiphi_rf_bindx", &jpsiphi_rf_bindx, "jpsiphi_rf_bindx/I");
 
         jpsiphi_tree->Branch("jpsi_vProb",        &jpsi_vProb,        "jpsi_vProb/D");
         jpsiphi_tree->Branch("jpsi_vNChi2",       &jpsi_vChi2,        "jpsi_vNChi2/D");
@@ -245,48 +254,6 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
 
         jpsiphi_tree->Branch("muonPhiP_type",     &muonPhiP_type,       "muonPhiP_type/i");
         jpsiphi_tree->Branch("muonPhiN_type",     &muonPhiN_type,       "muonPhiN_type/i");
-
-        //Kinematic refit tree
-
-        jpsiphi_tree_rf->Branch("run",                &run,                "run/I");
-        jpsiphi_tree_rf->Branch("event",              &event,              "event/I");
-        jpsiphi_tree_rf->Branch("numPrimaryVertices", &numPrimaryVertices, "numPrimaryVertices/I");
-        jpsiphi_tree_rf->Branch("trigger",            &trigger,            "trigger/I");
-
-        jpsiphi_tree_rf->Branch("jpsiphi_rf_bindx", &jpsiphi_rf_bindx, "jpsiphi_rf_bindx/I");
-        jpsiphi_tree_rf->Branch("jpsiphi_rf_vProb",      &jpsiphi_rf_vProb,        "jpsiphi_rf_vProb/D");
-        jpsiphi_tree_rf->Branch("jpsiphi_rf_vChi2",      &jpsiphi_rf_vChi2,        "jpsiphi_rf_vChi2/D");
-        jpsiphi_tree_rf->Branch("jpsiphi_rf_cosAlpha",   &jpsiphi_rf_cosAlpha,     "jpsiphi_rf_cosAlpha/D");
-        jpsiphi_tree_rf->Branch("jpsiphi_rf_ctauPV",     &jpsiphi_rf_ctauPV,       "jpsiphi_rf_ctauPV/D");
-        jpsiphi_tree_rf->Branch("jpsiphi_rf_ctauErrPV",  &jpsiphi_rf_ctauErrPV,    "jpsiphi_rf_ctauErrPV/D");
-
-        jpsiphi_tree_rf->Branch("jpsiphi_rf_p4",   "TLorentzVector", &jpsiphi_rf_p4);
-        jpsiphi_tree_rf->Branch("phi_rf_p4",     "TLorentzVector", &phi_rf_p4);
-        jpsiphi_tree_rf->Branch("jpsi_rf_p4",     "TLorentzVector", &jpsi_rf_p4);
-        jpsiphi_tree_rf->Branch("muonPhiN_rf_p4",   "TLorentzVector", &muonPhiN_rf_p4);
-        jpsiphi_tree_rf->Branch("muonJpsiN_rf_p4",   "TLorentzVector", &muonJpsiN_rf_p4);
-        jpsiphi_tree_rf->Branch("muonJpsiP_rf_p4",   "TLorentzVector", &muonJpsiP_rf_p4);
-        jpsiphi_tree_rf->Branch("muonPhiN_rf_p4",   "TLorentzVector", &muonPhiN_rf_p4);
-
-        jpsiphi_tree_rf->Branch("jpsiphi_not_rf_p4",   "TLorentzVector", &jpsiphi_not_rf_p4);
-        jpsiphi_tree_rf->Branch("phi_not_rf_p4",     "TLorentzVector", &phi_not_rf_p4);
-        jpsiphi_tree_rf->Branch("jpsi_not_rf_p4",     "TLorentzVector", &jpsi_not_rf_p4);
-
-        jpsiphi_tree_rf->Branch("jpsi_vProb_rf",  &jpsi_vProb_rf,    "jpsi_vProb_rf/D");
-        jpsiphi_tree_rf->Branch("jpsi_vChi2_rf",  &jpsi_vChi2_rf,    "jpsi_vChi2_rf/D");
-        jpsiphi_tree_rf->Branch("jpsi_DCA_rf",  &jpsi_DCA_rf,    "jpsi_DCA_rf/D");
-        jpsiphi_tree_rf->Branch("jpsi_ctauPV_rf",  &jpsi_ctauPV_rf,    "jpsi_ctauPV_rf/D");
-        jpsiphi_tree_rf->Branch("jpsi_ctauErrPV_rf",  &jpsi_ctauErrPV_rf,    "jpsi_ctauErrPV_rf/D");
-        jpsiphi_tree_rf->Branch("jpsi_cosAlpha_rf",  &jpsi_cosAlpha_rf,    "jpsi_cosAlpha_rf/D");
-        jpsiphi_tree_rf->Branch("jpsi_triggerMatch_rf", &jpsi_triggerMatch_rf, "jpsi_triggerMatch_rf/I");
-
-        jpsiphi_tree_rf->Branch("phi_vProb_rf",  &phi_vProb_rf,    "phi_vProb_rf/D");
-        jpsiphi_tree_rf->Branch("phi_vChi2_rf",  &phi_vChi2_rf,    "phi_vChi2_rf/D");
-        jpsiphi_tree_rf->Branch("phi_DCA_rf",  &phi_DCA_rf,    "phi_DCA_rf/D");
-        jpsiphi_tree_rf->Branch("phi_ctauPV_rf",  &phi_ctauPV_rf,    "phi_ctauPV_rf/D");
-        jpsiphi_tree_rf->Branch("phi_ctauErrPV_rf",  &phi_ctauErrPV_rf,    "phi_ctauErrPV_rf/D");
-        jpsiphi_tree_rf->Branch("phi_cosAlpha_rf",  &phi_cosAlpha_rf,    "phi_cosAlpha_rf/D");
-        jpsiphi_tree_rf->Branch("phi_triggerMatch_rf", &phi_triggerMatch_rf, "phi_triggerMatch_rf/I");
 
 	if(isMC_)
 	  {
@@ -400,11 +367,11 @@ int debug = 0;
         continue;
       }
 
-      jpsiphi_rf_vProb     = jpsiphi_rf_cand.userFloat("vProb");
-      jpsiphi_rf_vChi2     = jpsiphi_rf_cand.userFloat("vChi2");
-      jpsiphi_rf_cosAlpha  = jpsiphi_rf_cand.userFloat("cosAlpha");
-      jpsiphi_rf_ctauPV    = jpsiphi_rf_cand.userFloat("ctauPV");
-      jpsiphi_rf_ctauErrPV = jpsiphi_rf_cand.userFloat("ctauErrPV");
+      jpsiphi_vProb     = jpsiphi_rf_cand.userFloat("vProb");
+      jpsiphi_vChi2     = jpsiphi_rf_cand.userFloat("vChi2");
+      jpsiphi_cosAlpha  = jpsiphi_rf_cand.userFloat("cosAlpha");
+      jpsiphi_ctauPV    = jpsiphi_rf_cand.userFloat("ctauPV");
+      jpsiphi_ctauErrPV = jpsiphi_rf_cand.userFloat("ctauErrPV");
       jpsiphi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.pt(),jpsiphi_rf_cand.eta(),jpsiphi_rf_cand.phi(),jpsiphi_rf_cand.mass());
       jpsi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("jpsi")->pt(),jpsiphi_rf_cand.daughter("jpsi")->eta(),
                               jpsiphi_rf_cand.daughter("jpsi")->phi(),jpsiphi_rf_cand.daughter("jpsi")->mass());
