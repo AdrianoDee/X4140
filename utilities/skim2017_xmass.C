@@ -632,7 +632,7 @@ int jpsiRuns(std::string path, std::string filename, std::string treename, std::
 
   TFile *oldfile = TFile::Open((path+"/"+filename).data());
   TDirectory *directory = (TDirectory*)oldfile->Get(dirname.data());
-  TTree *oldtree = (TTree*)oldfile->Get((treename).data());
+  TTree *oldtree = (TTree*)directory->Get((treename).data());
 
 
   Long64_t nentries = oldtree->GetEntries();
