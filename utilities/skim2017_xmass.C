@@ -116,6 +116,7 @@ int selectXTree()
 
 }
 
+
 int drawPTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPythons/xTree.root",std::string treename = "xTree")
 {
 
@@ -620,6 +621,132 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
   c.SaveAs("xtriggerCheck.png");
   c.SaveAs("xtriggerCheck.eps");
   c.SaveAs("xtriggerCheck.root");
+
+  return 0;
+
+}
+
+int jpsiRuns(std::string path, std::string filename, std::string treename)
+{
+  UInt_t colors[13] = {1,2,3,6,7,8,30,40,46,38,29,34,9};
+
+  TFile *oldfile = TFile::Open((path+"/"+filename).data());
+  TTree *oldtree = (TTree*)oldfile->Get((treename).data());
+
+
+  Long64_t nentries = oldtree->GetEntries();
+  Double_t xM = 0.0, xDeltaM = 0.0;
+
+  Double_t cosA  = 0.0;
+
+  Double_t jPsiM  = 0.0;
+
+  Double_t ctau  = 0.0;
+  Double_t ctauErr  = 0.0;
+
+  Double_t vProb  = 0.0;
+  Double_t deltaR = 0.0;
+
+  Int_t n_jpsi = 0;
+
+  TLorentzVector *xP4 = 0, *jP4 = 0, *pP4 = 0;
+  TLorentzVector *muonp_p4 = 0, *muonn_p4 = 0, *kaonp_p4 = 0, *kaonn_p4 = 0;
+
+  //Output Variables
+  Int_t t = 0, evt = 0, r = 0;
+  Double_t jPt, xPt, mNPt, mPPt, kNPt, kPPt, cosAlpha, vP, pPt;
+  Double_t xyl   = 0.0;
+  Double_t xylErr   = 0.0;
+
+  oldtree->SetBranchAddress("vProb",&vProb);
+  oldtree->SetBranchAddress("trigger",&trigger);
+  oldtree->SetBranchAddress("run",&run);
+  oldtree->SetBranchAddress("nonia",&n_jpsi);
+  oldtree->SetBranchAddress("cosAlpha",&cosA);
+  oldtree->SetBranchAddress("ppdlPV",&ctau);
+  oldtree->SetBranchAddress("ppdlErrPV",&ctauErr);
+  oldtree->SetBranchAddress("dimuon_p4",&jP4);
+
+  // std::string hltsName[13] = {
+  //   "HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi", //0
+  // "HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi", //1
+  // "HLT_Mu20_TkMu0_Phi", //2
+  // "HLT_Dimuon14_Phi_Barrel_Seagulls", //3
+  // "HLT_Mu25_TkMu0_Phi", //4
+  // "HLT_Dimuon24_Phi_noCorrL1", //5
+  // "HLT_DoubleMu4_JpsiTrkTrk_Displaced", //6
+  // "HLT_DoubleMu4_JpsiTrk_Displaced", //7
+  // "HLT_DoubleMu4_Jpsi_Displaced", //8
+  // "HLT_DoubleMu4_3_Jpsi_Displaced", //9
+  // "HLT_Dimuon20_Jpsi_Barrel_Seagulls", //10
+  // "HLT_Dimuon25_Jpsi", //11
+  // "HLT_Dimuon0_Jpsi" //12
+  // };
+
+  std::vector <int> triggersToTest;
+
+  //OUR TRIGGERs
+  triggersToTest.push_back(0);
+  triggersToTest.push_back(1);
+
+  //PHI INCLUSIVE TRIGGERs
+  triggersToTest.push_back(2);
+  triggersToTest.push_back(3);
+  triggersToTest.push_back(4);
+  triggersToTest.push_back(5);
+
+  //JPSI INCLUSIVE TRIGGERs
+  triggersToTest.push_back(10);
+  triggersToTest.push_back(11);
+  triggersToTest.push_back(12);
+
+  //DISPLACED JPSI TRIGGERs
+  triggersToTest.push_back(6); //dis
+  triggersToTest.push_back(7); //dis
+  triggersToTest.push_back(8); //dis
+  triggersToTest.push_back(9); //dis
+
+
+
+  //oldtree->SetBranchAddress("oniat_rf_p4",&xP4);
+
+  TFile *newfile = new TFile((treename + "_jpsisRun_" + filename).data(),"RECREATE");
+
+  std::vector <TH1F*> JPsi_vs_run_hists;
+
+  for (size_t i = 0; i < triggersToTest.size(); i++)
+    JPsi_vs_run_hists.push_back(new TH1F (("JPsi_vs_run_" + std::to_string(triggersToTest[i])).data(), "JPsi_vs_run; Run[#];J/Psi[#]",40000, 280000, 320000););
+
+  TH1F* JPsi_vs_run = new TH1F ("JPsi_vs_run", "JPsi_vs_run; Run[#];J/Psi[#]",20000, 190000, 210000);
+
+
+  for (Long64_t i=0;i<nentries; i++) {
+
+    oldtree->GetEntry(i);
+
+    std::bitset<16> tB(trigger);
+
+    bool tested = false;
+
+    for (size_t j = 0; j < triggersToTest.size(); j++){
+
+      int testingTrigger = triggersToTest[j];
+
+      if (tB.test(testingTrigger) && vProb > 0.0)
+      {
+        tested = true;
+        JPsi_vs_run_hists[j]->Fill(run);
+      }
+
+      if(tested)
+        JPsi_vs_run->FillL(run);
+
+  }
+
+  for (size_t j = 0; j < triggersToTest.size(); j++)
+    JPsi_vs_run_hists[j]->Write();
+
+  JPsi_vs_run->Write();
 
   return 0;
 
