@@ -7,7 +7,6 @@ OniaKKProducer::OniaKKProducer(const edm::ParameterSet& ps):
   TrakTrakMassCuts_(ps.getParameter<std::vector<double>>("TrakTrakMassCuts")),
   OniaTrakTrakMassCuts_(ps.getParameter<std::vector<double>>("OniaTrakTrakMassCuts")),
   MassTraks_(ps.getParameter<std::vector<double>>("MassTraks")),
-  OnlyBest_(ps.getParameter<bool>("OnlyBest"))
 {
   produces<pat::CompositeCandidateCollection>("OniaTrakTrakCandidates");
   candidates = 0;
@@ -60,7 +59,6 @@ void OniaKKProducer::produce(edm::Event& event, const edm::EventSetup& esetup){
        }   // loop on track candidates
 
      }
-     if (OnlyBest_) break;
   }
   if ( ncombo != OniaTTCandColl->size() ) std::cout <<"ncombo ("<<ncombo<< ") != OniaTT ("<<OniaTTCandColl->size()<<")"<< std::endl;
   if ( !onia->empty() )  nonia++;
