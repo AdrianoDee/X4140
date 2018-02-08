@@ -741,7 +741,7 @@ int jpsiRuns(std::string path, std::string filename, std::string treename)
       }
 
       if(tested)
-        JPsi_vs_run->FillL(run);
+        JPsi_vs_run->Fill(run);
 
   }
 
