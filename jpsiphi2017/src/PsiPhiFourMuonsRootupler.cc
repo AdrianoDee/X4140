@@ -412,46 +412,6 @@ int debug = 0;
       phi_not_rf_p4.SetPtEtaPhiM(jpsiphi_not_rf_cand.daughter("phi")->pt(),jpsiphi_not_rf_cand.daughter("phi")->eta(),
                               jpsiphi_not_rf_cand.daughter("phi")->phi(),jpsiphi_not_rf_cand.daughter("phi")->mass());
 
-      jpsi_vProb_rf        = jpsi_cand->userFloat("vProb");
-      jpsi_vChi2_rf        = jpsi_cand->userFloat("vNChi2");
-      jpsi_DCA_rf          = jpsi_cand->userFloat("DCA");
-      jpsi_ctauPV_rf       = jpsi_cand->userFloat("ppdlPV");
-      jpsi_ctauErrPV_rf    = jpsi_cand->userFloat("ppdlErrPV");
-      jpsi_cosAlpha_rf     = jpsi_cand->userFloat("cosAlpha");
-      jpsi_triggerMatch_rf = PsiPhiFourMuonsRootupler::isTriggerMatched(jpsi_cand);
-
-      phi_vProb_rf        = phi_cand->userFloat("vProb");
-      phi_vChi2_rf        = phi_cand->userFloat("vNChi2");
-      phi_DCA_rf          = phi_cand->userFloat("DCA");
-      phi_ctauPV_rf       = phi_cand->userFloat("ppdlPV");
-      phi_ctauErrPV_rf    = phi_cand->userFloat("ppdlErrPV");
-      phi_cosAlpha_rf     = phi_cand->userFloat("cosAlpha");
-      phi_triggerMatch_rf = PsiPhiFourMuonsRootupler::isTriggerMatched(phi_cand);
-
-      if (OnlyBest_) break;
-
-      }
-
-      for (unsigned int i=0; i< jpsiphi_cand_handle->size(); i++){
-
-        std::cout<<"Deb 2"<<++debug<<std::endl;
-        jpsiphi_cand   = jpsiphi_cand_handle->at(i);
-        jpsiphi_vProb     = jpsiphi_cand.userFloat("vProb");
-        jpsiphi_vChi2     = jpsiphi_cand.userFloat("vChi2");
-        jpsiphi_cosAlpha  = jpsiphi_cand.userFloat("cosAlpha");
-        jpsiphi_ctauPV    = jpsiphi_cand.userFloat("ctauPV");
-        jpsiphi_ctauErrPV = jpsiphi_cand.userFloat("ctauErrPV");
-        jpsiphi_charge    = jpsiphi_cand.charge();
-        jpsiphi_rf_p4.SetPtEtaPhiM(jpsiphi_cand.pt(),jpsiphi_cand.eta(),jpsiphi_cand.phi(),jpsiphi_cand.mass());
-        jpsi_rf_p4.SetPtEtaPhiM(jpsiphi_cand.daughter("jpsi")->pt(),jpsiphi_cand.daughter("jpsi")->eta(),
-                                jpsiphi_cand.daughter("jpsi")->phi(),jpsiphi_cand.daughter("jpsi")->mass());
-        phi_rf_p4.SetPtEtaPhiM(jpsiphi_cand.daughter("phi")->pt(),jpsiphi_cand.daughter("phi")->eta(),
-                                jpsiphi_cand.daughter("phi")->phi(),jpsiphi_cand.daughter("phi")->mass());
-
-      // jpsiphi_cand = jpsiphi_cand_handle->at(bindx);
-      jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("jpsi"));
-      phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("phi"));
-      std::cout<<"Deb 2.1"<<++debug<<std::endl;
       jpsi_vProb        = jpsi_cand->userFloat("vProb");
       jpsi_vChi2        = jpsi_cand->userFloat("vNChi2");
       jpsi_DCA          = jpsi_cand->userFloat("DCA");
@@ -468,11 +428,10 @@ int debug = 0;
       phi_cosAlpha     = phi_cand->userFloat("cosAlpha");
       phi_triggerMatch = PsiPhiFourMuonsRootupler::isTriggerMatched(phi_cand);
 
-      reco::Candidate::LorentzVector vJpsiP = jpsi_cand->daughter("muon1")->p4();
-      reco::Candidate::LorentzVector vJpsiM = jpsi_cand->daughter("muon2")->p4();
-
       const pat::Muon *jpsiPatMuonP,  *jpsiPatMuonN, *phiPatMuonP, *phiPatMuonN;
+
       std::cout<<"Deb 2.2"<<++debug<<std::endl;
+
       if (jpsi_cand->daughter("muon1")->charge() < 0) {
          vJpsiP = jpsi_cand->daughter("muon2")->p4();
          vJpsiM = jpsi_cand->daughter("muon1")->p4();
@@ -483,6 +442,7 @@ int debug = 0;
         jpsiPatMuonP = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon1"));
         jpsiPatMuonN = dynamic_cast<const pat::Muon*>(jpsi_cand->daughter("muon2"));
       }
+
       muonJpsiP_p4.SetPtEtaPhiM(vJpsiP.pt(), vJpsiP.eta(), vJpsiP.phi(), vJpsiP.mass());
       muonJpsiN_p4.SetPtEtaPhiM(vJpsiM.pt(), vJpsiM.eta(), vJpsiM.phi(), vJpsiM.mass());
       std::cout<<"Deb 2.3"<<++debug<<std::endl;
@@ -520,6 +480,7 @@ int debug = 0;
         phiPatMuonN = dynamic_cast<const pat::Muon*>(phi_cand->daughter("muon2"));
       }
       std::cout<<"Deb 2.5"<<++debug<<std::endl;
+
       muonPhiP_isLoose   =  phiPatMuonP->isLooseMuon();
       muonPhiP_isSoft   =  phiPatMuonP->isSoftMuon(thePrimaryV);
       muonPhiP_isMedium   = phiPatMuonP->isMediumMuon();
@@ -537,10 +498,13 @@ int debug = 0;
 
       muonPhiP_p4.SetPtEtaPhiM(vPhiP.pt(), vPhiP.eta(), vPhiP.phi(), vPhiP.mass());
       muonPhiN_p4.SetPtEtaPhiM(vPhiM.pt(), vPhiM.eta(), vPhiM.phi(), vPhiM.mass());
-      std::cout<<"Deb 2.6"<<++debug<<std::endl;
+
       jpsiphi_tree->Fill();
-      if (OnlyBest_) break;  // jpsiphi candidates are sorted by vProb
-    }
+
+      if (OnlyBest_) break;
+
+      }
+
   }
 
 }
