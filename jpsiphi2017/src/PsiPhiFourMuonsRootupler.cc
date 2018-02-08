@@ -80,7 +80,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   UInt_t run,event,numPrimaryVertices, trigger;
 
   TLorentzVector jpsiphi_p4;
-  TLorentzVector psi_p4;
+  TLorentzVector jpsi_p4;
   TLorentzVector phi_p4;
   TLorentzVector muonPhiP_p4;
   TLorentzVector muonJpsiN_p4;
@@ -88,22 +88,26 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   TLorentzVector muonPhiN_p4;
 
   TLorentzVector jpsiphi_rf_p4;
-  TLorentzVector psi_rf_p4;
+  TLorentzVector jpsi_rf_p4;
   TLorentzVector phi_rf_p4;
   TLorentzVector muonPhiP_rf_p4;
   TLorentzVector muonJpsiN_rf_p4;
   TLorentzVector muonJpsiP_rf_p4;
   TLorentzVector muonPhiN_rf_p4;
   TLorentzVector jpsiphi_not_rf_p4;
-  TLorentzVector psi_not_rf_p4;
+  TLorentzVector jpsi_not_rf_p4;
   TLorentzVector phi_not_rf_p4;
 
-  Int_t    jpsiphi_charge, psi_triggerMatch, phi_triggerMatch, jpsiphi_rf_bindx;
+  Int_t    jpsiphi_charge, jpsi_triggerMatch, phi_triggerMatch, jpsiphi_rf_bindx;
   Double_t jpsiphi_vProb,  jpsiphi_vChi2, jpsiphi_cosAlpha, jpsiphi_ctauPV, jpsiphi_ctauErrPV;
   Double_t jpsiphi_rf_vProb,  jpsiphi_rf_vChi2, jpsiphi_rf_cosAlpha, jpsiphi_rf_ctauPV, jpsiphi_rf_ctauErrPV;
 
+  Int_t    jpsi_triggerMatch_rf, phi_triggerMatch_rf;
+  Double_t jpsi_vProb_rf, jpsi_vChi2_rf, jpsi_DCA_rf, jpsi_ctauPV_rf, jpsi_ctauErrPV_rf, jpsi_cosAlpha_rf;
+  Double_t phi_vProb_rf, phi_vChi2_rf, phi_DCA_rf, phi_ctauPV_rf, phi_ctauErrPV_rf, phi_cosAlpha_rf;
+
   //Double_t track_d0, track_d0Err, track_dz, track_dxy;
-  Double_t psi_vProb, psi_vChi2, psi_DCA, psi_ctauPV, psi_ctauErrPV, psi_cosAlpha;
+  Double_t jpsi_vProb, jpsi_vChi2, jpsi_DCA, jpsi_ctauPV, jpsi_ctauErrPV, jpsi_cosAlpha;
   Double_t phi_vProb, phi_vChi2, phi_DCA, phi_ctauPV, phi_ctauErrPV, phi_cosAlpha;
 
   Bool_t muonJpsiP_isLoose, muonJpsiP_isSoft, muonJpsiP_isMedium, muonJpsiP_isHighPt;
@@ -117,7 +121,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   UInt_t muonJpsiP_type, muonJpsiN_type, muonPhiP_type, muonPhiN_type;
   Int_t          gen_jpsiphi_pdgId;
   TLorentzVector gen_jpsiphi_p4;
-  TLorentzVector gen_psi_p4;
+  TLorentzVector gen_jpsi_p4;
   TLorentzVector gen_phi_p4;
   TLorentzVector gen_muonPhiP_p4;
   TLorentzVector gen_muonJpsiN_p4;
@@ -175,19 +179,19 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
 
         jpsiphi_tree->Branch("jpsiphi_p4",   "TLorentzVector", &jpsiphi_p4);
         jpsiphi_tree->Branch("phi_p4",     "TLorentzVector", &phi_p4);
-        jpsiphi_tree->Branch("psi_p4",     "TLorentzVector", &psi_p4);
+        jpsiphi_tree->Branch("jpsi_p4",     "TLorentzVector", &jpsi_p4);
         jpsiphi_tree->Branch("muonPhiN_p4",   "TLorentzVector", &muonPhiN_p4);
         jpsiphi_tree->Branch("muonJpsiN_p4",   "TLorentzVector", &muonJpsiN_p4);
         jpsiphi_tree->Branch("muonJpsiP_p4",   "TLorentzVector", &muonJpsiP_p4);
         jpsiphi_tree->Branch("muonPhiN_p4",   "TLorentzVector", &muonPhiN_p4);
 
-        jpsiphi_tree->Branch("psi_vProb",        &psi_vProb,        "psi_vProb/D");
-        jpsiphi_tree->Branch("psi_vNChi2",       &psi_vChi2,        "psi_vNChi2/D");
-        jpsiphi_tree->Branch("psi_DCA",          &psi_DCA,          "psi_DCA/D");
-        jpsiphi_tree->Branch("psi_ctauPV",       &psi_ctauPV,       "psi_ctauPV/D");
-        jpsiphi_tree->Branch("psi_ctauErrPV",    &psi_ctauErrPV,    "psi_ctauErrPV/D");
-        jpsiphi_tree->Branch("psi_cosAlpha",     &psi_cosAlpha,     "psi_cosAlpha/D");
-        jpsiphi_tree->Branch("psi_triggerMatch", &psi_triggerMatch, "psi_triggerMatch/I");
+        jpsiphi_tree->Branch("jpsi_vProb",        &jpsi_vProb,        "jpsi_vProb/D");
+        jpsiphi_tree->Branch("jpsi_vNChi2",       &jpsi_vChi2,        "jpsi_vNChi2/D");
+        jpsiphi_tree->Branch("jpsi_DCA",          &jpsi_DCA,          "jpsi_DCA/D");
+        jpsiphi_tree->Branch("jpsi_ctauPV",       &jpsi_ctauPV,       "jpsi_ctauPV/D");
+        jpsiphi_tree->Branch("jpsi_ctauErrPV",    &jpsi_ctauErrPV,    "jpsi_ctauErrPV/D");
+        jpsiphi_tree->Branch("jpsi_cosAlpha",     &jpsi_cosAlpha,     "jpsi_cosAlpha/D");
+        jpsiphi_tree->Branch("jpsi_triggerMatch", &jpsi_triggerMatch, "jpsi_triggerMatch/I");
 
         jpsiphi_tree->Branch("phi_vProb",        &phi_vProb,        "phi_vProb/D");
         jpsiphi_tree->Branch("phi_vNChi2",       &phi_vChi2,        "phi_vNChi2/D");
@@ -242,6 +246,8 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
         jpsiphi_tree->Branch("muonPhiP_type",     &muonPhiP_type,       "muonPhiP_type/i");
         jpsiphi_tree->Branch("muonPhiN_type",     &muonPhiN_type,       "muonPhiN_type/i");
 
+        //Kinematic refit tree
+
         jpsiphi_tree_rf->Branch("run",                &run,                "run/I");
         jpsiphi_tree_rf->Branch("event",              &event,              "event/I");
         jpsiphi_tree_rf->Branch("numPrimaryVertices", &numPrimaryVertices, "numPrimaryVertices/I");
@@ -256,7 +262,7 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
 
         jpsiphi_tree_rf->Branch("jpsiphi_rf_p4",   "TLorentzVector", &jpsiphi_rf_p4);
         jpsiphi_tree_rf->Branch("phi_rf_p4",     "TLorentzVector", &phi_rf_p4);
-        jpsiphi_tree_rf->Branch("psi_rf_p4",     "TLorentzVector", &psi_rf_p4);
+        jpsiphi_tree_rf->Branch("jpsi_rf_p4",     "TLorentzVector", &jpsi_rf_p4);
         jpsiphi_tree_rf->Branch("muonPhiN_rf_p4",   "TLorentzVector", &muonPhiN_rf_p4);
         jpsiphi_tree_rf->Branch("muonJpsiN_rf_p4",   "TLorentzVector", &muonJpsiN_rf_p4);
         jpsiphi_tree_rf->Branch("muonJpsiP_rf_p4",   "TLorentzVector", &muonJpsiP_rf_p4);
@@ -264,13 +270,29 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
 
         jpsiphi_tree_rf->Branch("jpsiphi_not_rf_p4",   "TLorentzVector", &jpsiphi_not_rf_p4);
         jpsiphi_tree_rf->Branch("phi_not_rf_p4",     "TLorentzVector", &phi_not_rf_p4);
-        jpsiphi_tree_rf->Branch("psi_not_rf_p4",     "TLorentzVector", &psi_not_rf_p4);
+        jpsiphi_tree_rf->Branch("jpsi_not_rf_p4",     "TLorentzVector", &jpsi_not_rf_p4);
+
+        jpsiphi_tree_rf->Branch("jpsi_vProb_rf",  &jpsi_vProb_rf,    "jpsi_vProb_rf/D");
+        jpsiphi_tree_rf->Branch("jpsi_vChi2_rf",  &jpsi_vChi2_rf,    "jpsi_vChi2_rf/D");
+        jpsiphi_tree_rf->Branch("jpsi_DCA_rf",  &jpsi_DCA_rf,    "jpsi_DCA_rf/D");
+        jpsiphi_tree_rf->Branch("jpsi_ctauPV_rf",  &jpsi_ctauPV_rf,    "jpsi_ctauPV_rf/D");
+        jpsiphi_tree_rf->Branch("jpsi_ctauErrPV_rf",  &jpsi_ctauErrPV_rf,    "jpsi_ctauErrPV_rf/D");
+        jpsiphi_tree_rf->Branch("jpsi_cosAlpha_rf",  &jpsi_cosAlpha_rf,    "jpsi_cosAlpha_rf/D");
+        jpsiphi_tree_rf->Branch("jpsi_triggerMatch_rf", &jpsi_triggerMatch_rf, "jpsi_triggerMatch_rf/I");
+
+        jpsiphi_tree_rf->Branch("phi_vProb_rf",  &phi_vProb_rf,    "phi_vProb_rf/D");
+        jpsiphi_tree_rf->Branch("phi_vChi2_rf",  &phi_vChi2_rf,    "phi_vChi2_rf/D");
+        jpsiphi_tree_rf->Branch("phi_DCA_rf",  &phi_DCA_rf,    "phi_DCA_rf/D");
+        jpsiphi_tree_rf->Branch("phi_ctauPV_rf",  &phi_ctauPV_rf,    "phi_ctauPV_rf/D");
+        jpsiphi_tree_rf->Branch("phi_ctauErrPV_rf",  &phi_ctauErrPV_rf,    "phi_ctauErrPV_rf/D");
+        jpsiphi_tree_rf->Branch("phi_cosAlpha_rf",  &phi_cosAlpha_rf,    "phi_cosAlpha_rf/D");
+        jpsiphi_tree_rf->Branch("phi_triggerMatch_rf", &phi_triggerMatch_rf, "phi_triggerMatch_rf/I");
 
 	if(isMC_)
 	  {
             jpsiphi_tree->Branch("gen_jpsiphi_pdgId", &gen_jpsiphi_pdgId, "gen_jpsiphi_pdgId/I");
       	    jpsiphi_tree->Branch("gen_jpsiphi_p4",    "TLorentzVector", &gen_jpsiphi_p4);
-      	    jpsiphi_tree->Branch("gen_psi_p4",      "TLorentzVector", &gen_psi_p4);
+      	    jpsiphi_tree->Branch("gen_jpsi_p4",      "TLorentzVector", &gen_jpsi_p4);
       	    jpsiphi_tree->Branch("gen_phi_p4",      "TLorentzVector", &gen_phi_p4);
             jpsiphi_tree->Branch("gen_muonPhiP_p4",    "TLorentzVector", &gen_muonPhiP_p4);
             jpsiphi_tree->Branch("gen_muonJpsiN_p4",    "TLorentzVector", &gen_muonJpsiN_p4);
@@ -366,53 +388,80 @@ int debug = 0;
 
     std::cout<<"Deb "<<++debug<<std::endl;
 
-    pat::CompositeCandidate jpsiphi_rf_cand, jpsiphi_cand, *jpsi_cand, *phi_cand;
+    pat::CompositeCandidate jpsiphi_rf_cand, jpsiphi_cand, *jpsi_cand, *phi_cand, *jpsi_cand_rf, *phi_cand_rf;
+
     for (unsigned int i=0; i< jpsiphi_rf_cand_handle->size(); i++){
       std::cout<<"Deb 1"<<++debug<<std::endl;
       jpsiphi_rf_cand      = jpsiphi_rf_cand_handle->at(i);
       jpsiphi_rf_bindx     = jpsiphi_rf_cand.userInt("bIndex");
-      jpsiphi_rf_vProb     = jpsiphi_rf_cand.userFloat("vProb");
-      jpsiphi_rf_vChi2     = jpsiphi_rf_cand.userFloat("vChi2");
-      jpsiphi_rf_cosAlpha  = jpsiphi_rf_cand.userFloat("cosAlpha");
-      jpsiphi_rf_ctauPV    = jpsiphi_rf_cand.userFloat("ctauPV");
-      jpsiphi_rf_ctauErrPV = jpsiphi_rf_cand.userFloat("ctauErrPV");
-      jpsiphi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.pt(),jpsiphi_rf_cand.eta(),jpsiphi_rf_cand.phi(),jpsiphi_rf_cand.mass());
-      psi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("jpsi")->pt(),jpsiphi_rf_cand.daughter("jpsi")->eta(),
-                              jpsiphi_rf_cand.daughter("jpsi")->phi(),jpsiphi_rf_cand.daughter("jpsi")->mass());
-      phi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("phi")->pt(),jpsiphi_rf_cand.daughter("phi")->eta(),
-                              jpsiphi_rf_cand.daughter("phi")->phi(),jpsiphi_rf_cand.daughter("phi")->mass());
-
-      reco::Candidate::LorentzVector vJpsiP = jpsi_cand->daughter("muon1")->p4();
-      reco::Candidate::LorentzVector vJpsiM = jpsi_cand->daughter("muon2")->p4();
-
-      if (jpsi_cand->daughter("muon1")->charge() < 0) {
-         vJpsiP = jpsi_cand->daughter("muon2")->p4();
-         vJpsiM = jpsi_cand->daughter("muon1")->p4();
-      }
-      muonPhiN_rf_p4.SetPtEtaPhiM(vJpsiP.pt(), vJpsiP.eta(), vJpsiP.phi(), vJpsiP.mass());
-      muonJpsiN_rf_p4.SetPtEtaPhiM(vJpsiM.pt(), vJpsiM.eta(), vJpsiM.phi(), vJpsiM.mass());
-
-      reco::Candidate::LorentzVector vPhiP = phi_cand->daughter("muon1")->p4();
-      reco::Candidate::LorentzVector vPhiM = phi_cand->daughter("muon2")->p4();
-
-      if (phi_cand->daughter("muon1")->charge() < 0) {
-         vPhiP = phi_cand->daughter("muon2")->p4();
-         vPhiM = phi_cand->daughter("muon1")->p4();
-      }
 
       if (jpsiphi_rf_bindx<0 || jpsiphi_rf_bindx>(int) jpsiphi_cand_handle->size()) {
         std::cout << "Incorrect index for oniat combination " << run << "," << event <<"," << jpsiphi_rf_bindx << std::endl;
         continue;
       }
 
+      jpsiphi_rf_vProb     = jpsiphi_rf_cand.userFloat("vProb");
+      jpsiphi_rf_vChi2     = jpsiphi_rf_cand.userFloat("vChi2");
+      jpsiphi_rf_cosAlpha  = jpsiphi_rf_cand.userFloat("cosAlpha");
+      jpsiphi_rf_ctauPV    = jpsiphi_rf_cand.userFloat("ctauPV");
+      jpsiphi_rf_ctauErrPV = jpsiphi_rf_cand.userFloat("ctauErrPV");
+      jpsiphi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.pt(),jpsiphi_rf_cand.eta(),jpsiphi_rf_cand.phi(),jpsiphi_rf_cand.mass());
+      jpsi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("jpsi")->pt(),jpsiphi_rf_cand.daughter("jpsi")->eta(),
+                              jpsiphi_rf_cand.daughter("jpsi")->phi(),jpsiphi_rf_cand.daughter("jpsi")->mass());
+      phi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("phi")->pt(),jpsiphi_rf_cand.daughter("phi")->eta(),
+                              jpsiphi_rf_cand.daughter("phi")->phi(),jpsiphi_rf_cand.daughter("phi")->mass());
+
+
+      jpsi_cand_rf = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_rf_cand.daughter("onia"));
+      phi_cand_rf = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_rf_cand.daughter("phi"));
+
+      reco::Candidate::LorentzVector vJpsiP = jpsi_cand_rf->daughter("muon1")->p4();
+      reco::Candidate::LorentzVector vJpsiM = jpsi_cand_rf->daughter("muon2")->p4();
+
+      if (jpsi_cand_rf->daughter("muon1")->charge() < 0) {
+         vJpsiP = jpsi_cand_rf->daughter("muon2")->p4();
+         vJpsiM = jpsi_cand_rf->daughter("muon1")->p4();
+      }
+
+      muonPhiN_rf_p4.SetPtEtaPhiM(vJpsiP.pt(), vJpsiP.eta(), vJpsiP.phi(), vJpsiP.mass());
+      muonJpsiN_rf_p4.SetPtEtaPhiM(vJpsiM.pt(), vJpsiM.eta(), vJpsiM.phi(), vJpsiM.mass());
+
+      reco::Candidate::LorentzVector vPhiP = phi_cand_rf->daughter("muon1")->p4();
+      reco::Candidate::LorentzVector vPhiM = phi_cand_rf->daughter("muon2")->p4();
+
+      if (phi_cand->daughter("muon1")->charge() < 0) {
+         vPhiP = phi_cand_rf->daughter("muon2")->p4();
+         vPhiM = phi_cand_rf->daughter("muon1")->p4();
+      }
+
       pat::CompositeCandidate jpsiphi_not_rf_cand = jpsiphi_cand_handle->at(jpsiphi_rf_bindx);
 
+      jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_not_rf_cand.daughter("onia"));
+      phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_not_rf_cand.daughter("phi"));
+
       jpsiphi_not_rf_p4.SetPtEtaPhiM(jpsiphi_not_rf_cand.pt(),jpsiphi_not_rf_cand.eta(),jpsiphi_not_rf_cand.phi(),jpsiphi_not_rf_cand.mass());
-      psi_not_rf_p4.SetPtEtaPhiM(jpsiphi_not_rf_cand.daughter("jpsi")->pt(),jpsiphi_not_rf_cand.daughter("jpsi")->eta(),
+      jpsi_not_rf_p4.SetPtEtaPhiM(jpsiphi_not_rf_cand.daughter("jpsi")->pt(),jpsiphi_not_rf_cand.daughter("jpsi")->eta(),
                               jpsiphi_not_rf_cand.daughter("jpsi")->phi(),jpsiphi_not_rf_cand.daughter("jpsi")->mass());
       phi_not_rf_p4.SetPtEtaPhiM(jpsiphi_not_rf_cand.daughter("phi")->pt(),jpsiphi_not_rf_cand.daughter("phi")->eta(),
                               jpsiphi_not_rf_cand.daughter("phi")->phi(),jpsiphi_not_rf_cand.daughter("phi")->mass());
 
+      jpsi_vProb_rf        = jpsi_cand->userFloat("vProb");
+      jpsi_vChi2_rf        = jpsi_cand->userFloat("vNChi2");
+      jpsi_DCA_rf          = jpsi_cand->userFloat("DCA");
+      jpsi_ctauPV_rf       = jpsi_cand->userFloat("ppdlPV");
+      jpsi_ctauErrPV_rf    = jpsi_cand->userFloat("ppdlErrPV");
+      jpsi_cosAlpha_rf     = jpsi_cand->userFloat("cosAlpha");
+      jpsi_triggerMatch_rf = PsiPhiFourMuonsRootupler::isTriggerMatched(jpsi_cand);
+
+      phi_vProb_rf        = phi_cand->userFloat("vProb");
+      phi_vChi2_rf        = phi_cand->userFloat("vNChi2");
+      phi_DCA_rf          = phi_cand->userFloat("DCA");
+      phi_ctauPV_rf       = phi_cand->userFloat("ppdlPV");
+      phi_ctauErrPV_rf    = phi_cand->userFloat("ppdlErrPV");
+      phi_cosAlpha_rf     = phi_cand->userFloat("cosAlpha");
+      phi_triggerMatch_rf = PsiPhiFourMuonsRootupler::isTriggerMatched(phi_cand);
+
+      if (OnlyBest_) break;
 
       }
 
@@ -427,7 +476,7 @@ int debug = 0;
         jpsiphi_ctauErrPV = jpsiphi_cand.userFloat("ctauErrPV");
         jpsiphi_charge    = jpsiphi_cand.charge();
         jpsiphi_rf_p4.SetPtEtaPhiM(jpsiphi_cand.pt(),jpsiphi_cand.eta(),jpsiphi_cand.phi(),jpsiphi_cand.mass());
-        psi_rf_p4.SetPtEtaPhiM(jpsiphi_cand.daughter("jpsi")->pt(),jpsiphi_cand.daughter("jpsi")->eta(),
+        jpsi_rf_p4.SetPtEtaPhiM(jpsiphi_cand.daughter("jpsi")->pt(),jpsiphi_cand.daughter("jpsi")->eta(),
                                 jpsiphi_cand.daughter("jpsi")->phi(),jpsiphi_cand.daughter("jpsi")->mass());
         phi_rf_p4.SetPtEtaPhiM(jpsiphi_cand.daughter("phi")->pt(),jpsiphi_cand.daughter("phi")->eta(),
                                 jpsiphi_cand.daughter("phi")->phi(),jpsiphi_cand.daughter("phi")->mass());
@@ -436,13 +485,13 @@ int debug = 0;
       jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("jpsi"));
       phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_cand.daughter("phi"));
       std::cout<<"Deb 2.1"<<++debug<<std::endl;
-      psi_vProb        = jpsi_cand->userFloat("vProb");
-      psi_vChi2        = jpsi_cand->userFloat("vNChi2");
-      psi_DCA          = jpsi_cand->userFloat("DCA");
-      psi_ctauPV       = jpsi_cand->userFloat("ppdlPV");
-      psi_ctauErrPV    = jpsi_cand->userFloat("ppdlErrPV");
-      psi_cosAlpha     = jpsi_cand->userFloat("cosAlpha");
-      psi_triggerMatch = PsiPhiFourMuonsRootupler::isTriggerMatched(jpsi_cand);
+      jpsi_vProb        = jpsi_cand->userFloat("vProb");
+      jpsi_vChi2        = jpsi_cand->userFloat("vNChi2");
+      jpsi_DCA          = jpsi_cand->userFloat("DCA");
+      jpsi_ctauPV       = jpsi_cand->userFloat("ppdlPV");
+      jpsi_ctauErrPV    = jpsi_cand->userFloat("ppdlErrPV");
+      jpsi_cosAlpha     = jpsi_cand->userFloat("cosAlpha");
+      jpsi_triggerMatch = PsiPhiFourMuonsRootupler::isTriggerMatched(jpsi_cand);
 
       phi_vProb        = phi_cand->userFloat("vProb");
       phi_vChi2        = phi_cand->userFloat("vNChi2");
@@ -470,6 +519,7 @@ int debug = 0;
       muonJpsiP_p4.SetPtEtaPhiM(vJpsiP.pt(), vJpsiP.eta(), vJpsiP.phi(), vJpsiP.mass());
       muonJpsiN_p4.SetPtEtaPhiM(vJpsiM.pt(), vJpsiM.eta(), vJpsiM.phi(), vJpsiM.mass());
       std::cout<<"Deb 2.3"<<++debug<<std::endl;
+
       muonJpsiP_isLoose   =  jpsiPatMuonP->isLooseMuon();
       muonJpsiP_isSoft   =  jpsiPatMuonP->isSoftMuon(thePrimaryV);
       muonJpsiP_isMedium   = jpsiPatMuonP->isMediumMuon();
@@ -487,7 +537,7 @@ int debug = 0;
 
       //double kmass = 0.4936770;
       jpsiphi_p4.SetPtEtaPhiM(jpsiphi_cand.pt(),jpsiphi_cand.eta(),jpsiphi_cand.phi(),jpsiphi_cand.mass());
-      psi_p4.SetPtEtaPhiM(jpsi_cand->pt(),jpsi_cand->eta(),jpsi_cand->phi(),jpsi_cand->mass());
+      jpsi_p4.SetPtEtaPhiM(jpsi_cand->pt(),jpsi_cand->eta(),jpsi_cand->phi(),jpsi_cand->mass());
       phi_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
       std::cout<<"Deb 2.4"<<++debug<<std::endl;
       reco::Candidate::LorentzVector vPhiP = phi_cand->daughter("muon1")->p4();

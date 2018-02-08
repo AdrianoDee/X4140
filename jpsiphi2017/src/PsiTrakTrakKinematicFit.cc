@@ -2,7 +2,7 @@
 //
 // Package:    PsiTrakTrakKinematicFit
 // Class:      PsiTrakTrakKinematicFit
-// 
+//
 /**\class PsiTrakTrakKinematicFit Ponia/OniaTrak/src/PsiTrakTrakKinematicFit.cc
 
  Description: performs vertex kinematical fit for J/psi Track
@@ -33,7 +33,7 @@
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrack.h"
-#include "MagneticField/Engine/interface/MagneticField.h"            
+#include "MagneticField/Engine/interface/MagneticField.h"
 #include "CommonTools/Statistics/interface/ChiSquaredProbability.h"
 
 #include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
@@ -71,7 +71,7 @@ class PsiTrakTrakKinematicFit : public edm::EDProducer {
       void beginJob() override ;
       void produce(edm::Event&, const edm::EventSetup&) override;
       void endJob() override ;
-      
+
       virtual void beginRun(edm::Run&, edm::EventSetup const&);
       virtual void endRun(edm::Run&, edm::EventSetup const&);
       virtual void beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
@@ -114,7 +114,7 @@ PsiTrakTrakKinematicFit::PsiTrakTrakKinematicFit(const edm::ParameterSet& iConfi
 
 // kinematic refit collections
   produces<pat::CompositeCandidateCollection>(product_name_);
- 
+
 // now do what ever other initialization is needed
 }
 
@@ -136,15 +136,15 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
 
 // Kinematic refit collection
   std::unique_ptr< pat::CompositeCandidateCollection > PsiTCandRefitColl(new pat::CompositeCandidateCollection);
- 
+
 // Kinematic fit
-  edm::ESHandle<TransientTrackBuilder> theB; 
-  iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB); 
-  
+  edm::ESHandle<TransientTrackBuilder> theB;
+  iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
+
   int indexPsiT=-1;
   for (pat::CompositeCandidateCollection::const_iterator oniat=PsiTCandHandle->begin(); oniat!=PsiTCandHandle->end(); ++oniat) {
 
-    indexPsiT++;    
+    indexPsiT++;
     reco::TrackRef JpsiTk[4]={
       ( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack(),
       ( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack(),
@@ -162,14 +162,14 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
     MuMuTT.push_back((*theB).build(&JpsiTk[3])); // K+
 
     KinematicParticleFactoryFromTransientTrack pFactory;
-     
+
     const ParticleMass muonMass(0.1056583);
     float muonSigma = muonMass*1E-6;
     const ParticleMass kaonMass1(MassTraks_[0]);
     float kaonSigma1 = kaonMass1*1E-6;
     const ParticleMass kaonMass2(MassTraks_[1]);
     float kaonSigma2 = kaonMass2*1E-6;
-	      
+
     std::vector<RefCountedKinematicParticle> allPsiTDaughters;
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[0], muonMass, float(0), float(0), muonSigma));
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[1], muonMass, float(0), float(0), muonSigma));
@@ -187,7 +187,7 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
        double oniat_ma_fit = 14000.;
        double oniat_vp_fit = -9999.;
        double oniat_x2_fit = 10000.;
-       if (fitPsiT->currentState().isValid()) { 
+       if (fitPsiT->currentState().isValid()) {
          oniat_ma_fit = fitPsiT->currentState().mass();
          oniat_x2_fit = PsiTDecayVertex->chiSquared();
          oniat_vp_fit = ChiSquaredProbability(oniat_x2_fit,
@@ -197,7 +197,7 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
             TVector3 vtx;
             TVector3 pvtx;
             VertexDistanceXY vdistXY;
-            int   oniat_ch_fit = oniat->charge();         
+            int   oniat_ch_fit = oniat->charge();
             double oniat_px_fit = fitPsiT->currentState().kinematicParameters().momentum().x();
             double oniat_py_fit = fitPsiT->currentState().kinematicParameters().momentum().y();
             double oniat_pz_fit = fitPsiT->currentState().kinematicParameters().momentum().z();
@@ -261,7 +261,7 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
 // Define psi from two muons
 	    pat::CompositeCandidate psi;
 	    psi.addDaughter(patMu1,"muon1");
-            psi.addDaughter(patMu2,"muon2");	
+            psi.addDaughter(patMu2,"muon2");
             psi.setP4(patMu1.p4()+patMu2.p4());
 // get kaon
             child = PsiTTree->movePointerToTheNextChild();
@@ -296,14 +296,14 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
             phi.addDaughter(patTk,"trak1");
             phi.addDaughter(patTk2,"trak2");
             phi.setP4(patTk.p4()+patTk2.p4());
-	 
+
 	    patPsiT.addDaughter(psi,"onia");
 	    patPsiT.addDaughter(phi,"ditrak");
 
             PsiTCandRefitColl->push_back(patPsiT);
           }
 	}
-  }  
+  }
 // End kinematic fit
 
 // now sort by vProb
