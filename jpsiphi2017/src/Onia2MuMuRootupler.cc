@@ -121,7 +121,7 @@ OniaMassCuts_(iConfig.getParameter<std::vector<double>>("onia_mass_cuts")),
 isMC_(iConfig.getParameter<bool>("isMC")),
 OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
 OnlyGen_(iConfig.getParameter<bool>("OnlyGen")),
-HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs")),
+HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs"))
 {
   edm::Service < TFileService > fs;
   onia_tree = fs->make < TTree > ("oniaTree", "Tree of Onia2MuMu");
