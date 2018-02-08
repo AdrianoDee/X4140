@@ -2,7 +2,7 @@
 
 OniaKKProducer::OniaKKProducer(const edm::ParameterSet& ps):
   OniaCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Onia"))),
-  KaonCollection_(consumes<pat::CompositeCandidateCollection>(ps.getParameter<edm::InputTag>("Kaons"))),
+  KaonCollection_(consumes<std::vector<pat::GenericParticle>>(ps.getParameter<edm::InputTag>("Kaons"))),
   OniaMassCuts_(ps.getParameter<std::vector<double>>("OniaMassCuts")),
   TrakTrakMassCuts_(ps.getParameter<std::vector<double>>("TrakTrakMassCuts")),
   OniaTrakTrakMassCuts_(ps.getParameter<std::vector<double>>("OniaTrakTrakMassCuts")),
