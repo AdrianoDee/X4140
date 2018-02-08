@@ -125,6 +125,8 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
 
   Int_t jpsitrktrk_rf_bindx;
 
+  Bool_t isBestCandidate;
+
   Int_t          gen_jpsitrktrk_pdgId;
   TLorentzVector gen_jpsitrktrk_p4;
   TLorentzVector gen_jpsi_p4;
@@ -261,6 +263,8 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         jpsitrktrk_tree->Branch("track_KP_nvsh",  &track_KP_nvsh,  "track_KP_nvsh/I");
         jpsitrktrk_tree->Branch("track_KP_nvph",  &track_KP_nvph,  "track_KP_nvph/I");
 
+        jpsitrktrk_tree->Branch("isBestCandidate",        &isBestCandidate,        "isBestCandidate/O");
+
 }
 
 PsiTrakTrakRootupler::~PsiTrakTrakRootupler() {}
@@ -332,6 +336,8 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
      }
    } else std::cout << "*** NO triggerResults found " << iEvent.id().run() << "," << iEvent.id().event() << std::endl;
 
+  isBestCandidate = true;
+
 // grabbing oniat information
   if (!jpsitrktrk_cand_handle.isValid()) std::cout<< "No oniat information " << run << "," << event <<std::endl;
   if (!jpsitrktrk_rf_cand_handle.isValid()) std::cout<< "No jpsitrktrk_rf information " << run << "," << event <<std::endl;
@@ -342,6 +348,8 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
 
     //Refitted Handle
     for (unsigned int i=0; i< jpsitrktrk_rf_cand_handle->size(); i++){
+
+
 
       jpsitrktrk_rf_cand   = jpsitrktrk_rf_cand_handle->at(i);
       jpsitrktrk_rf_bindx = jpsitrktrk_rf_cand.userInt("bIndex");
@@ -479,7 +487,11 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
 
       jpsitrktrk_tree->Fill();
 
-      if (OnlyBest_) break;  // oniat candidates are sorted by vProb
+      if (OnlyBest_) break;
+      else if(i==0)
+      isBestCandidate = false;
+
+        // oniat candidates are sorted by vProb
     }
 
   }

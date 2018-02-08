@@ -118,6 +118,8 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   Bool_t muonJpsiP_isTracker, muonJpsiP_isGlobal, muonJpsiN_isTracker, muonJpsiN_isGlobal;
   Bool_t muonPhiP_isTracker, muonPhiP_isGlobal, muonPhiN_isTracker, muonPhiN_isGlobal;
 
+  Bool_t isBestCandidate;
+
   UInt_t muonJpsiP_type, muonJpsiN_type, muonPhiP_type, muonPhiN_type;
   Int_t          gen_jpsiphi_pdgId;
   TLorentzVector gen_jpsiphi_p4;
@@ -254,6 +256,8 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
 
         jpsiphi_tree->Branch("muonPhiP_type",     &muonPhiP_type,       "muonPhiP_type/i");
         jpsiphi_tree->Branch("muonPhiN_type",     &muonPhiN_type,       "muonPhiN_type/i");
+
+        jpsiphi_tree->Branch("isBestCandidate",        &isBestCandidate,        "isBestCandidate/O");
 
 	if(isMC_)
 	  {
@@ -505,6 +509,8 @@ int debug = 0;
       jpsiphi_tree->Fill();
 
       if (OnlyBest_) break;
+      else if(i==0)
+      isBestCandidate = false;
 
       }
 
