@@ -153,7 +153,8 @@ process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
     TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
     isMC = cms.bool(False),
     OnlyBest = cms.bool(False),
-    HLTs = hltpaths
+    HLTs = hltpaths,
+    filters = filters
 )
 
 # process.Phi2KKPAT = cms.EDProducer('Phi2KKPAT',
