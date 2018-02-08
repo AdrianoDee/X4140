@@ -387,8 +387,8 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       muonp_rf_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
       muonn_rf_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
 
-      reco::Candidate::LorentzVector kP = phi_cand_rf->daughter("trak1")->p4();
-      reco::Candidate::LorentzVector kM = phi_cand_rf->daughter("trak2")->p4();
+      kP = phi_cand_rf->daughter("trak1")->p4();
+      kM = phi_cand_rf->daughter("trak2")->p4();
 
       if (phi_cand_rf->daughter("trak1")->charge() < 0) {
          kP = phi_cand_rf->daughter("trak2")->p4();
