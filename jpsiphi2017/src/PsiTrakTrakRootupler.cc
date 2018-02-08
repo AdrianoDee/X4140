@@ -95,6 +95,7 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   Bool_t muonP_isLoose, muonP_isSoft, muonP_isMedium, muonP_isHighPt;
   Bool_t muonN_isLoose, muonN_isSoft, muonN_isMedium, muonN_isHighPt;
 
+  Bool_t muonP_isTracker, muonP_isGlobal, muonN_isTracker, muonN_isGlobal;
   UInt_t muonP_type, muonN_type;
 
   Int_t          gen_oniat_pdgId;
@@ -118,19 +119,9 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
 //
 // static data member definitions
 //
-static const double pi0_mass    =  0.1349766;
 static const Double_t psi1SMass =  3.09691;
-static const Double_t psi2SMass =  3.68610;
-static const Double_t ups1SMass =  9.46030;
 
-// 2011 par
-//static const double Y_sig_par_A = 0.058;
-//static const double Y_sig_par_B = 0.047;
-//static const double Y_sig_par_C = 0.22;
 
-// 2012 par
-static const double Y_sig_par_A = 62.62;
-static const double Y_sig_par_B = 56.3;
 static const double Y_sig_par_C = -20.77;
 
 //
