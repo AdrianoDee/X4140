@@ -117,10 +117,10 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   Bool_t muonP_rf_isTracker, muonP_rf_isGlobal, muonN_rf_isTracker, muonN_rf_isGlobal;
   UInt_t muonP_rf_type, muonN_rf_type;
 
-  Doublet_t track_KP_d0, track_KP_d0Err, track_KP_dz, track_KP_dxy;
+  Double_t track_KP_d0, track_KP_d0Err, track_KP_dz, track_KP_dxy;
   Int_t track_KP_nvsh, track_KP_nvph;
 
-  Doublet_t track_KN_d0, track_KN_d0Err, track_KN_dz, track_KN_dxy;
+  Double_t track_KN_d0, track_KN_d0Err, track_KN_dz, track_KN_dxy;
   Int_t track_KN_nvsh, track_KN_nvph;
 
   Int_t jpsitrktrk_rf_bindx;
