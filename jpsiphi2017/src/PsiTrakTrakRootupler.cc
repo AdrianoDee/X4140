@@ -120,8 +120,8 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   Doublet_t track_KP_d0, track_KP_d0Err, track_KP_dz, track_KP_dxy;
   Int_t track_KP_nvsh, track_KP_nvph;
 
-  Doublet_t track_KN_d0_rf, track_KN_d0Err_rf, track_KN_dz_rf, track_KN_dxy_rf;
-  Int_t track_KN_nvsh_rf, track_KN_nvph_rf;
+  Doublet_t track_KN_d0, track_KN_d0Err, track_KN_dz, track_KN_dxy;
+  Int_t track_KN_nvsh, track_KN_nvph;
 
   Int_t jpsitrktrk_rf_bindx;
 
