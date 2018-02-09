@@ -94,16 +94,13 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   TLorentzVector kaonp_rf_p4;
   TLorentzVector kaonn_rf_p4;
 
-  Int_t    jpsitrktrk_charge;
+  Int_t jpsitrktrk_charge;
 
   UInt_t jpsi_triggerMatch, jpsi_triggerMatch_rf;
 
   Double_t jpsitrktrk_vProb,  jpsitrktrk_vChi2, jpsitrktrk_cosAlpha, jpsitrktrk_ctauPV, jpsitrktrk_ctauErrPV;
-  Double_t jpsitrktrk_rf_vProb,  jpsitrktrk_rf_vChi2, jpsitrktrk_rf_cosAlpha, jpsitrktrk_rf_ctauPV, jpsitrktrk_rf_ctauErrPV;
-  Double_t track_d0, track_d0Err, track_dz, track_dxy;
 
   Double_t jpsi_vProb, jpsi_vChi2, jpsi_DCA, jpsi_ctauPV, jpsi_ctauErrPV, jpsi_cosAlpha;
-  Double_t jpsi_vProb_rf, jpsi_vChi2_rf, jpsi_DCA_rf, jpsi_ctauPV_rf, jpsi_ctauErrPV_rf, jpsi_cosAlpha_rf;
 
   Bool_t muonP_isLoose, muonP_isSoft, muonP_isMedium, muonP_isHighPt;
   Bool_t muonN_isLoose, muonN_isSoft, muonN_isMedium, muonN_isHighPt;
@@ -124,6 +121,8 @@ class PsiTrakTrakRootupler : public edm::EDAnalyzer {
   Int_t track_KN_nvsh, track_KN_nvph;
 
   Int_t jpsitrktrk_rf_bindx;
+
+  Int_t noXCandidates;
 
   Bool_t isBestCandidate;
 
@@ -191,6 +190,7 @@ PsiTrakTrakRootupler::PsiTrakTrakRootupler(const edm::ParameterSet& iConfig):
         jpsitrktrk_tree->Branch("event",              &event,              "event/I");
         jpsitrktrk_tree->Branch("numPrimaryVertices", &numPrimaryVertices, "numPrimaryVertices/I");
         jpsitrktrk_tree->Branch("trigger",            &trigger,            "trigger/I");
+        jpsitrktrk_tree->Branch("noXCandidates",      &noXCandidates,      "noXCandidates/I");
 
         //p4s
         jpsitrktrk_tree->Branch("jpsitrktrk_p4",   "TLorentzVector", &jpsitrktrk_p4);
@@ -346,6 +346,7 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
 
     pat::CompositeCandidate jpsitrktrk_rf_cand, jpsitrktrk_cand, *onia_cand, *phi_cand, *onia_cand_rf, *phi_cand_rf;
 
+    noXCandidates = (Int_t)(jpsitrktrk_rf_cand_handle->size());
     //Refitted Handle
     for (unsigned int i=0; i< jpsitrktrk_rf_cand_handle->size(); i++){
 
@@ -477,12 +478,12 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       jpsi_p4.SetPtEtaPhiM(onia_cand->pt(),onia_cand->eta(),onia_cand->phi(),onia_cand->mass());
       phi_p4.SetPtEtaPhiM(phi_cand->pt(), phi_cand->eta(), phi_cand->phi(), phi_cand->mass());
 
-      jpsi_vProb_rf        = onia_cand->userFloat("vProb");
-      jpsi_vChi2_rf        = onia_cand->userFloat("vNChi2");
-      jpsi_DCA_rf          = onia_cand->userFloat("DCA");
-      jpsi_ctauPV_rf       = onia_cand->userFloat("ppdlPV");
-      jpsi_ctauErrPV_rf    = onia_cand->userFloat("ppdlErrPV");
-      jpsi_cosAlpha_rf     = onia_cand->userFloat("cosAlpha");
+      jpsi_vProb        = onia_cand->userFloat("vProb");
+      jpsi_vChi2        = onia_cand->userFloat("vNChi2");
+      jpsi_DCA          = onia_cand->userFloat("DCA");
+      jpsi_ctauPf       = onia_cand->userFloat("ppdlPV");
+      jpsi_ctauErrPV    = onia_cand->userFloat("ppdlErrPV");
+      jpsi_cosAlpha     = onia_cand->userFloat("cosAlpha");
       jpsi_triggerMatch = PsiTrakTrakRootupler::isTriggerMatched(onia_cand);
 
       jpsitrktrk_tree->Fill();
