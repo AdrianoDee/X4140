@@ -481,7 +481,7 @@ void PsiTrakTrakRootupler::analyze(const edm::Event& iEvent, const edm::EventSet
       jpsi_vProb        = onia_cand->userFloat("vProb");
       jpsi_vChi2        = onia_cand->userFloat("vNChi2");
       jpsi_DCA          = onia_cand->userFloat("DCA");
-      jpsi_ctauPf       = onia_cand->userFloat("ppdlPV");
+      jpsi_ctauPV      = onia_cand->userFloat("ppdlPV");
       jpsi_ctauErrPV    = onia_cand->userFloat("ppdlErrPV");
       jpsi_cosAlpha     = onia_cand->userFloat("cosAlpha");
       jpsi_triggerMatch = PsiTrakTrakRootupler::isTriggerMatched(onia_cand);
