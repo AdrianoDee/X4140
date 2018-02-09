@@ -128,13 +128,15 @@ PsiPhiFourMuKinematicFit::~PsiPhiFourMuKinematicFit() {
 // ------------ method called to produce the data  ------------
 void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
+  int debug = 0;
+
   // Grab paramenters
   edm::Handle<pat::CompositeCandidateCollection> PsiPhiCandHandle;
   iEvent.getByToken(oniafourmu_cand_, PsiPhiCandHandle);
 
 // Kinematic refit collection
   std::unique_ptr< pat::CompositeCandidateCollection > PsiPhiCandRefitColl(new pat::CompositeCandidateCollection);
-
+  std::cout<<"Deb "<<++debug<<std::endl;
 // Kinematic fit
   edm::ESHandle<TransientTrackBuilder> theB;
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
@@ -200,7 +202,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
     RefCountedKinematicTree jpsiVertexFitTree;
     jpsiVertexFitTree = fitter.fit(jpsiParticles);
-
+    std::cout<<"Deb "<<++debug<<std::endl;
     if(jpsiVertexFitTree->isValid())
     {
 
@@ -212,7 +214,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
       jpsiVertexFitTree->movePointerToTheTop();
       jpsiVertexFitTree = csFitterJpsi.fit(jpsi_c,jpsiVertexFitTree);
-
+      std::cout<<"Deb "<<++debug<<std::endl;
       if (jpsiVertexFitTree->isValid()) {
 
         RefCountedKinematicTree phiVertexFitTree;
@@ -230,6 +232,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
       	MultiTrackKinematicConstraint *phi_mtc = new  TwoTrackMassKinematicConstraint(mass_phi);
       	RefCountedKinematicTree B0sTree = constVertexFitter.fit(allB0sDaughters,phi_mtc);
+        std::cout<<"Deb "<<++debug<<std::endl;
 
         if (!B0sTree->isEmpty())
         {
@@ -239,6 +242,9 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
           if (fitB0s->currentState().isValid())
           {
+
+
+            std::cout<<"Deb "<<++debug<<std::endl;
 
             float B0sM_fit  = fitB0s->currentState().mass();
 	          float B0sPx_fit = fitB0s->currentState().kinematicParameters().momentum().x();
@@ -339,7 +345,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
             patB0s.addDaughter(phiRefit,"phi");
             patB0s.addDaughter(patJpsi,"jpsi");
-
+            std::cout<<"Deb "<<++debug<<std::endl;
             PsiPhiCandRefitColl->push_back(patB0s);
           }
 
