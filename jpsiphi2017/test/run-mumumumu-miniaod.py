@@ -217,7 +217,8 @@ process.rootupleJPsi = cms.EDAnalyzer('Onia2MuMuRootupler',
                           onia_mass_cuts = cms.vdouble(2.8,3.3),
                           isMC = cms.bool(False),
                           OnlyBest = cms.bool(False),
-                          OnlyGen = cms.bool(False)
+                          OnlyGen = cms.bool(False),
+                          HLTs = hltpaths
                           )
 
 process.rootuplePhi = cms.EDAnalyzer('Onia2MuMuRootupler',
@@ -229,7 +230,8 @@ process.rootuplePhi = cms.EDAnalyzer('Onia2MuMuRootupler',
                           onia_mass_cuts = cms.vdouble(0.55,1.25),
                           isMC = cms.bool(False),
                           OnlyBest = cms.bool(False),
-                          OnlyGen = cms.bool(False)
+                          OnlyGen = cms.bool(False),
+                          HLTs = hltpaths
                           )
 
 process.p = cms.Path(process.xCandSequence * process.rootuple * process.rootupleJPsi * process.rootuplePhi)
