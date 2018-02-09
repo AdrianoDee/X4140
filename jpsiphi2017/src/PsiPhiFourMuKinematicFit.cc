@@ -169,8 +169,8 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
     JpsiTT.push_back((*theB).build(&JpsiTk[1]));
 
     std::vector<reco::TransientTrack> PhiTT;
-    PhiTT.push_back((*theB).build(PhiTk[0]));
-    PhiTT.push_back((*theB).build(PhiTk[1]));
+    PhiTT.push_back((*theB).build(&PhiTk[0]));
+    PhiTT.push_back((*theB).build(&PhiTk[1]));
 
     const pat::CompositeCandidate *jpsiCand = dynamic_cast<const pat::CompositeCandidate *>(oniat->daughter("jpsi"));
     const reco::Vertex thePrimaryV = *jpsiCand->userData<reco::Vertex>("PVwithmuons");
