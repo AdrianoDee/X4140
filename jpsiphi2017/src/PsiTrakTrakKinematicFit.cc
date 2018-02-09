@@ -179,7 +179,7 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
     KinematicConstrainedVertexFitter constVertexFitter;
     MultiTrackKinematicConstraint *onia_mtc = new  TwoTrackMassKinematicConstraint(mass_);
     RefCountedKinematicTree PsiTTree = constVertexFitter.fit(allPsiTDaughters,onia_mtc);
-    
+
     if (!PsiTTree->isEmpty()) {
        PsiTTree->movePointerToTheTop();
        RefCountedKinematicParticle fitPsiT = PsiTTree->currentParticle();
@@ -299,8 +299,8 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
             phi.addDaughter(patTk2,"trak2");
             phi.setP4(patTk.p4()+patTk2.p4());
 
-	    patPsiT.addDaughter(psi,"onia");
-	    patPsiT.addDaughter(phi,"ditrak");
+	          patPsiT.addDaughter(psi,"onia");
+	          patPsiT.addDaughter(phi,"ditrak");
 
             PsiTCandRefitColl->push_back(patPsiT);
           }
