@@ -1,4 +1,4 @@
-/*
+jpsi/*
    Package:    PsiPhiFourMuonsRootupler
    Class:      PsiPhiFourMuonsRootupler
 
@@ -367,7 +367,7 @@ int debug = 0;
       jpsiphi_rf_bindx     = jpsiphi_rf_cand.userInt("bIndex");
 
       if (jpsiphi_rf_bindx<0 || jpsiphi_rf_bindx>(int) jpsiphi_cand_handle->size()) {
-        std::cout << "Incorrect index for oniat combination " << run << "," << event <<"," << jpsiphi_rf_bindx << std::endl;
+        std::cout << "Incorrect index for oniatt combination " << run << "," << event <<"," << jpsiphi_rf_bindx << std::endl;
         continue;
       }
 
@@ -383,7 +383,7 @@ int debug = 0;
                               jpsiphi_rf_cand.daughter("phi")->phi(),jpsiphi_rf_cand.daughter("phi")->mass());
 
 
-      jpsi_cand_rf = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_rf_cand.daughter("onia"));
+      jpsi_cand_rf = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_rf_cand.daughter("jpsi"));
       phi_cand_rf = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_rf_cand.daughter("phi"));
 
       reco::Candidate::LorentzVector vJpsiP = jpsi_cand_rf->daughter("muon1")->p4();
