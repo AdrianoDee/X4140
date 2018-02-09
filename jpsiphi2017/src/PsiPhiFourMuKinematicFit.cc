@@ -130,6 +130,8 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
   int debug = 0;
 
+  std::cout << "PsiPhiFourMuKinematicFit" << std::endl;
+
   // Grab paramenters
   edm::Handle<pat::CompositeCandidateCollection> PsiPhiCandHandle;
   iEvent.getByToken(oniafourmu_cand_, PsiPhiCandHandle);
