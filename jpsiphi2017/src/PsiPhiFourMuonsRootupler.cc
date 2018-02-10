@@ -1,4 +1,4 @@
-jpsi/*
+/*
    Package:    PsiPhiFourMuonsRootupler
    Class:      PsiPhiFourMuonsRootupler
 
