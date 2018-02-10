@@ -386,7 +386,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
 
             patB0s.addDaughter(jpsiRefit,"phi");
-            patB0s.addDaughter(patJpsi,"jpsi");
+            patB0s.addDaughter(phiRefit,"jpsi");
             std::cout<<"Deb "<<debug<<std::endl;debug++;
             PsiPhiCandRefitColl->push_back(patB0s);
           }

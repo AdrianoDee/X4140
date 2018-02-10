@@ -64,7 +64,7 @@ config.General.requestName      = 'mmmm_jpsiTriggers_' + dataset[0]+'_'+dataset[
 config.General.transferLogs     = False
 
 config.section_('JobType')
-config.JobType.psetName         = '/lustre/home/adrianodif/CMSSW_9_2_13/src/mmkk/mmkk/test/run-mumukk-bphskim.py'
+config.JobType.psetName         = '/lustre/home/adrianodif/CMSSW_9_2_13/src/mmkk/mmkk/test/run-mumumumu-miniaod.py'
 config.JobType.pluginName       = 'Analysis'
 config.JobType.maxMemoryMB      = 2500
 config.JobType.maxJobRuntimeMin = 2750
