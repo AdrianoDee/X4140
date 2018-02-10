@@ -110,7 +110,7 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   Double_t jpsi_vProb, jpsi_vChi2, jpsi_DCA, jpsi_ctauPV, jpsi_ctauErrPV, jpsi_cosAlpha;
   Double_t phi_vProb, phi_vChi2, phi_DCA, phi_ctauPV, phi_ctauErrPV, phi_cosAlpha;
   Double_t  jpsiphi_jpsiM_fit, jpsiphi_jpsiPx_fit, jpsiphi_jpsiPy_fit, jpsiphi_jpsiPz_fit;
-  
+
   Bool_t muonJpsiP_isLoose, muonJpsiP_isSoft, muonJpsiP_isMedium, muonJpsiP_isHighPt;
   Bool_t muonJpsiN_isLoose, muonJpsiN_isSoft, muonJpsiN_isMedium, muonJpsiN_isHighPt;
   Bool_t muonPhiP_isLoose, muonPhiP_isSoft, muonPhiP_isMedium, muonPhiP_isHighPt;
@@ -419,7 +419,7 @@ int debug = 0;
 
       pat::CompositeCandidate jpsiphi_not_rf_cand = jpsiphi_cand_handle->at(jpsiphi_rf_bindx);
 
-      jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_not_rf_cand.daughter("onia"));
+      jpsi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_not_rf_cand.daughter("jpsi"));
       phi_cand = dynamic_cast <pat::CompositeCandidate *>(jpsiphi_not_rf_cand.daughter("phi"));
 
       jpsiphi_not_rf_p4.SetPtEtaPhiM(jpsiphi_not_rf_cand.pt(),jpsiphi_not_rf_cand.eta(),jpsiphi_not_rf_cand.phi(),jpsiphi_not_rf_cand.mass());
