@@ -192,11 +192,12 @@ def GetMuPerLumiHisto(histo,hlt):
    if val>0:
       #runcontent = histo.GetBinContent(ix)
       runcontent = val
-      grep_cmd='cat ' + str(outbril) + ' | grep '+str(irun)+': | grep -v Warning | grep -v WARNING | cut -d"|" -f7'
+      grep_cmd='cat ' + str(inpbril) + ' | grep '+str(irun)+': | grep -v Warning | grep -v WARNING | cut -d"|" -f7'
       status_cmd,lumiout=commands.getstatusoutput(grep_cmd)
 
-    #   print(irun)
-    #   print(lumiout)
+      if lumiout == '':
+          continue
+
       lumiclean = string.strip(lumiout)
       lumiclean = lumiout.strip(" ")
       lumiclean = lumiclean.strip("\n")
@@ -208,8 +209,8 @@ def GetMuPerLumiHisto(histo,hlt):
       if status_cmd != 0:
          print "ERROR %s for run %i"%(lumiout,irun)
       else:
-         print(lumiclean)
-         lumi =float(string.strip(lumiclean)) / 1000.
+         #print(lumiclean)
+         lumi =float(string.strip(lumiclean)) / 1.
 
          nmuperlumi = runcontent/lumi
          err=sqrt(runcontent)/lumi
@@ -262,13 +263,13 @@ if __name__ == '__main__':
       histo_lumi=GetMuPerLumiHisto(histo,hlt)
       cl = TCanvas("cl","cl",1200, 900)
       cl.SetLogy(0)
-      printRunHisto(histo_lumi,'# JPsi (from X)/lumi (mb)' + hlt)
+      printRunHisto(histo_lumi,'# JPsi (from X)/lumi (ub)' + hlt)
       cl.SaveAs("JPsivsrun_lumi%s.eps"%(hlt))
 
       clr = TCanvas("clr","clr",1200, 900)
       clr.SetLogy(0)
       histo_lumi_rebin=ReBinRunHisto(histo_lumi,'JPsilumi_rebin' + hlt)
-      printRunHisto(histo_lumi_rebin,'# JPsi (from X)/lumi (mb)')
+      printRunHisto(histo_lumi_rebin,'# JPsi (from X)/lumi (ub)')
       clr.SaveAs("JPsivsrunrebin_lumi%s.eps"%(hlt))
 
       hfile.cd()

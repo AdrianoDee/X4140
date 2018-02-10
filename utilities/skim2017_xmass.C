@@ -784,9 +784,9 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
   Long64_t nentries = oldtree->GetEntries();
   Double_t xM = 0.0, xDeltaM = 0.0;
 
-  Float_t cosA  = 0.0;
+  Double_t cosA  = 0.0;
 
-  Double_t jPsiM  = 0.0;
+  Double_t jPsiM  = 0.0, phiM = 0.0;
 
   Float_t ctau  = 0.0;
   Float_t ctauErr  = 0.0;
@@ -806,7 +806,6 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
   Double_t xyl   = 0.0;
   Double_t xylErr   = 0.0;
 
-  oldtree->SetBranchAddress("psi_vProb",&vProb);
   oldtree->SetBranchAddress("trigger",&trigger);
   oldtree->SetBranchAddress("run",&run);
   oldtree->SetBranchAddress("event",&ev);
@@ -816,6 +815,13 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
   // oldtree->SetBranchAddress("ppdlErrPV",&ctauErr);
   oldtree->SetBranchAddress("psi_p4",&jP4);
 
+  oldtree->SetBranchAddress("oniat_ctauPV",&xyl);
+  oldtree->SetBranchAddress("oniat_ctauErrPV",&xylErr);
+  oldtree->SetBranchAddress("oniat_cosAlpha",&cosA);
+  oldtree->SetBranchAddress("oniat_vProb",&vProb);
+
+  oldtree->SetBranchAddress("phi_p4",&pP4);
+  oldtree->SetBranchAddress("oniat_rf_p4",&xP4);
   // std::string hltsName[13] = {
   //   "HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi", //0
   // "HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi", //1
@@ -835,14 +841,14 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
   std::vector <int> triggersToTest;
 
   //OUR TRIGGERs
-  triggersToTest.push_back(0);
+  // triggersToTest.push_back(0);
   triggersToTest.push_back(1);
 
-  //PHI INCLUSIVE TRIGGERs
-  triggersToTest.push_back(2);
-  triggersToTest.push_back(3);
-  triggersToTest.push_back(4);
-  triggersToTest.push_back(5);
+  // //PHI INCLUSIVE TRIGGERs
+  // triggersToTest.push_back(2);
+  // triggersToTest.push_back(3);
+  // triggersToTest.push_back(4);
+  // triggersToTest.push_back(5);
 
   //JPSI INCLUSIVE TRIGGERs
   triggersToTest.push_back(10);
@@ -855,8 +861,6 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
   triggersToTest.push_back(8); //dis
   triggersToTest.push_back(9); //dis
 
-
-
   //oldtree->SetBranchAddress("oniat_rf_p4",&xP4);
 
   TFile *newfile = new TFile((treename + "_jpsisRun_" + filename).data(),"RECREATE");
@@ -866,7 +870,7 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
   for (size_t i = 0; i < triggersToTest.size(); i++)
     JPsi_vs_run_hists.push_back(new TH1F (("JPsi_vs_run_" + std::to_string(triggersToTest[i])).data(), "JPsi_vs_run; Run[#];J/Psi[#]",40000, 280000, 320000));
 
-  TH1F* JPsi_vs_run = new TH1F ("JPsi_vs_run", "JPsi_vs_run; Run[#];J/Psi[#]",20000, 190000, 210000);
+  TH1F* JPsi_vs_run = new TH1F ("JPsi_vs_run", "JPsi_vs_run; Run[#];J/Psi[#]",40000, 280000, 320000);
 
   std::map<Int_t,int> eventMap;
   std::map<Int_t,int> runMap;
@@ -896,12 +900,16 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
     std::bitset<16> tB(trigger);
 
     bool tested = false;
+    bool phimass = pP4->M() > 1.015 && pP4->M() < 1.025;
+    bool xmass = xP4->M() > 5.15 && xP4->M() < 5.55;
 
     for (size_t j = 0; j < triggersToTest.size(); j++){
 
       int testingTrigger = triggersToTest[j];
 
-      if (tB.test(testingTrigger) && vProb > 0.0)
+      //if (tB.test(testingTrigger) && vProb > 0.0)
+
+      if (tB.test(testingTrigger) && xyl/xylErr > 3.0 && cosA > 0.997 && jP4->Pt() > 7.0 && vProb > 0.0 && phimass && xmass)
       {
         tested = true;
         JPsi_vs_run_hists[j]->Fill(run);
