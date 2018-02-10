@@ -869,6 +869,7 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
   TH1F* JPsi_vs_run = new TH1F ("JPsi_vs_run", "JPsi_vs_run; Run[#];J/Psi[#]",20000, 190000, 210000);
 
   std::map<Int_t,int> eventMap;
+  std::map<Int_t,int> runMap;
 
   for (Long64_t i=0;i<nentries; i++) {
 
@@ -889,7 +890,8 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
     oldtree->GetEntry(i);
 
     if(eventMap.find(ev) != eventMap.end())
-      continue;
+      if(runMap.find(run) != runMap.end())
+        continue;
 
     std::bitset<16> tB(trigger);
 
@@ -904,6 +906,8 @@ int jpsiRunsMMKK(std::string path, std::string filename, std::string treename, s
         tested = true;
         JPsi_vs_run_hists[j]->Fill(run);
         eventMap[ev] = 1;
+        runMap[run] = 1;
+        std::cout<<run<<std::endl;
       }
     }
 
