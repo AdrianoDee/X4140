@@ -109,7 +109,8 @@ class PsiPhiFourMuonsRootupler : public edm::EDAnalyzer {
   //Double_t track_d0, track_d0Err, track_dz, track_dxy;
   Double_t jpsi_vProb, jpsi_vChi2, jpsi_DCA, jpsi_ctauPV, jpsi_ctauErrPV, jpsi_cosAlpha;
   Double_t phi_vProb, phi_vChi2, phi_DCA, phi_ctauPV, phi_ctauErrPV, phi_cosAlpha;
-
+  Double_t  jpsiphi_jpsiM_fit, jpsiphi_jpsiPx_fit, jpsiphi_jpsiPy_fit, jpsiphi_jpsiPz_fit;
+  
   Bool_t muonJpsiP_isLoose, muonJpsiP_isSoft, muonJpsiP_isMedium, muonJpsiP_isHighPt;
   Bool_t muonJpsiN_isLoose, muonJpsiN_isSoft, muonJpsiN_isMedium, muonJpsiN_isHighPt;
   Bool_t muonPhiP_isLoose, muonPhiP_isSoft, muonPhiP_isMedium, muonPhiP_isHighPt;
@@ -218,6 +219,12 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
         jpsiphi_tree->Branch("jpsiphi_ctauPV",     &jpsiphi_ctauPV,       "jpsiphi_ctauPV/D");
         jpsiphi_tree->Branch("jpsiphi_ctauErrPV",  &jpsiphi_ctauErrPV,    "jpsiphi_ctauErrPV/D");
         jpsiphi_tree->Branch("jpsiphi_charge",     &jpsiphi_charge,       "jpsiphi_charge/I");
+
+        jpsiphi_tree->Branch("jpsiphi_jpsiM_fit",  &jpsiphi_jpsiM_fit,    "jpsiphi_jpsiM_fit/D");
+        jpsiphi_tree->Branch("jpsiphi_jpsiPx_fit",  &jpsiphi_jpsiPx_fit,    "jpsiphi_jpsiPx_fit/D");
+        jpsiphi_tree->Branch("jpsiphi_jpsiPy_fit",  &jpsiphi_jpsiPy_fit,    "jpsiphi_jpsiPy_fit/D");
+        jpsiphi_tree->Branch("jpsiphi_jpsiPz_fit",  &jpsiphi_jpsiPz_fit,    "jpsiphi_jpsiPz_fit/D");
+
 
         jpsiphi_tree->Branch("muonJpsiP_isLoose",        &muonJpsiP_isLoose,        "muonJpsiP_isLoose/O");
         jpsiphi_tree->Branch("muonJpsiP_isSoft",        &muonJpsiP_isSoft,        "muonJpsiP_isSoft/O");
@@ -376,6 +383,11 @@ int debug = 0;
       jpsiphi_cosAlpha  = jpsiphi_rf_cand.userFloat("cosAlpha");
       jpsiphi_ctauPV    = jpsiphi_rf_cand.userFloat("ctauPV");
       jpsiphi_ctauErrPV = jpsiphi_rf_cand.userFloat("ctauErrPV");
+      jpsiphi_jpsiM_fit = jpsiphi_rf_cand.userFloat("jpsiM_fit");
+      jpsiphi_jpsiPx_fit = jpsiphi_rf_cand.userFloat("jpsiPx_fit");
+      jpsiphi_jpsiPy_fit = jpsiphi_rf_cand.userFloat("jpsiPy_fit");
+      jpsiphi_jpsiPz_fit = jpsiphi_rf_cand.userFloat("jpsiPz_fit");
+
       jpsiphi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.pt(),jpsiphi_rf_cand.eta(),jpsiphi_rf_cand.phi(),jpsiphi_rf_cand.mass());
       jpsi_rf_p4.SetPtEtaPhiM(jpsiphi_rf_cand.daughter("jpsi")->pt(),jpsiphi_rf_cand.daughter("jpsi")->eta(),
                               jpsiphi_rf_cand.daughter("jpsi")->phi(),jpsiphi_rf_cand.daughter("jpsi")->mass());

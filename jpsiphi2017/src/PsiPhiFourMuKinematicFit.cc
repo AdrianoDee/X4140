@@ -249,6 +249,10 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
             std::cout<<"Deb "<<debug<<std::endl;debug++;
 
             float B0sM_fit  = fitB0s->currentState().mass();
+
+            if ( B0sM_fit < FourOniaMassCuts_[0] || B0sM_fit > FourOniaMassCuts_[1])
+            continue;
+
 	          float B0sPx_fit = fitB0s->currentState().kinematicParameters().momentum().x();
             float B0sPy_fit = fitB0s->currentState().kinematicParameters().momentum().y();
 	          float B0sPz_fit = fitB0s->currentState().kinematicParameters().momentum().z();
@@ -262,7 +266,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
             float B0s_en_fit = sqrt(B0sM_fit*B0sM_fit+B0sPx_fit*B0sPx_fit+
                                                        B0sPy_fit*B0sPy_fit+B0sPz_fit*B0sPz_fit);
 
-            if ( B0sM_fit < FourOniaMassCuts_[0] || B0sM_fit > FourOniaMassCuts_[1])
+            if ( B0sVtxP_fit < 0.0 )
             continue;
 
             TVector3 vtx;
@@ -340,12 +344,48 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 	          float jpsiPy_fit = fitJpsi->currentState().kinematicParameters().momentum().y();
             float jpsiPz_fit = fitJpsi->currentState().kinematicParameters().momentum().z();
 
-            reco::CompositeCandidate recoJpsi(0, math::XYZTLorentzVector(jpsiPx_fit, jpsiPy_fit, jpsiPz_fit,
-                                               sqrt(jpsiM_fit*jpsiM_fit + jpsiPx_fit*jpsiPx_fit + jpsiPy_fit*jpsiPy_fit +
-                                               jpsiPz_fit*jpsiPz_fit)), math::XYZPoint(B0sVtxX_fit, B0sVtxY_fit, B0sVtxZ_fit), 22);
-            pat::CompositeCandidate patJpsi(recoJpsi);
+            patB0s.addUserFloat("jpsiM_fit",jpsiM_fit);
+            patB0s.addUserFloat("jpsiPx_fit",jpsiPx_fit);
+            patB0s.addUserFloat("jpsiPy_fit",jpsiPy_fit);
+            patB0s.addUserFloat("jpsiPz_fit",jpsiPz_fit);
 
-            patB0s.addDaughter(phiRefit,"phi");
+            child = jpsiVertexFitTree->movePointerToTheFirstChild();
+            RefCountedKinematicParticle fitjPsiMu1 = jpsiVertexFitTree->currentParticle();
+            if (!child) break;
+
+            float jpsiMu1M_fit  = fitjPsiMu1->currentState().mass();
+            float jpsiMu1Q_fit  = fitjPsiMu1->currentState().particleCharge();
+            float jpsiMu1Px_fit = fitjPsiMu1->currentState().kinematicParameters().momentum().x();
+            float jpsiMu1Py_fit = fitjPsiMu1->currentState().kinematicParameters().momentum().y();
+            float jpsiMu1Pz_fit = fitjPsiMu1->currentState().kinematicParameters().momentum().z();
+            reco::CompositeCandidate recojPsiMu1(jpsiMu1Q_fit, math::XYZTLorentzVector(jpsiMu1Px_fit, jpsiMu1Py_fit, jpsiMu1Pz_fit,
+                                             sqrt(jpsiMu1M_fit*jpsiMu1M_fit + jpsiMu1Px_fit*jpsiMu1Px_fit + jpsiMu1Py_fit*jpsiMu1Py_fit +
+                                             jpsiMu1Pz_fit*jpsiMu1Pz_fit)), math::XYZPoint(B0sVtxX_fit, B0sVtxY_fit, B0sVtxZ_fit), 13);
+            pat::CompositeCandidate patjPsiMu1(recojPsiMu1);
+
+            //get second muon
+            child = jpsiVertexFitTree->movePointerToTheNextChild();
+            RefCountedKinematicParticle fitjPsiMu2 = jpsiVertexFitTree->currentParticle();
+            if (!child) break;
+
+            float jpsiMu2M_fit  = fitjPsiMu2->currentState().mass();
+            float jpsiMu2Q_fit  = fitjPsiMu2->currentState().particleCharge();
+            float jpsiMu2Px_fit = fitjPsiMu2->currentState().kinematicParameters().momentum().x();
+            float jpsiMu2Py_fit = fitjPsiMu2->currentState().kinematicParameters().momentum().y();
+            float jpsiMu2Pz_fit = fitjPsiMu2->currentState().kinematicParameters().momentum().z();
+            reco::CompositeCandidate recojPsiMu2(jpsiMu2Q_fit, math::XYZTLorentzVector(jpsiMu2Px_fit, jpsiMu2Py_fit, jpsiMu2Pz_fit,
+                                             sqrt(jpsiMu2M_fit*jpsiMu2M_fit + jpsiMu2Px_fit*jpsiMu2Px_fit + jpsiMu2Py_fit*jpsiMu2Py_fit +
+                                             jpsiMu2Pz_fit*jpsiMu2Pz_fit)), math::XYZPoint(B0sVtxX_fit, B0sVtxY_fit, B0sVtxZ_fit), 13);
+            pat::CompositeCandidate patjPsiMu2(recojPsiMu2);
+
+            pat::CompositeCandidate jpsiRefit;
+            jpsiRefit.addDaughter(patjPsiMu1,"muon1");
+            jpsiRefit.addDaughter(patjPsiMu2,"muon2");
+            jpsiRefit.setP4(patjPsiMu1.p4()+patjPsiMu2.p4());
+
+
+
+            patB0s.addDaughter(jpsiRefit,"phi");
             patB0s.addDaughter(patJpsi,"jpsi");
             std::cout<<"Deb "<<debug<<std::endl;debug++;
             PsiPhiCandRefitColl->push_back(patB0s);

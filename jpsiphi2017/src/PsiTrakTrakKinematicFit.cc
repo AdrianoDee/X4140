@@ -261,8 +261,8 @@ void PsiTrakTrakKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup&
             pat::CompositeCandidate patMu2(recoMu2);
 
 // Define psi from two muons
-	    pat::CompositeCandidate psi;
-	    psi.addDaughter(patMu1,"muon1");
+	          pat::CompositeCandidate psi;
+	          psi.addDaughter(patMu1,"muon1");
             psi.addDaughter(patMu2,"muon2");
             psi.setP4(patMu1.p4()+patMu2.p4());
 // get kaon
