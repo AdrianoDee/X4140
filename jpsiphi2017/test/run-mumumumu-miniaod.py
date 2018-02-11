@@ -220,7 +220,8 @@ process.xCandSequence = cms.Sequence(
                    process.JPsi2MuMuPAT *
                    process.Phi2MuMuPAT *
                    process.PsiPhiProducer *
-                   process.PsiPhiFitter
+                   process.PsiPhiFitter *
+                   process.rootuple
 				   )
 
 process.rootupleJPsi = cms.EDAnalyzer('Onia2MuMuRootupler',
@@ -249,4 +250,12 @@ process.rootuplePhi = cms.EDAnalyzer('Onia2MuMuRootupler',
                           HLTs = hltpaths
                           )
 
-process.p = cms.Path(process.xCandSequence * process.rootuple * process.rootupleJPsi * process.rootuplePhi)
+process.mumuSequence = cms.Sequence(
+                    process.triggerSelection *
+                    process.JPsi2MuMuPAT *
+                    process.Phi2MuMuPAT *
+                    process.rootupleJPsi *
+                    process.rootuplePhi
+)
+
+process.p = cms.Path(process.xCandSequence * process.mumuSequence)
