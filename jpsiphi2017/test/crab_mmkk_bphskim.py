@@ -89,5 +89,5 @@ config.section_('Site')
 config.Site.storageSite         = 'T2_IT_Bari'
 #config.Site.blacklist          = ['T2_IN_TIFR','T2_US_Vanderbilt']
 config.Site.blacklist           = ['T1*', 'T3_US_UMiss']
-config.Site.whitelist           = ['T2_IT_*','T3*','T2_US']
+config.Site.whitelist           = ['T2_IT_*','T3*']
 #config.Site.whitelist          = ['T2_IT_Bari','T2_IT_Pisa','T2_IT_Rome','T2_IT_Legnaro']

@@ -142,7 +142,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 // Kinematic fit
   edm::ESHandle<TransientTrackBuilder> theB;
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
-
+  std::cout<<"-Debug "<<++debug<<std::endl;
   int indexPsiT=-1;
   for (pat::CompositeCandidateCollection::const_iterator oniat=PsiTCandHandle->begin(); oniat!=PsiTCandHandle->end(); ++oniat) {
 
@@ -161,14 +161,14 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
-
+    std::cout<<"Debug "<<++debug<<std::endl;
     if(!trak1->hasTrackDetails())
       continue;
     if(!trak2->hasTrackDetails())
       continue;
 
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
-
+    std::cout<<"Debug 0"<<++debug<<std::endl;
     std::vector<reco::TransientTrack> MuMuTT;
     MuMuTT.push_back((*theB).build(&JpsiTk[0]));
     MuMuTT.push_back((*theB).build(&JpsiTk[1]));
@@ -177,6 +177,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     KinematicParticleFactoryFromTransientTrack pFactory;
 
+    std::cout<<"Debug 1"<<++debug<<std::endl;
     const ParticleMass muonMass(0.1056583);
     float muonSigma = muonMass*1E-6;
     const ParticleMass kaonMass1(MassTraks_[0]);
@@ -202,7 +203,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
        double oniat_ma_fit = 14000.;
        double oniat_vp_fit = -9999.;
        double oniat_x2_fit = 10000.;
-
+       std::cout<<"Debug 2"<<++debug<<std::endl;
        if (fitPsiT->currentState().isValid()) {
          oniat_ma_fit = fitPsiT->currentState().mass();
          oniat_x2_fit = PsiTDecayVertex->chiSquared();
