@@ -179,9 +179,9 @@ PsiPhiFourMuonsRootupler::PsiPhiFourMuonsRootupler(const edm::ParameterSet& iCon
         jpsiphi_tree->Branch("numPrimaryVertices", &numPrimaryVertices, "numPrimaryVertices/I");
         jpsiphi_tree->Branch("trigger",            &trigger,            "trigger/I");
 
-        jpsiphi_tree->Branch("jpsiphi_p4",   "TLorentzVector", &jpsiphi_p4);
-        jpsiphi_tree->Branch("phi_p4",     "TLorentzVector", &phi_p4);
-        jpsiphi_tree->Branch("jpsi_p4",     "TLorentzVector", &jpsi_p4);
+        jpsiphi_tree->Branch("jpsiphi_p4",   "TLorentzVector", &jpsiphi_not_rf_p4);
+        jpsiphi_tree->Branch("phi_p4",     "TLorentzVector", &phi_not_rf_p4);
+        jpsiphi_tree->Branch("jpsi_p4",     "TLorentzVector", &jpsi_not_rf_p4);
         jpsiphi_tree->Branch("muonPhiN_p4",   "TLorentzVector", &muonPhiN_p4);
         jpsiphi_tree->Branch("muonJpsiN_p4",   "TLorentzVector", &muonJpsiN_p4);
         jpsiphi_tree->Branch("muonJpsiP_p4",   "TLorentzVector", &muonJpsiP_p4);
