@@ -162,23 +162,18 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
 
-    if(trak1->hasTrackDetails())
-      JpsiTk.push_back((trak1->pseudoTrack()));
-    else
+    if(!trak1->hasTrackDetails())
       continue;
-
-    if(trak2->hasTrackDetails())
-        JpsiTk.push_back((trak2->pseudoTrack()));
-    else
-      continue;
-
+    if(!trak2->hasTrackDetails())
+      continue
+    
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
 
     std::vector<reco::TransientTrack> MuMuTT;
     MuMuTT.push_back((*theB).build(&JpsiTk[0]));
     MuMuTT.push_back((*theB).build(&JpsiTk[1]));
-    MuMuTT.push_back((*theB).build(&JpsiTk[2])); // K+
-    MuMuTT.push_back((*theB).build(&JpsiTk[3])); // K+
+    MuMuTT.push_back((*theB).build(&(trak1->pseudoTrack()))); // K+
+    MuMuTT.push_back((*theB).build(&(trak2->pseudoTrack()))); // K+
 
     KinematicParticleFactoryFromTransientTrack pFactory;
 
