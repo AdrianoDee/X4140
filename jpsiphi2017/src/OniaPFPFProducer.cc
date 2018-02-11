@@ -67,10 +67,9 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
          }
          } // loop over second track
        }   // loop on track candidates
-
+       if (OnlyBest_) break;
      }
-     if (OnlyBest_) break;
-  }
+
   if ( ncombo != OniaTTCandColl->size() ) std::cout <<"ncombo ("<<ncombo<< ") != OniaTT ("<<OniaTTCandColl->size()<<")"<< std::endl;
   if ( !onia->empty() )  nonia++;
   if ( ncombo > 0 ) nreco++;
