@@ -17,6 +17,7 @@
 
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/PatCandidates/interface/CompositeCandidate.h"
+#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/PatCandidates/interface/UserData.h"
 #include "DataFormats/PatCandidates/interface/GenericParticle.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
@@ -46,11 +47,11 @@ class OniaPFPFProducer : public edm::EDProducer {
   bool OnlyBest_;
 
   reco::Candidate::LorentzVector convertVector(const math::XYZTLorentzVectorF& v);
-  bool IsTheSame(const pat::GenericParticle& tk, const pat::Muon& mu);
+  bool IsTheSame(const pat::PackedCandidate& tk, const pat::Muon& mu);
   const pat::CompositeCandidate makeOniaTTCandidate(const pat::CompositeCandidate& onia,
 						    const pat::CompositeCandidate& tt);
-  const pat::CompositeCandidate makeTTCandidate(const pat::GenericParticle& trak1,
-                                                const pat::GenericParticle& trak2);
+  const pat::CompositeCandidate makeTTCandidate(const pat::PackedCandidate& trak1,
+                                                const pat::PackedCandidate& trak2);
   int candidates;
   int nevents;
   int nonia;
