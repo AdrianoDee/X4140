@@ -128,17 +128,13 @@ PsiPhiFourMuKinematicFit::~PsiPhiFourMuKinematicFit() {
 // ------------ method called to produce the data  ------------
 void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
-  int debug = 0;
-
-  std::cout << "PsiPhiFourMuKinematicFit" << std::endl;
-
   // Grab paramenters
   edm::Handle<pat::CompositeCandidateCollection> PsiPhiCandHandle;
   iEvent.getByToken(oniafourmu_cand_, PsiPhiCandHandle);
 
 // Kinematic refit collection
   std::unique_ptr< pat::CompositeCandidateCollection > PsiPhiCandRefitColl(new pat::CompositeCandidateCollection);
-  std::cout<<"Deb "<<debug<<std::endl;debug++;
+
 // Kinematic fit
   edm::ESHandle<TransientTrackBuilder> theB;
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
@@ -158,34 +154,34 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
       ( dynamic_cast<const pat::Muon*>(oniat->daughter("jpsi")->daughter("muon1") ) )->innerTrack(),
       ( dynamic_cast<const pat::Muon*>(oniat->daughter("jpsi")->daughter("muon2") ) )->innerTrack()
     };
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     reco::TrackRef PhiTk[2]={
       ( dynamic_cast<const pat::Muon*>(oniat->daughter("phi")->daughter("muon1") ) )->innerTrack(),
       ( dynamic_cast<const pat::Muon*>(oniat->daughter("phi")->daughter("muon2") ) )->innerTrack()
     };
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     std::vector<reco::TransientTrack> JpsiTT;
     JpsiTT.push_back((*theB).build(&JpsiTk[0]));
     JpsiTT.push_back((*theB).build(&JpsiTk[1]));
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     std::vector<reco::TransientTrack> PhiTT;
     PhiTT.push_back((*theB).build(&PhiTk[0]));
     PhiTT.push_back((*theB).build(&PhiTk[1]));
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     const pat::CompositeCandidate *jpsiCand = dynamic_cast<const pat::CompositeCandidate *>(oniat->daughter("jpsi"));
     const reco::Vertex thePrimaryV = *jpsiCand->userData<reco::Vertex>("PVwithmuons");
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     std::vector<reco::TransientTrack> fourMuTT;
     fourMuTT.push_back((*theB).build(&JpsiPhiTk[0]));
     fourMuTT.push_back((*theB).build(&JpsiPhiTk[1]));
     fourMuTT.push_back((*theB).build(&JpsiPhiTk[2]));
     fourMuTT.push_back((*theB).build(&JpsiPhiTk[3]));
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     KinematicParticleFactoryFromTransientTrack pFactory;
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     const ParticleMass muonMass(0.1056583);
     float muonSigma = muonMass*1E-6;
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     std::vector<RefCountedKinematicParticle> allFourMuDaughters;
     allFourMuDaughters.push_back(pFactory.particle (fourMuTT[0], muonMass, float(0), float(0), muonSigma));
     allFourMuDaughters.push_back(pFactory.particle (fourMuTT[1], muonMass, float(0), float(0), muonSigma));
@@ -195,7 +191,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
     std::vector<RefCountedKinematicParticle> jpsiParticles;
     jpsiParticles.push_back(pFactory.particle(JpsiTT[0],muonMass,float(0),float(0),muonSigma));
     jpsiParticles.push_back(pFactory.particle(JpsiTT[1],muonMass,float(0),float(0),muonSigma));
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     std::vector<RefCountedKinematicParticle> phiParticles;
     phiParticles.push_back(pFactory.particle(PhiTT[0],muonMass,float(0),float(0),muonSigma));
     phiParticles.push_back(pFactory.particle(PhiTT[1],muonMass,float(0),float(0),muonSigma));
@@ -204,7 +200,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
     RefCountedKinematicTree jpsiVertexFitTree;
     jpsiVertexFitTree = fitter.fit(jpsiParticles);
-    std::cout<<"Deb "<<debug<<std::endl;debug++;
+
     if(jpsiVertexFitTree->isValid())
     {
 
@@ -216,7 +212,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
       jpsiVertexFitTree->movePointerToTheTop();
       jpsiVertexFitTree = csFitterJpsi.fit(jpsi_c,jpsiVertexFitTree);
-      std::cout<<"Deb "<<debug<<std::endl;debug++;
+
       if (jpsiVertexFitTree->isValid()) {
 
         RefCountedKinematicTree phiVertexFitTree;
@@ -234,7 +230,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
       	MultiTrackKinematicConstraint *phi_mtc = new  TwoTrackMassKinematicConstraint(mass_phi);
       	RefCountedKinematicTree B0sTree = constVertexFitter.fit(allB0sDaughters,phi_mtc);
-        std::cout<<"Deb "<<debug<<std::endl;debug++;
+
 
         if (!B0sTree->isEmpty())
         {
@@ -246,7 +242,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
           {
 
 
-            std::cout<<"Deb "<<debug<<std::endl;debug++;
+
 
             float B0sM_fit  = fitB0s->currentState().mass();
 
@@ -387,7 +383,7 @@ void PsiPhiFourMuKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup
 
             patB0s.addDaughter(jpsiRefit,"phi");
             patB0s.addDaughter(phiRefit,"jpsi");
-            std::cout<<"Deb "<<debug<<std::endl;debug++;
+
             PsiPhiCandRefitColl->push_back(patB0s);
           }
 
