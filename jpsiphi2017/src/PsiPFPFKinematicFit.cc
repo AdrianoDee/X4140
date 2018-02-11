@@ -147,14 +147,14 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
   for (pat::CompositeCandidateCollection::const_iterator oniat=PsiTCandHandle->begin(); oniat!=PsiTCandHandle->end(); ++oniat) {
 
     const pat::CompositeCandidate *dimuonC = dynamic_cast<const pat::CompositeCandidate *>(oniat->daughter("onia"));
-    const pat::CompositeCandidate *ditrakC = dynamic_cast<const pat::GenericParticle*>(oniat->daughter("ditrak"));
+    const pat::CompositeCandidate *ditrakC = dynamic_cast<const pat::CompositeCandidate*>(oniat->daughter("ditrak"));
 
     indexPsiT++;
 
     std::vector <reco::TrackRef> JpsiTk;
 
-    const pat::PackedCandidate *trak1 = dynamic_cast<const pat::GenericParticle*>(oniat->daughter("ditrak")->daughter("trak1"));
-    const pat::PackedCandidate *trak2 = dynamic_cast<const pat::GenericParticle*>(oniat->daughter("ditrak")->daughter("trak2"));
+    const pat::PackedCandidate *trak1 = dynamic_cast<const pat::PackedCandidate*>(oniat->daughter("ditrak")->daughter("trak1"));
+    const pat::PackedCandidate *trak2 = dynamic_cast<const pat::PackedCandidate*>(oniat->daughter("ditrak")->daughter("trak2"));
 
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack())
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack())
