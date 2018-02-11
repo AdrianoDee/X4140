@@ -162,12 +162,12 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
-    std::cout<<"Debug "<<++debug<<std::endl;
+
     if(!trak1->hasTrackDetails())
       continue;
     if(!trak2->hasTrackDetails())
       continue;
-
+    std::cout<<"Debug a"<<++debug<<std::endl;
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
     std::cout<<"Debug 0"<<++debug<<std::endl;
     std::vector<reco::TransientTrack> MuMuTT;
