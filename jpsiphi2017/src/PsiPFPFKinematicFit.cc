@@ -161,15 +161,19 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     if(trak1->hasTrackDetails())
       if(trak1->bestTrack())
-      JpsiTk.push_back(*(trak1->bestTrack()));
+        JpsiTk.push_back(*(trak1->bestTrack()));
       else
-      JpsiTk.push_back((trak1->pseudoTrack()));
+        JpsiTk.push_back((trak1->pseudoTrack()));
+    else
+      continue;
 
     if(trak2->hasTrackDetails())
       if(trak2->bestTrack())
-      JpsiTk.push_back(*(trak2->bestTrack()));
+        JpsiTk.push_back(*(trak2->bestTrack()));
       else
-      JpsiTk.push_back(trak2->pseudoTrack());
+        JpsiTk.push_back(trak2->pseudoTrack());
+    else
+      continue;
 
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
 
