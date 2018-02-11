@@ -353,7 +353,7 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserData("PVwithmuons",Vertex(theOriginalPV));
 
               // lifetime using PV
-              float cosAlpha, cosAlpha3D, ctauPV, ctauErrPV, l_xyz, l_xy, lErr_xyz, lErr_xy;
+              float cosAlpha, cosAlpha3D, ppdlPV, ppdlErrPV, l_xyz, l_xy, lErr_xyz, lErr_xy;
 
               //2D
               pvtx.SetXYZ(thePrimaryV.position().x(),thePrimaryV.position().y(),0);
@@ -361,12 +361,12 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               cosAlpha = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
 
               Measurement1D distXY = vdistXY.distance(Vertex(mumuVertex), thePrimaryV);
-              ctauPV = distXY.value()*cosAlpha * mumucand.mass()/pperp.Perp();
+              ppdlPV = distXY.value()*cosAlpha * mumucand.mass()/pperp.Perp();
 
               GlobalError v1e = (Vertex(mumuVertex)).error();
               GlobalError v2e = thePrimaryV.error();
               AlgebraicSymMatrix33 vXYe = v1e.matrix()+ v2e.matrix();
-              ctauErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*mumucand.mass()/(pperp.Perp2());
+              ppdlErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*mumucand.mass()/(pperp.Perp2());
 
               AlgebraicVector3 vDiff;
               vDiff[0] = vdiff.x(); vDiff[1] = vdiff.y(); vDiff[2] = 0 ;
@@ -383,8 +383,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               vDiff3D[0] = vdiff3D.x(); vDiff3D[1] = vdiff3D.y(); vDiff3D[2] = vdiff3D.z() ;
               lErr_xyz = sqrt(ROOT::Math::Similarity(vDiff3D,vXYe)) / vdiff3D.Mag();
 
-              mumucand.addUserFloat("ctauPV",ctauPV);
-              mumucand.addUserFloat("ctauErrPV",ctauErrPV);
+              mumucand.addUserFloat("ppdlPV",ppdlPV);
+              mumucand.addUserFloat("ppdlErrPV",ppdlErrPV);
               mumucand.addUserFloat("cosAlpha",cosAlpha);
               mumucand.addUserFloat("cosAlpha3D",cosAlpha3D);
 
@@ -395,22 +395,22 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserFloat("lErr_xyz",lErr_xyz);
 
               // lifetime using BS
-              float cosAlphaBS, cosAlphaBS3D, ctauBS, ctauErrBS, l_xyBS, lErr_xyBS, l_xyzBS, lErr_xyzBS;
+              float cosAlphaBS, cosAlphaBS3D, ppdlBS, ppdlErrBS, l_xyBS, lErr_xyBS, l_xyzBS, lErr_xyzBS;
 
               //2D
               pvtx.SetXYZ(theBeamSpotV.position().x(),theBeamSpotV.position().y(),0);
               vdiff = vtx - pvtx;
               cosAlphaBS = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
               distXY = vdistXY.distance(Vertex(mumuVertex), theBeamSpotV);
-              //double ctauBS = distXY.value()*cosAlpha*3.09688/pperp.Perp();
+              //double ppdlBS = distXY.value()*cosAlpha*3.09688/pperp.Perp();
 
-              ctauBS = distXY.value()*cosAlpha*mumucand.mass()/pperp.Perp();
+              ppdlBS = distXY.value()*cosAlpha*mumucand.mass()/pperp.Perp();
 
               GlobalError v1eB = (Vertex(mumuVertex)).error();
               GlobalError v2eB = theBeamSpotV.error();
               AlgebraicSymMatrix33 vXYeB = v1eB.matrix()+ v2eB.matrix();
-              //double ctauErrBS = sqrt(vXYeB.similarity(vpperp))*3.09688/(pperp.Perp2());
-              ctauErrBS = sqrt(ROOT::Math::Similarity(vpperp,vXYeB))*mumucand.mass()/(pperp.Perp2());
+              //double ppdlErrBS = sqrt(vXYeB.similarity(vpperp))*3.09688/(pperp.Perp2());
+              ppdlErrBS = sqrt(ROOT::Math::Similarity(vpperp,vXYeB))*mumucand.mass()/(pperp.Perp2());
 
               vDiff[0] = vdiff.x(); vDiff[1] = vdiff.y(); vDiff[2] = 0 ;
               l_xyBS = vdiff.Perp();
@@ -425,8 +425,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               lErr_xyzBS = sqrt(ROOT::Math::Similarity(vDiff3D,vXYe)) / vdiff3D.Mag();
 
 
-              mumucand.addUserFloat("ctauBS",ctauBS);
-              mumucand.addUserFloat("ctauErrBS",ctauErrBS);
+              mumucand.addUserFloat("ppdlBS",ppdlBS);
+              mumucand.addUserFloat("ppdlErrBS",ppdlErrBS);
               mumucand.addUserFloat("cosAlphaBS",cosAlphaBS);
               mumucand.addUserFloat("cosAlphaBS3D",cosAlphaBS3D);
 
@@ -442,8 +442,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserFloat("vNChi2",-1);
               mumucand.addUserFloat("vProb", -1);
 
-              mumucand.addUserFloat("ctauPV",-100);
-              mumucand.addUserFloat("ctauErrPV",-100);
+              mumucand.addUserFloat("ppdlPV",-100);
+              mumucand.addUserFloat("ppdlErrPV",-100);
               mumucand.addUserFloat("cosAlpha",-100);
               mumucand.addUserFloat("cosAlpha3D",-100);
 
@@ -453,8 +453,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserFloat("l_xyz",-100);
               mumucand.addUserFloat("lErr_xyz",-100);
 
-              mumucand.addUserFloat("ctauBS",-100);
-              mumucand.addUserFloat("ctauErrBS",-100);
+              mumucand.addUserFloat("ppdlBS",-100);
+              mumucand.addUserFloat("ppdlErrBS",-100);
               mumucand.addUserFloat("cosAlphaBS",-100);
               mumucand.addUserFloat("cosAlphaBS3D",-100);
 
@@ -522,10 +522,10 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                   mumucand.embedGenParticle();      // and embed
                   std::pair<int, float> MCinfo = findJpsiMCInfo(mom1);
                   mumucand.addUserInt("momPDGId",MCinfo.first);
-                  mumucand.addUserFloat("ctauTrue",MCinfo.second);
+                  mumucand.addUserFloat("ppdlTrue",MCinfo.second);
                 } else {
                   mumucand.addUserInt("momPDGId",0);
-                  mumucand.addUserFloat("ctauTrue",-99.);
+                  mumucand.addUserFloat("ppdlTrue",-99.);
                 }
               } else {
                 edm::Handle<reco::GenParticleCollection> theGenParticles;
@@ -541,17 +541,17 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                       mumucand.embedGenParticle();
                       std::pair<int, float> MCinfo = findJpsiMCInfo(mom1);
                       mumucand.addUserInt("momPDGId",MCinfo.first);
-                      mumucand.addUserFloat("ctauTrue",MCinfo.second);
+                      mumucand.addUserFloat("ppdlTrue",MCinfo.second);
                     }
                   }
                 } else {
                   mumucand.addUserInt("momPDGId",0);
-                  mumucand.addUserFloat("ctauTrue",-99.);
+                  mumucand.addUserFloat("ppdlTrue",-99.);
                 }
               }
             } else {
               mumucand.addUserInt("momPDGId",0);
-              mumucand.addUserFloat("ctauTrue",-99.);
+              mumucand.addUserFloat("ppdlTrue",-99.);
             }
           }
 
