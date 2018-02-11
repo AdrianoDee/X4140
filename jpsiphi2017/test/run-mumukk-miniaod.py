@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 process = cms.Process('PSIKK')
 
-input_file = "file:1AC81AA9-36B2-E711-AEDB-02163E01A6C9.root"
+input_file = "file:1AC81AA9-36B2-E711-AEDB-02163E01A6C9_bphskim.root"
 
 process.load("TrackingTools.TransientTrack.TransientTrackBuilder_cfi")
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
@@ -113,7 +113,6 @@ filters = cms.vstring(
                                 )
 
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
-
 process.CandidateSelectedTracks = cms.EDProducer("ConcreteChargedCandidateProducer",
                 src=cms.InputTag("oniaSelectedTracks"),
                 particleType=cms.string('K+')
@@ -129,24 +128,11 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         throw = cms.bool(False)
                                         )
 
-process.JPsi2MuMuPAT = cms.EDProducer('Onia2MuMuPAT',
-  muons = cms.InputTag("slimmedMuons"),
-  beamSpotTag = cms.InputTag("offlineBeamSpot"),
-  primaryVertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),
-  higherPuritySelection = cms.string(""), ## At least one muon must pass this selection
-  lowerPuritySelection  = cms.string(""), ## BOTH muons must pass this selection
-  dimuonSelection  = cms.string("2.8 < mass < 3.3"), ## The dimuon must pass this selection before vertexing
-  addCommonVertex = cms.bool(True), ## Embed the full reco::Vertex out of the common vertex fit
-  addMuonlessPrimaryVertex = cms.bool(True), ## Embed the primary vertex re-made from all the tracks except the two muons
-  addMCTruth = cms.bool(False),      ## Add the common MC mother of the two muons, if any
-  resolvePileUpAmbiguity = cms.bool(True)   ## Order PVs by their vicinity to the J/psi vertex, not by sumPt
-)
-
 process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
-    Onia = cms.InputTag('JPsi2MuMuPAT'),
+    Onia = cms.InputTag('onia2MuMuPAT'),
     Trak = cms.InputTag('patSelectedTracks'),
     OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
-    TrakTrakMassCuts = cms.vdouble(1.004461,1.034461),  # phi mass window 1.019461 +/- .015
+    TrakTrakMassCuts = cms.vdouble(0.919461,1.119461),  # phi mass window 1.019461 +/- .015
     OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     OnlyBest  = cms.bool(False)
@@ -155,19 +141,21 @@ process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
 process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
     PsiTrakTrak     = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
     mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
-    OniaTrakTrakMassCuts = cms.vdouble(5.0,5.7),            # b-hadron mass window
+    OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     product_name    = cms.string('PsiPhiCandidates')
 )
 
 process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
-    oniat_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
-    oniat_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
-    primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    jpsitrktrk_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
+    jpsitrktrk_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    primaryVertices = cms.InputTag("offlinePrimaryVertices"),
     TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
     isMC = cms.bool(False),
     OnlyBest = cms.bool(False),
-    HLTs = hltpaths
+    HLTs = hltpaths,
+    filters = filters
 )
 
 # process.Phi2KKPAT = cms.EDProducer('Phi2KKPAT',
@@ -203,7 +191,8 @@ process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
                           onia_mass_cuts = cms.vdouble(2.5,3.5),
                           isMC = cms.bool(False),
                           OnlyBest = cms.bool(False),
-                          OnlyGen = cms.bool(False)
+                          OnlyGen = cms.bool(False),
+                          HLTs = hltpaths
                           )
 
 
