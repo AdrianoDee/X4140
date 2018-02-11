@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 process = cms.Process('PSIKK')
 
-input_file = "file:1AC81AA9-36B2-E711-AEDB-02163E01A6C9_bphskim.root"
+input_file = "file:FABC2662-9AC8-E711-BF94-02163E019BB9.root "
 
 process.load("TrackingTools.TransientTrack.TransientTrackBuilder_cfi")
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
@@ -128,8 +128,22 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         throw = cms.bool(False)
                                         )
 
-process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
-    Onia = cms.InputTag('onia2MuMuPAT'),
+process.JPsi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
+        muons                       = cms.InputTag('slimmedMuons'),
+        primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
+        beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
+        higherPuritySelection       = cms.string(""),
+        lowerPuritySelection        = cms.string(""),
+        dimuonSelection             = cms.string("2.9 < mass && mass < 3.3 && charge==0 "),
+        addCommonVertex             = cms.bool(True),
+        addMuonlessPrimaryVertex    = cms.bool(False),
+        addMCTruth                  = cms.bool(False),
+        resolvePileUpAmbiguity      = cms.bool(True),
+        HLTFilters                  = filters
+)
+
+process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
+    Onia = cms.InputTag('JPsi2MuMuPAT'),
     PFCandidates = cms.InputTag('packedPFCandidates'),
     OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
     TrakTrakMassCuts = cms.vdouble(0.919461,1.119461),  # phi mass window 1.019461 +/- .015
@@ -197,4 +211,4 @@ process.PsiPhiProducer = cms.EDProducer('OniaTrakTrakProducer',
 
 
 
-process.p = cms.Path(process.triggerSelection * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
+process.p = cms.Path(process.triggerSelection * process.JPsi2MuMuPAT * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
