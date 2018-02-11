@@ -39,7 +39,7 @@ class OniaPFPFProducer : public edm::EDProducer {
 
   void endJob() override;
   edm::EDGetTokenT<pat::CompositeCandidateCollection> OniaCollection_;
-  edm::EDGetTokenT<std::vector<pat::GenericParticle>> PFCandCollection_;
+  edm::EDGetTokenT<std::vector<pat::PackedCandidate>> PFCandCollection_;
   std::vector<double> OniaMassCuts_;
   std::vector<double> TrakTrakMassCuts_;
   std::vector<double> OniaTrakTrakMassCuts_;
