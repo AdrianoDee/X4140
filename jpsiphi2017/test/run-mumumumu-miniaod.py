@@ -25,10 +25,10 @@ process.load("HeavyFlavorAnalysis.Onia2MuMu.onia2MuMuPAT_cfi")
 
 hltList = [
 #Phi
-# 'HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi',
-'HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi',
+'HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi',
+#'HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi',
 # 'HLT_Mu20_TkMu0_Phi',
-# 'HLT_Dimuon14_Phi_Barrel_Seagulls',
+#'HLT_Dimuon14_Phi_Barrel_Seagulls',
 # 'HLT_Mu25_TkMu0_Phi',
 # 'HLT_Dimuon24_Phi_noCorrL1',
 #JPsi
@@ -48,20 +48,21 @@ hltpathsV = cms.vstring([h + '_v*' for h in hltList])
 
 filters = cms.vstring(
                                 #PHI TRIGGERS FILTER
+
                                 #HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi
-                                ##'hltDiMuonGlbOrTrkFiltered0v2', #Phi
+                                'hltDiMuonGlbOrTrkFiltered0v2', #Phi
                                 ##'hltDiMuonGlbOrTrk0zFiltered0p2v2',
-                                ##'hltDoubleMu2JpsiL3Filtered', ##JPsi
+                                'hltDoubleMu2JpsiL3Filtered', ##JPsi
                                 ##'hltMumuVtxProducerDoubleMu2Jpsi',
-                                ##'hltMumuFilterDoubleMu2Jpsi',
+                                'hltMumuFilterDoubleMu2Jpsi',
 
                                 #HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi
                                 ##'hltDoubleMu2JpsiDoubleTrkL3Filtered',
                                 ##'hltDoubleTrkmumuVtxProducerDoubleMu2Jpsi',
-                                'hltDoubleTrkmumuFilterDoubleMu2Jpsi',
+                                #'hltDoubleTrkmumuFilterDoubleMu2Jpsi',
                                 ##'hltJpsiTkAllConeTracksIterDoubleTrk',
                                 ##'hltJpsiTrkTrkVertexProducerPhiDoubleTrk1v2',
-                                'hltJpsiTkTkVertexFilterPhiDoubleTrk1v2',
+                                #'hltJpsiTkTkVertexFilterPhiDoubleTrk1v2',
 
                                 #HLT_Mu20_TkMu0_Phi
                                 ## 'hltL3fL1sMu16orMu18erorMu20L1f0L2f0L3Filtered20',
