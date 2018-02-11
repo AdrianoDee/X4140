@@ -330,7 +330,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
   std::sort(PsiTCandRefitColl->begin(),PsiTCandRefitColl->end(),vPComparator);
   std::cout << "sort"<< std::endl;
   iEvent.put(std::move(PsiTCandRefitColl),product_name_);
-  std::cout << "PsiTCandRefitColl size: "<< PsiTCandRefitColl->size()<<std::endl;
+  // std::cout << "PsiTCandRefitColl size: "<< PsiTCandRefitColl->size()<<std::endl;
 }
 
 // ------------ method called once each job just before starting event loop  ------------
