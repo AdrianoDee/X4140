@@ -160,13 +160,15 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     JpsiTk.push_back(*( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
 
     if(trak1->hasTrackDetails())
+      if(trak1->bestTrack())
       JpsiTk.push_back(*(trak1->bestTrack()));
-    else
+      else
       JpsiTk.push_back((trak1->pseudoTrack()));
 
     if(trak2->hasTrackDetails())
+      if(trak2->bestTrack())
       JpsiTk.push_back(*(trak2->bestTrack()));
-    else
+      else
       JpsiTk.push_back(trak2->pseudoTrack());
 
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");

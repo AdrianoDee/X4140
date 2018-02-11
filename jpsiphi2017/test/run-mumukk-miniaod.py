@@ -152,7 +152,7 @@ process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
     OnlyBest  = cms.bool(False)
 )
 
-process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
+process.PsiPhiFitter = cms.EDProducer('PsiPFPFKinematicFit',
     PsiPFPF     = cms.InputTag('PsiPhiProducer','OniaPFPFCandidates'),
     mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
     OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
