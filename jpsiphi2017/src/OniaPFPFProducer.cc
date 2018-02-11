@@ -73,7 +73,7 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
   if ( ncombo != OniaTTCandColl->size() ) std::cout <<"ncombo ("<<ncombo<< ") != OniaTT ("<<OniaTTCandColl->size()<<")"<< std::endl;
   if ( !onia->empty() )  nonia++;
   if ( ncombo > 0 ) nreco++;
-  event.put(std::move(OniaTTCandColl),"OniaTrakTrakCandidates");
+  event.put(std::move(OniaTTCandColl),"OniaPFPFCandidates");
   nevents++;
 }
 
