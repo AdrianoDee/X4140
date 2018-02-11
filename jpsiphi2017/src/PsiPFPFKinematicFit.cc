@@ -324,7 +324,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 	}
   }
 // End kinematic fit
-
+  std::cout << "PsiTCandRefit"<< std::endl;
 // now sort by vProb
   PsiPFPFKinematicFit::GreaterByVProb<pat::CompositeCandidate> vPComparator;
   std::sort(PsiTCandRefitColl->begin(),PsiTCandRefitColl->end(),vPComparator);
