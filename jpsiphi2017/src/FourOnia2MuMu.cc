@@ -439,6 +439,9 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserData("commonVertex",Vertex(mumuVertex));
 
             } else {
+
+              continue;
+              
               mumucand.addUserFloat("vNChi2",-1);
               mumucand.addUserFloat("vProb", -1);
 
