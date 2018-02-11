@@ -328,8 +328,8 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 // now sort by vProb
   PsiPFPFKinematicFit::GreaterByVProb<pat::CompositeCandidate> vPComparator;
   std::sort(PsiTCandRefitColl->begin(),PsiTCandRefitColl->end(),vPComparator);
+  std::cout << "sort"<< std::endl;
   iEvent.put(std::move(PsiTCandRefitColl),product_name_);
-
   std::cout << "PsiTCandRefitColl size: "<< PsiTCandRefitColl->size()<<std::endl;
 }
 
