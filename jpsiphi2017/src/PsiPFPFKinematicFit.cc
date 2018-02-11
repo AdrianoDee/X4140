@@ -165,8 +165,8 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     if(!trak1->hasTrackDetails())
       continue;
     if(!trak2->hasTrackDetails())
-      continue
-    
+      continue;
+
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
 
     std::vector<reco::TransientTrack> MuMuTT;
