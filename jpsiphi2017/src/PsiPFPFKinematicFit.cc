@@ -132,6 +132,7 @@ PsiPFPFKinematicFit::~PsiPFPFKinematicFit() {
 // ------------ method called to produce the data  ------------
 void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
+  int debug = 0;
   // Grab paramenters
   edm::Handle<pat::CompositeCandidateCollection> PsiTCandHandle;
   iEvent.getByToken(oniat_cand_, PsiTCandHandle);
