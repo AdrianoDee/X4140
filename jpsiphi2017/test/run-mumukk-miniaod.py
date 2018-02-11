@@ -211,4 +211,4 @@ process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
 
 
 
-process.p = cms.Path(process.triggerSelection * process.JPsi2MuMuPAT * process.PsiPhiProducer) # * process.PsiPhiFitter * process.rootuple * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
+process.p = cms.Path(process.triggerSelection * process.JPsi2MuMuPAT * process.PsiPhiProducer * process.PsiPhiFitter) # * process.rootuple * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
