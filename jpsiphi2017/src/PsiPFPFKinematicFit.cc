@@ -149,6 +149,9 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     const pat::CompositeCandidate *dimuonC = dynamic_cast<const pat::CompositeCandidate *>(oniat->daughter("onia"));
     const pat::CompositeCandidate *ditrakC = dynamic_cast<const pat::CompositeCandidate*>(oniat->daughter("ditrak"));
 
+    if(dimuonC->userFloat("vProb")<0.0)
+      continue;
+
     indexPsiT++;
 
     std::vector <reco::Track> JpsiTk;
