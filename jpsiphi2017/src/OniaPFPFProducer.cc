@@ -48,7 +48,7 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
            if (trakCand2 == trakCand) continue;
            if ( IsTheSame(*trakCand2,*pmu1) || IsTheSame(*trakCand2,*pmu2) || trakCand2->charge() > 0 ) continue;
            // pat::CompositeCandidate TTCand = makeTTCandidate(*trakCand, *trakCand2);
-           std::cout<< trakCand1->mass() << " -> " << trakCand1->pdgId() << std::endl;
+           std::cout<< trakCand->mass() << " -> " << trakCand->pdgId() << std::endl;
            std::cout<< trakCand2->mass() << " -> " << trakCand2->pdgId() << std::endl;
          } // loop over second track
        }   // loop on track candidates
