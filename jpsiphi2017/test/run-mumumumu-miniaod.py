@@ -159,7 +159,7 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
 # )
 
 
-process.JPsi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
+process.Phi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
         muons                       = cms.InputTag('slimmedMuons'),
         primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
         beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
@@ -173,7 +173,7 @@ process.JPsi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
         HLTFilters                  = filters
 )
 
-process.Phi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
+process.JPsi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
         muons                       = cms.InputTag('slimmedMuons'),
         primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
         beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
