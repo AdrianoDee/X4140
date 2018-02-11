@@ -132,30 +132,59 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         throw = cms.bool(False)
                                         )
 
-process.JPsi2MuMuPAT = cms.EDProducer('Onia2MuMuPAT',
-  muons = cms.InputTag("slimmedMuons"),
-  beamSpotTag = cms.InputTag("offlineBeamSpot"),
-  primaryVertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),
-  higherPuritySelection = cms.string(""), ## At least one muon must pass this selection
-  lowerPuritySelection  = cms.string(""), ## BOTH muons must pass this selection
-  dimuonSelection  = cms.string("2.8 < mass < 3.3"), ## The dimuon must pass this selection before vertexing
-  addCommonVertex = cms.bool(True), ## Embed the full reco::Vertex out of the common vertex fit
-  addMuonlessPrimaryVertex = cms.bool(False), ## Embed the primary vertex re-made from all the tracks except the two muons
-  addMCTruth = cms.bool(False),      ## Add the common MC mother of the two muons, if any
-  resolvePileUpAmbiguity = cms.bool(True)   ## Order PVs by their vicinity to the J/psi vertex, not by sumPt
+# process.JPsi2MuMuPAT = cms.EDProducer('Onia2MuMuPAT',
+#   muons = cms.InputTag("slimmedMuons"),
+#   beamSpotTag = cms.InputTag("offlineBeamSpot"),
+#   primaryVertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),
+#   higherPuritySelection = cms.string(""), ## At least one muon must pass this selection
+#   lowerPuritySelection  = cms.string(""), ## BOTH muons must pass this selection
+#   dimuonSelection  = cms.string("2.8 < mass < 3.3"), ## The dimuon must pass this selection before vertexing
+#   addCommonVertex = cms.bool(True), ## Embed the full reco::Vertex out of the common vertex fit
+#   addMuonlessPrimaryVertex = cms.bool(False), ## Embed the primary vertex re-made from all the tracks except the two muons
+#   addMCTruth = cms.bool(False),      ## Add the common MC mother of the two muons, if any
+#   resolvePileUpAmbiguity = cms.bool(True)   ## Order PVs by their vicinity to the J/psi vertex, not by sumPt
+# )
+#
+# process.Phi2MuMuPAT = cms.EDProducer('Onia2MuMuPAT',
+#   muons = cms.InputTag("slimmedMuons"),
+#   beamSpotTag = cms.InputTag("offlineBeamSpot"),
+#   primaryVertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),
+#   higherPuritySelection = cms.string(""), ## At least one muon must pass this selection
+#   lowerPuritySelection  = cms.string(""), ## BOTH muons must pass this selection
+#   dimuonSelection  = cms.string("0.55 < mass < 1.25"), ## The dimuon must pass this selection before vertexing
+#   addCommonVertex = cms.bool(True), ## Embed the full reco::Vertex out of the common vertex fit
+#   addMuonlessPrimaryVertex = cms.bool(False), ## Embed the primary vertex re-made from all the tracks except the two muons
+#   addMCTruth = cms.bool(False),      ## Add the common MC mother of the two muons, if any
+#   resolvePileUpAmbiguity = cms.bool(True)   ## Order PVs by their vicinity to the J/psi vertex, not by sumPt
+# )
+
+
+process.JPsi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
+        muons                       = cms.InputTag('slimmedMuons'),
+        primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
+        beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
+        higherPuritySelection       = cms.string(""),
+        lowerPuritySelection        = cms.string(""),
+        dimuonSelection             = cms.string("0.6 < mass && mass < 1.2 && charge==0 "),
+        addCommonVertex             = cms.bool(True),
+        addMuonlessPrimaryVertex    = cms.bool(False),
+        addMCTruth                  = cms.bool(False),
+        resolvePileUpAmbiguity      = cms.bool(True),
+        HLTFilters                  = filters
 )
 
-process.Phi2MuMuPAT = cms.EDProducer('Onia2MuMuPAT',
-  muons = cms.InputTag("slimmedMuons"),
-  beamSpotTag = cms.InputTag("offlineBeamSpot"),
-  primaryVertexTag = cms.InputTag("offlineSlimmedPrimaryVertices"),
-  higherPuritySelection = cms.string(""), ## At least one muon must pass this selection
-  lowerPuritySelection  = cms.string(""), ## BOTH muons must pass this selection
-  dimuonSelection  = cms.string("0.55 < mass < 1.25"), ## The dimuon must pass this selection before vertexing
-  addCommonVertex = cms.bool(True), ## Embed the full reco::Vertex out of the common vertex fit
-  addMuonlessPrimaryVertex = cms.bool(False), ## Embed the primary vertex re-made from all the tracks except the two muons
-  addMCTruth = cms.bool(False),      ## Add the common MC mother of the two muons, if any
-  resolvePileUpAmbiguity = cms.bool(True)   ## Order PVs by their vicinity to the J/psi vertex, not by sumPt
+process.Phi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
+        muons                       = cms.InputTag('slimmedMuons'),
+        primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
+        beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
+        higherPuritySelection       = cms.string(""),
+        lowerPuritySelection        = cms.string(""),
+        dimuonSelection             = cms.string("2.9 < mass && mass < 3.3 && charge==0 "),
+        addCommonVertex             = cms.bool(True),
+        addMuonlessPrimaryVertex    = cms.bool(False),
+        addMCTruth                  = cms.bool(False),
+        resolvePileUpAmbiguity      = cms.bool(True),
+        HLTFilters                  = filters
 )
 
 process.Onia2MuMuFilteredJpsi = cms.EDProducer('DiMuonFilter',
