@@ -237,7 +237,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             GlobalError v2e = thePrimaryV.error();
             AlgebraicSymMatrix33 vXYe = v1e.matrix()+ v2e.matrix();
             double ctauErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*oniat_ma_fit/(pperp.Perp2());
-
+            std::cout<<"Debug 3"<<++debug<<std::endl;
 	    reco::CompositeCandidate recoPsiT(oniat_ch_fit,math::XYZTLorentzVector(oniat_px_fit,oniat_py_fit,oniat_pz_fit,oniat_en_fit),
                                                math::XYZPoint(oniat_vx_fit,oniat_vy_fit,oniat_vz_fit),531);
 	    pat::CompositeCandidate patPsiT(recoPsiT);
@@ -275,7 +275,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             reco::CompositeCandidate recoMu2(m2_ch_fit,math::XYZTLorentzVector(m2_px_fit,m2_py_fit,m2_pz_fit,m2_en_fit),
                                              math::XYZPoint(oniat_vx_fit,oniat_vy_fit,oniat_vz_fit),13);
             pat::CompositeCandidate patMu2(recoMu2);
-
+            std::cout<<"Debug 4"<<++debug<<std::endl;
 // Define psi from two muons
 	          pat::CompositeCandidate psi;
 	          psi.addDaughter(patMu1,"muon1");
@@ -294,7 +294,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             reco::CompositeCandidate recoTk(tk_ch_fit,math::XYZTLorentzVector(tk_px_fit,tk_py_fit,tk_pz_fit,tk_en_fit),
                                              math::XYZPoint(oniat_vx_fit,oniat_vy_fit,oniat_vz_fit),321);
             pat::CompositeCandidate patTk(recoTk);
-
+            std::cout<<"Debug 5"<<++debug<<std::endl;
 // get kaon2
             child = PsiTTree->movePointerToTheNextChild();
             RefCountedKinematicParticle fitTrk2 = PsiTTree->currentParticle();
@@ -317,7 +317,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
 	          patPsiT.addDaughter(psi,"onia");
 	          patPsiT.addDaughter(phi,"ditrak");
-
+            std::cout<<"Debug 6"<<++debug<<std::endl;
             PsiTCandRefitColl->push_back(patPsiT);
           }
 	}
