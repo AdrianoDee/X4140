@@ -42,12 +42,20 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
 
 // loop on track candidates, make OniaT candidate, positive charge
        for (std::vector<pat::PackedCandidate>::const_iterator trakCand = trak->begin(), trakend=trak->end(); trakCand!= trakend; ++trakCand){
+         if (trakCand->pdgId() != 321)
+         if (trakCand->pdgId() != -321)
+         continue;
+         
          if ( IsTheSame(*trakCand,*pmu1) || IsTheSame(*trakCand,*pmu2) || trakCand->charge() < 0 ) continue;
+
 // loop over second track candidate, negative charge
          for (std::vector<pat::PackedCandidate>::const_iterator trakCand2 = trak->begin(); trakCand2!= trakend; ++trakCand2){
+           if (trakCand2->pdgId() != 321)
+           if (trakCand2->pdgId() != -321)
+           continue;
            if (trakCand2 == trakCand) continue;
            if ( IsTheSame(*trakCand2,*pmu1) || IsTheSame(*trakCand2,*pmu2) || trakCand2->charge() > 0 ) continue;
-           // pat::CompositeCandidate TTCand = makeTTCandidate(*trakCand, *trakCand2);
+           pat::CompositeCandidate TTCand = makeTTCandidate(*trakCand, *trakCand2);
            std::cout<< trakCand->mass() << " -> " << trakCand->pdgId() << std::endl;
            std::cout<< trakCand2->mass() << " -> " << trakCand2->pdgId() << std::endl;
          } // loop over second track
