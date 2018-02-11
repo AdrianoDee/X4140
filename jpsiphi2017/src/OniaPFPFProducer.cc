@@ -45,7 +45,7 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
          if (trakCand->pdgId() != 321)
          if (trakCand->pdgId() != -321)
          continue;
-         
+
          if ( IsTheSame(*trakCand,*pmu1) || IsTheSame(*trakCand,*pmu2) || trakCand->charge() < 0 ) continue;
 
 // loop over second track candidate, negative charge
