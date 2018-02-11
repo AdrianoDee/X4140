@@ -163,12 +163,12 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
 
     if(trak1->hasTrackDetails())
-      JpsiTk.push_back(&(trak1->pseudoTrack()));
+      JpsiTk.push_back((trak1->pseudoTrack()));
     else
       continue;
 
     if(trak2->hasTrackDetails())
-        JpsiTk.push_back(&(trak2->pseudoTrack()));
+        JpsiTk.push_back((trak2->pseudoTrack()));
     else
       continue;
 
