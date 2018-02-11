@@ -152,14 +152,14 @@ process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
     OnlyBest  = cms.bool(False)
 )
 
-# process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
-#     PsiTrakTrak     = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
-#     mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
-#     OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
-#     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
-#     product_name    = cms.string('PsiPhiCandidates')
-# )
-#
+process.PsiPhiFitter = cms.EDProducer('PsiTrakTrakKinematicFit',
+    PsiPFPF     = cms.InputTag('PsiPhiProducer','OniaPFPFCandidates'),
+    mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
+    OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
+    product_name    = cms.string('PsiPhiCandidates')
+)
+
 # process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
 #     jpsitrktrk_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
 #     jpsitrktrk_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),

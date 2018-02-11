@@ -9,7 +9,7 @@ OniaPFPFProducer::OniaPFPFProducer(const edm::ParameterSet& ps):
   MassTraks_(ps.getParameter<std::vector<double>>("MassTraks")),
   OnlyBest_(ps.getParameter<bool>("OnlyBest"))
 {
-  produces<pat::CompositeCandidateCollection>("OniaTrakTrakCandidates");
+  produces<pat::CompositeCandidateCollection>("OniaPFPFCandidates");
   candidates = 0;
   nevents = 0;
   nonia = 0;
@@ -53,7 +53,17 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
            pat::CompositeCandidate TTCand = makeTTCandidate(*trakCand, *trakCand2);
 
            if ( TTCand.mass() < TrakTrakMassMax_ && TTCand.mass() > TrakTrakMassMin_ ) {
-           std::cout<< TTCand.mass() << std::endl;
+
+           pat::CompositeCandidate OniaTTCand = makeOniaTTCandidate(*oniaCand, *&TTCand);
+
+           if ( OniaTTCand.mass() < OniaTrakTrakMassMax_ && OniaTTCand.mass() > OniaTrakTrakMassMin_) {
+
+             OniaTTCandColl->push_back(OniaTTCand);
+             candidates++;
+             ncombo++;
+           }
+        }
+
          }
          } // loop over second track
        }   // loop on track candidates
