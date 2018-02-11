@@ -151,21 +151,21 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     indexPsiT++;
 
-    std::vector <reco::TrackRef> JpsiTk;
+    std::vector <reco::Track> JpsiTk;
 
     const pat::PackedCandidate *trak1 = dynamic_cast<const pat::PackedCandidate*>(oniat->daughter("ditrak")->daughter("trak1"));
     const pat::PackedCandidate *trak2 = dynamic_cast<const pat::PackedCandidate*>(oniat->daughter("ditrak")->daughter("trak2"));
 
-    JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
-    JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
+    JpsiTk.push_back(*( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
+    JpsiTk.push_back(*( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
 
     if(trak1->hasTrackDetails())
-      JpsiTk.push_back(reco::TrackRef(*(trak1->bestTrack())));
+      JpsiTk.push_back(*(trak1->bestTrack());
     else
       JpsiTk.push_back((trak1->pseudoTrack()));
 
     if(trak2->hasTrackDetails())
-      JpsiTk.push_back(trak2->bestTrack());
+      JpsiTk.push_back(*(trak2->bestTrack()));
     else
       JpsiTk.push_back(trak2->pseudoTrack());
 
