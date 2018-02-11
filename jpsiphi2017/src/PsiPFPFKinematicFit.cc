@@ -191,11 +191,11 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[1], muonMass, float(0), float(0), muonSigma));
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[2], kaonMass1, float(0), float(0), kaonSigma1));
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[3], kaonMass2, float(0), float(0), kaonSigma2));
-
+    std::cout<<"Debug 1.1"<<++debug<<std::endl;
     KinematicConstrainedVertexFitter constVertexFitter;
     MultiTrackKinematicConstraint *onia_mtc = new  TwoTrackMassKinematicConstraint(mass_);
     RefCountedKinematicTree PsiTTree = constVertexFitter.fit(allPsiTDaughters,onia_mtc);
-
+    std::cout<<"Debug 2.0"<<++debug<<std::endl;
     if (!PsiTTree->isEmpty()) {
        PsiTTree->movePointerToTheTop();
        RefCountedKinematicParticle fitPsiT = PsiTTree->currentParticle();
@@ -204,13 +204,14 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
        double oniat_ma_fit = 14000.;
        double oniat_vp_fit = -9999.;
        double oniat_x2_fit = 10000.;
-       std::cout<<"Debug 2"<<++debug<<std::endl;
+       std::cout<<"Debug 2.1"<<++debug<<std::endl;
        if (fitPsiT->currentState().isValid()) {
          oniat_ma_fit = fitPsiT->currentState().mass();
          oniat_x2_fit = PsiTDecayVertex->chiSquared();
          oniat_vp_fit = ChiSquaredProbability(oniat_x2_fit,
                                               (double)(PsiTDecayVertex->degreesOfFreedom()));
        }
+       std::cout<<"Debug 2.2"<<++debug<<std::endl;
        if ( oniat_ma_fit > OniaTrakTrakMassCuts_[0] && oniat_ma_fit < OniaTrakTrakMassCuts_[1] && oniat_vp_fit > 0.0 ) {
             TVector3 vtx;
             TVector3 pvtx;
@@ -224,7 +225,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             double oniat_vx_fit = PsiTDecayVertex->position().x();
 	          double oniat_vy_fit = PsiTDecayVertex->position().y();
             double oniat_vz_fit = PsiTDecayVertex->position().z();
-
+            std::cout<<"Debug 3.1"<<++debug<<std::endl;
             vtx.SetXYZ(oniat_vx_fit,oniat_vy_fit,0);
             TVector3 pperp(oniat_px_fit, oniat_py_fit, 0);
             AlgebraicVector3 vpperp(pperp.x(),pperp.y(),0);
