@@ -159,8 +159,8 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     const pat::PackedCandidate *trak1 = dynamic_cast<const pat::PackedCandidate*>(ditrakC->daughter("trak1"));
     const pat::PackedCandidate *trak2 = dynamic_cast<const pat::PackedCandidate*>(ditrakC->daughter("trak2"));
 
-    JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
-    JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
+    JpsiTk.push_back(*( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
+    JpsiTk.push_back(*( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
 
     std::vector<reco::TransientTrack> MuMuTT;
     MuMuTT.push_back((*theB).build(&JpsiTk[0]));
