@@ -74,6 +74,7 @@ class PsiPFPFRootupler : public edm::EDAnalyzer {
   bool isMC_,OnlyBest_;
   std::vector<std::string>  HLTs_;
   std::vector<std::string>  HLTFilters_;
+  std::string treeName_;
 
   UInt_t run,event,numPrimaryVertices, trigger;
 
@@ -166,8 +167,6 @@ UInt_t PsiPFPFRootupler::isTriggerMatched(pat::CompositeCandidate *diMuon_cand) 
 static const Double_t psi1SMass =  3.09691;
 
 
-static const double Y_sig_par_C = -20.77;
-
 //
 // constructors and destructor
 //
@@ -180,10 +179,11 @@ PsiPFPFRootupler::PsiPFPFRootupler(const edm::ParameterSet& iConfig):
 	      isMC_(iConfig.getParameter<bool>("isMC")),
         OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
         HLTs_(iConfig.getParameter<std::vector<std::string>>("HLTs")),
-        HLTFilters_(iConfig.getParameter<std::vector<std::string>>("filters"))
+        HLTFilters_(iConfig.getParameter<std::vector<std::string>>("Filters")),
+        treeName_(iConfig.getParameter<std::string>("TreeName"))
 {
 	      edm::Service<TFileService> fs;
-        jpsitrktrk_tree = fs->make<TTree>("OniaTrkTrkTree","Tree of Onia and Phi");
+        jpsitrktrk_tree = fs->make<TTree>(treeName_.data(),"Tree of Onia and Phi");
 
         jpsitrktrk_tree->Branch("run",                &run,                "run/I");
         jpsitrktrk_tree->Branch("event",              &event,              "event/I");

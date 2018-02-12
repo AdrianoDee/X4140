@@ -142,7 +142,8 @@ process.JPsi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
         HLTFilters                  = filters
 )
 
-process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
+#K+ Pi-
+process.PsiKPiProducer = cms.EDProducer('OniaPFPFProducer',
     Onia = cms.InputTag('JPsi2MuMuPAT'),
     PFCandidates = cms.InputTag('packedPFCandidates'),
     OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
@@ -152,17 +153,17 @@ process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
     OnlyBest  = cms.bool(False)
 )
 
-process.PsiPhiFitter = cms.EDProducer('PsiPFPFKinematicFit',
-    PsiPFPF     = cms.InputTag('PsiPhiProducer','OniaPFPFCandidates'),
+process.PsiKPiFitter = cms.EDProducer('PsiPFPFKinematicFit',
+    PsiPFPF     = cms.InputTag('PsiKPiProducer','OniaPFPFCandidates'),
     mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
     OniaPFPFMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
-    product_name    = cms.string('PsiPhiCandidates')
+    product_name    = cms.string('PsiKPiCandidates')
 )
 
 process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
-    jpsitrktrk_cand = cms.InputTag('PsiPhiProducer','OniaPFPFCandidates'),
-    jpsitrktrk_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
+    jpsitrktrk_cand = cms.InputTag('PsiKPiProducer','OniaPFPFCandidates'),
+    jpsitrktrk_rf_cand = cms.InputTag("PsiKPiFitter","PsiKPiCandidates"),
     beamSpotTag = cms.InputTag("offlineBeamSpot"),
     primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
     TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
@@ -170,7 +171,38 @@ process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
     OnlyBest = cms.bool(False),
     HLTs = hltpaths,
     Filters = filters,
-    TreeName = cms.string('JPsi Phi Tree')
+    TreeName = cms.string('JPsi K Pi Tree')
+)
+
+process.PsiKPiProducer = cms.EDProducer('OniaPFPFProducer',
+    Onia = cms.InputTag('JPsi2MuMuPAT'),
+    PFCandidates = cms.InputTag('packedPFCandidates'),
+    OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
+    TrakTrakMassCuts = cms.vdouble(0.919461,1.119461),  # phi mass window 1.019461 +/- .015
+    OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
+    OnlyBest  = cms.bool(False)
+)
+
+process.PsiKPiFitter = cms.EDProducer('PsiPFPFKinematicFit',
+    PsiPFPF     = cms.InputTag('PsiKPiProducer','OniaPFPFCandidates'),
+    mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
+    OniaPFPFMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
+    product_name    = cms.string('PsiKPiCandidates')
+)
+
+process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
+    jpsitrktrk_cand = cms.InputTag('PsiKPiProducer','OniaPFPFCandidates'),
+    jpsitrktrk_rf_cand = cms.InputTag("PsiKPiFitter","PsiKPiCandidates"),
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+    isMC = cms.bool(False),
+    OnlyBest = cms.bool(False),
+    HLTs = hltpaths,
+    Filters = filters,
+    TreeName = cms.string('JPsi Pi K Tree')
 )
 
 # process.Phi2KKPAT = cms.EDProducer('Phi2KKPAT',
@@ -212,4 +244,4 @@ process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
 
 
 
-process.p = cms.Path(process.triggerSelection * process.JPsi2MuMuPAT * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple)# * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
+process.p = cms.Path(process.triggerSelection * process.JPsi2MuMuPAT * process.PsiKPiProducer * process.PsiKPiFitter * process.rootuple)# * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
