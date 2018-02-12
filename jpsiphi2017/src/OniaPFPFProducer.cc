@@ -43,10 +43,18 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
 // loop on track candidates, make OniaT candidate, positive charge
        for (std::vector<pat::PackedCandidate>::const_iterator trakCand = trak->begin(), trakend=trak->end(); trakCand!= trakend; ++trakCand){
 
+         if(trakCand->charge()==0) continue;
+	       if(fabs(trakCand->pdgId())!=211) continue;
+	       if(!(trakCand->trackHighPurity())) continue;
+
          if ( IsTheSame(*trakCand,*pmu1) || IsTheSame(*trakCand,*pmu2) || trakCand->charge() < 0 ) continue;
 
 // loop over second track candidate, negative charge
          for (std::vector<pat::PackedCandidate>::const_iterator trakCand2 = trak->begin(); trakCand2!= trakend; ++trakCand2){
+
+           if(trakCand2->charge()==0) continue;
+  	       if(fabs(trakCand2->pdgId())!=211) continue;
+  	       if(!(trakCand2->trackHighPurity())) continue;
 
            if (trakCand2 == trakCand) continue;
            if ( IsTheSame(*trakCand2,*pmu1) || IsTheSame(*trakCand2,*pmu2) || trakCand2->charge() > 0 ) continue;
