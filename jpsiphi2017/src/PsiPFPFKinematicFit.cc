@@ -154,7 +154,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     indexPsiT++;
 
-    std::vector <reco::TrackRef> JpsiTk;
+    std::vector <reco::Track> JpsiTk;
 
     const pat::PackedCandidate *trak1 = dynamic_cast<const pat::PackedCandidate*>(ditrakC->daughter("trak1"));
     const pat::PackedCandidate *trak2 = dynamic_cast<const pat::PackedCandidate*>(ditrakC->daughter("trak2"));
@@ -169,17 +169,17 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     if(!trak1->hasTrackDetails())
       continue;
     else if(trak1->bestTrack())
-      MuMuTT.push_back((*theB).build(&(trak1->bestTrack()))); // K+
+      MuMuTT.push_back((*theB).build(*(trak1->bestTrack()))); // K+
     else
-      MuMuTT.push_back((*theB).build(&(trak1->pseudoTrack()))); // K+
+      MuMuTT.push_back((*theB).build((trak1->pseudoTrack()))); // K+
 
 
     if(!trak2->hasTrackDetails())
       continue;
     else if(trak2->bestTrack())
-      MuMuTT.push_back((*theB).build(&(trak2->bestTrack()))); // K+
+      MuMuTT.push_back((*theB).build(*(trak2->bestTrack()))); // K+
     else
-      MuMuTT.push_back((*theB).build(&(trak2->pseudoTrack()))); // K+
+      MuMuTT.push_back((*theB).build((trak2->pseudoTrack()))); // K+
 
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
 
