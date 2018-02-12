@@ -132,7 +132,6 @@ PsiPFPFKinematicFit::~PsiPFPFKinematicFit() {
 // ------------ method called to produce the data  ------------
 void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
-  int debug = 0;
   // Grab paramenters
   edm::Handle<pat::CompositeCandidateCollection> PsiTCandHandle;
   iEvent.getByToken(oniat_cand_, PsiTCandHandle);
@@ -163,21 +162,28 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
     JpsiTk.push_back(( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
 
-    if(!trak1->hasTrackDetails())
-      continue;
-    if(!trak2->hasTrackDetails())
-      continue;
-
-    const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
-
     std::vector<reco::TransientTrack> MuMuTT;
     MuMuTT.push_back((*theB).build(&JpsiTk[0]));
     MuMuTT.push_back((*theB).build(&JpsiTk[1]));
-    MuMuTT.push_back((*theB).build(&(trak1->pseudoTrack()))); // K+
-    MuMuTT.push_back((*theB).build(&(trak2->pseudoTrack()))); // K+
+
+    if(!trak1->hasTrackDetails())
+      continue;
+    else if(trak1->bestTrack())
+      MuMuTT.push_back((*theB).build(&(trak1->bestTrack()))); // K+
+    else
+      MuMuTT.push_back((*theB).build(&(trak1->pseudoTrack()))); // K+
+
+
+    if(!trak2->hasTrackDetails())
+      continue;
+    else if(trak2->bestTrack())
+      MuMuTT.push_back((*theB).build(&(trak2->bestTrack()))); // K+
+    else
+      MuMuTT.push_back((*theB).build(&(trak2->pseudoTrack()))); // K+
+
+    const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
 
     KinematicParticleFactoryFromTransientTrack pFactory;
-
 
     const ParticleMass muonMass(0.1056583);
     float muonSigma = muonMass*1E-6;
