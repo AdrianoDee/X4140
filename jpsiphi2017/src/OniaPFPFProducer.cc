@@ -5,7 +5,7 @@ OniaPFPFProducer::OniaPFPFProducer(const edm::ParameterSet& ps):
   PFCandCollection_(consumes<std::vector<pat::PackedCandidate>>(ps.getParameter<edm::InputTag>("PFCandidates"))),
   OniaMassCuts_(ps.getParameter<std::vector<double>>("OniaMassCuts")),
   TrakTrakMassCuts_(ps.getParameter<std::vector<double>>("TrakTrakMassCuts")),
-  OniaTrakTrakMassCuts_(ps.getParameter<std::vector<double>>("OniaTrakTrakMassCuts")),
+  OniaPFPFMassCuts_(ps.getParameter<std::vector<double>>("OniaPFPFMassCuts")),
   MassTraks_(ps.getParameter<std::vector<double>>("MassTraks")),
   OnlyBest_(ps.getParameter<bool>("OnlyBest"))
 {
@@ -31,8 +31,8 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
   float OniaMassMin_ = OniaMassCuts_[0];
   float TrakTrakMassMax_ = TrakTrakMassCuts_[1];
   float TrakTrakMassMin_ = TrakTrakMassCuts_[0];
-  float OniaTrakTrakMassMax_ = OniaTrakTrakMassCuts_[1];
-  float OniaTrakTrakMassMin_ = OniaTrakTrakMassCuts_[0];
+  float OniaPFPFMassMax_ = OniaPFPFMassCuts_[1];
+  float OniaPFPFMassMin_ = OniaPFPFMassCuts_[0];
 
 // Note: Dimuon cand are sorted by decreasing vertex probability then first is associated with "best" dimuon
   for (pat::CompositeCandidateCollection::const_iterator oniaCand = onia->begin(); oniaCand != onia->end(); ++oniaCand){
@@ -56,7 +56,7 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
 
            pat::CompositeCandidate OniaTTCand = makeOniaTTCandidate(*oniaCand, *&TTCand);
 
-           if ( OniaTTCand.mass() < OniaTrakTrakMassMax_ && OniaTTCand.mass() > OniaTrakTrakMassMin_) {
+           if ( OniaTTCand.mass() < OniaPFPFMassMax_ && OniaTTCand.mass() > OniaPFPFMassMin_) {
 
              OniaTTCandColl->push_back(OniaTTCand);
              candidates++;
@@ -79,13 +79,13 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
 
 void OniaPFPFProducer::endJob(){
   std::cout << "###########################" << std::endl;
-  std::cout << "OniaTrakTrak Candidate producer report:" << std::endl;
+  std::cout << "OniaPFPF Candidate producer report:" << std::endl;
   std::cout << "###########################" << std::endl;
   std::cout << "Found " << nevents << " Events" << std::endl;
   std::cout << "Events with Onia candidates " << nonia << std::endl;
-  std::cout << "Events with OniaTrakTrak candidates " << nreco << std::endl;
+  std::cout << "Events with OniaPFPF candidates " << nreco << std::endl;
   std::cout << "###########################" << std::endl;
-  std::cout << "Found " << candidates << " OniaTrakTrak candidates." << std::endl;
+  std::cout << "Found " << candidates << " OniaPFPF candidates." << std::endl;
   std::cout << "###########################" << std::endl;
 }
 
