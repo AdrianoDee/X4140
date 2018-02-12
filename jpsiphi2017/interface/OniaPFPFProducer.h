@@ -42,7 +42,7 @@ class OniaPFPFProducer : public edm::EDProducer {
   edm::EDGetTokenT<std::vector<pat::PackedCandidate>> PFCandCollection_;
   std::vector<double> OniaMassCuts_;
   std::vector<double> TrakTrakMassCuts_;
-  std::vector<double> OniaTrakTrakMassCuts_;
+  std::vector<double> OniaPFPFMassCuts_;
   std::vector<double> MassTraks_;
   bool OnlyBest_;
 
