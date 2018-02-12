@@ -161,7 +161,7 @@ process.PsiPhiFitter = cms.EDProducer('PsiPFPFKinematicFit',
 )
 
 process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
-    jpsitrktrk_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
+    jpsitrktrk_cand = cms.InputTag('PsiPhiProducer','OniaPFPFCandidates'),
     jpsitrktrk_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
     beamSpotTag = cms.InputTag("offlineBeamSpot"),
     primaryVertices = cms.InputTag("offlinePrimaryVertices"),
