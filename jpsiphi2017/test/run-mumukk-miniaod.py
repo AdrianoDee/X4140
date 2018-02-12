@@ -147,7 +147,7 @@ process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
     PFCandidates = cms.InputTag('packedPFCandidates'),
     OniaMassCuts = cms.vdouble(2.946916,3.246916),      # J/psi mass window 3.096916 +/- 0.150
     TrakTrakMassCuts = cms.vdouble(0.919461,1.119461),  # phi mass window 1.019461 +/- .015
-    OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    OniaPFPFMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     OnlyBest  = cms.bool(False)
 )
