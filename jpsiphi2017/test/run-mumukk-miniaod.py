@@ -160,17 +160,17 @@ process.PsiPhiFitter = cms.EDProducer('PsiPFPFKinematicFit',
     product_name    = cms.string('PsiPhiCandidates')
 )
 
-# process.rootuple = cms.EDAnalyzer('PsiTrakTrakRootupler',
-#     jpsitrktrk_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
-#     jpsitrktrk_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
-#     beamSpotTag = cms.InputTag("offlineBeamSpot"),
-#     primaryVertices = cms.InputTag("offlinePrimaryVertices"),
-#     TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
-#     isMC = cms.bool(False),
-#     OnlyBest = cms.bool(False),
-#     HLTs = hltpaths,
-#     filters = filters
-# )
+process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
+    jpsitrktrk_cand = cms.InputTag('PsiPhiProducer','OniaTrakTrakCandidates'),
+    jpsitrktrk_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidates"),
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+    TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+    isMC = cms.bool(False),
+    OnlyBest = cms.bool(False),
+    HLTs = hltpaths,
+    filters = filters
+)
 
 # process.Phi2KKPAT = cms.EDProducer('Phi2KKPAT',
 #   kaons = cms.InputTag("patSelectedTracks"),
@@ -211,4 +211,4 @@ process.PsiPhiFitter = cms.EDProducer('PsiPFPFKinematicFit',
 
 
 
-process.p = cms.Path(process.triggerSelection * process.JPsi2MuMuPAT * process.PsiPhiProducer * process.PsiPhiFitter) # * process.rootuple * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
+process.p = cms.Path(process.triggerSelection * process.JPsi2MuMuPAT * process.PsiPhiProducer * process.PsiPhiFitter * process.rootuple)# * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
