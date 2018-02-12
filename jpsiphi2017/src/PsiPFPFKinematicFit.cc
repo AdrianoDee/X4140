@@ -143,7 +143,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 // Kinematic fit
   edm::ESHandle<TransientTrackBuilder> theB;
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
-  std::cout<<"-Debug "<<++debug<<std::endl;
+
   int indexPsiT=-1;
   for (pat::CompositeCandidateCollection::const_iterator oniat=PsiTCandHandle->begin(); oniat!=PsiTCandHandle->end(); ++oniat) {
 
@@ -167,9 +167,9 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
       continue;
     if(!trak2->hasTrackDetails())
       continue;
-    std::cout<<"Debug a"<<++debug<<std::endl;
+
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
-    std::cout<<"Debug 0"<<++debug<<std::endl;
+
     std::vector<reco::TransientTrack> MuMuTT;
     MuMuTT.push_back((*theB).build(&JpsiTk[0]));
     MuMuTT.push_back((*theB).build(&JpsiTk[1]));
@@ -178,7 +178,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     KinematicParticleFactoryFromTransientTrack pFactory;
 
-    std::cout<<"Debug 1"<<++debug<<std::endl;
+
     const ParticleMass muonMass(0.1056583);
     float muonSigma = muonMass*1E-6;
     const ParticleMass kaonMass1(MassTraks_[0]);
@@ -191,11 +191,11 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[1], muonMass, float(0), float(0), muonSigma));
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[2], kaonMass1, float(0), float(0), kaonSigma1));
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[3], kaonMass2, float(0), float(0), kaonSigma2));
-    std::cout<<"Debug 1.1"<<++debug<<std::endl;
+
     KinematicConstrainedVertexFitter constVertexFitter;
     MultiTrackKinematicConstraint *onia_mtc = new  TwoTrackMassKinematicConstraint(mass_);
     RefCountedKinematicTree PsiTTree = constVertexFitter.fit(allPsiTDaughters,onia_mtc);
-    std::cout<<"Debug 2.0"<<++debug<<std::endl;
+
     if (!PsiTTree->isEmpty()) {
        PsiTTree->movePointerToTheTop();
        RefCountedKinematicParticle fitPsiT = PsiTTree->currentParticle();
@@ -204,14 +204,14 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
        double oniat_ma_fit = 14000.;
        double oniat_vp_fit = -9999.;
        double oniat_x2_fit = 10000.;
-       std::cout<<"Debug 2.1"<<++debug<<std::endl;
+
        if (fitPsiT->currentState().isValid()) {
          oniat_ma_fit = fitPsiT->currentState().mass();
          oniat_x2_fit = PsiTDecayVertex->chiSquared();
          oniat_vp_fit = ChiSquaredProbability(oniat_x2_fit,
                                               (double)(PsiTDecayVertex->degreesOfFreedom()));
        }
-       std::cout<<"Debug 2.2"<<++debug<<std::endl;
+
        if ( oniat_ma_fit > OniaTrakTrakMassCuts_[0] && oniat_ma_fit < OniaTrakTrakMassCuts_[1] && oniat_vp_fit > 0.0 ) {
             TVector3 vtx;
             TVector3 pvtx;
@@ -225,7 +225,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             double oniat_vx_fit = PsiTDecayVertex->position().x();
 	          double oniat_vy_fit = PsiTDecayVertex->position().y();
             double oniat_vz_fit = PsiTDecayVertex->position().z();
-            std::cout<<"Debug 3.1"<<++debug<<std::endl;
+
             vtx.SetXYZ(oniat_vx_fit,oniat_vy_fit,0);
             TVector3 pperp(oniat_px_fit, oniat_py_fit, 0);
             AlgebraicVector3 vpperp(pperp.x(),pperp.y(),0);
@@ -238,7 +238,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             GlobalError v2e = thePrimaryV.error();
             AlgebraicSymMatrix33 vXYe = v1e.matrix()+ v2e.matrix();
             double ctauErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*oniat_ma_fit/(pperp.Perp2());
-            std::cout<<"Debug 3"<<++debug<<std::endl;
+
 	    reco::CompositeCandidate recoPsiT(oniat_ch_fit,math::XYZTLorentzVector(oniat_px_fit,oniat_py_fit,oniat_pz_fit,oniat_en_fit),
                                                math::XYZPoint(oniat_vx_fit,oniat_vy_fit,oniat_vz_fit),531);
 	    pat::CompositeCandidate patPsiT(recoPsiT);
@@ -276,7 +276,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             reco::CompositeCandidate recoMu2(m2_ch_fit,math::XYZTLorentzVector(m2_px_fit,m2_py_fit,m2_pz_fit,m2_en_fit),
                                              math::XYZPoint(oniat_vx_fit,oniat_vy_fit,oniat_vz_fit),13);
             pat::CompositeCandidate patMu2(recoMu2);
-            std::cout<<"Debug 4"<<++debug<<std::endl;
+
 // Define psi from two muons
 	          pat::CompositeCandidate psi;
 	          psi.addDaughter(patMu1,"muon1");
@@ -295,7 +295,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             reco::CompositeCandidate recoTk(tk_ch_fit,math::XYZTLorentzVector(tk_px_fit,tk_py_fit,tk_pz_fit,tk_en_fit),
                                              math::XYZPoint(oniat_vx_fit,oniat_vy_fit,oniat_vz_fit),321);
             pat::CompositeCandidate patTk(recoTk);
-            std::cout<<"Debug 5"<<++debug<<std::endl;
+
 // get kaon2
             child = PsiTTree->movePointerToTheNextChild();
             RefCountedKinematicParticle fitTrk2 = PsiTTree->currentParticle();
@@ -318,17 +318,17 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
 	          patPsiT.addDaughter(psi,"onia");
 	          patPsiT.addDaughter(phi,"ditrak");
-            std::cout<<"Debug 6"<<++debug<<std::endl;
+
             PsiTCandRefitColl->push_back(patPsiT);
           }
 	}
   }
 // End kinematic fit
-  std::cout << "PsiTCandRefit"<< std::endl;
+
 // now sort by vProb
   PsiPFPFKinematicFit::GreaterByVProb<pat::CompositeCandidate> vPComparator;
   std::sort(PsiTCandRefitColl->begin(),PsiTCandRefitColl->end(),vPComparator);
-  std::cout << "sort"<< std::endl;
+
   iEvent.put(std::move(PsiTCandRefitColl),product_name_);
   // std::cout << "PsiTCandRefitColl size: "<< PsiTCandRefitColl->size()<<std::endl;
 }
