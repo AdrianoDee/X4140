@@ -26,7 +26,7 @@ sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ'
  'T3_CH_PSI', 'T3_CN_PKU', 'T3_CO_Uniandes',
  'T3_ES_Oviedo', 'T3_FR_IPNL', 'T3_GR_IASA', 'T3_HU_Debrecen',
  'T3_IN_PUHEP', 'T3_IN_TIFRCloud',
- 'T3_IT_Bologna', 'T3_IT_Firenze', 'T3_IT_MIB', 'T3_IT_Opportunistic', 'T3_IT_Perugia',
+ 'T3_IT_Bologna', 'T3_IT_MIB', 'T3_IT_Opportunistic', 'T3_IT_Perugia',
  'T3_IT_Trieste', 'T3_KR_KISTI', 'T3_KR_KNU', 'T3_KR_UOS', 'T3_MX_Cinvestav',
  'T3_RU_FIAN', 'T3_RU_MEPhI', 'T3_RU_SINP', 'T3_TH_CHULA', 'T3_TW_NCU', 'T3_TW_NTU_HEP',
  'T3_UK_GridPP_Cloud', 'T3_UK_London_QMUL', 'T3_UK_London_RHUL', 'T3_UK_SGrid_Oxford',
