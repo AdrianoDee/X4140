@@ -156,7 +156,7 @@ process.JPsi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
 process.JPsi2MuMuFilter = cms.EDProducer('DiMuonFilter',
       OniaTag             = cms.InputTag("JPsi2MuMuPAT"),
       singlemuonSelection = cms.string(""),
-      dimuonSelection     = cms.string("2.95 < mass && mass < 3.25 && vProb > 0.01"),
+      dimuonSelection     = cms.string("2.95 < mass && mass < 3.25 && userFloat('vProb') > 0.01"),
       do_trigger_match    = cms.bool(False),
       HLTFilters          = filters
 )
