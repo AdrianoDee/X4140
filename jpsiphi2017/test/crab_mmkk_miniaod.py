@@ -34,7 +34,11 @@ sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ'
  'T3_UK_ScotGrid_GLA', 'T3_US_ANL', 'T3_US_BU', 'T3_US_Baylor', 'T3_US_Brown',
  'T3_US_Colorado', 'T3_US_Cornell', 'T3_US_FIT', 'T3_US_FIU', 'T3_US_FNALLPC',
  'T3_US_FSU', 'T3_US_HEPCloud', 'T3_US_JHU', 'T3_US_Kansas', 'T3_US_MIT', 'T3_US_NERSC',
-  'T3_US_NEU', 'T3_US_NotreDame', 'T3_US_OSG']
+  'T3_US_NEU', 'T3_US_NotreDame', 'T3_US_OSG', 'T3_US_OSU', 'T3_US_Princeton_ARM',
+  'T3_US_Princeton_ICSE', 'T3_US_PuertoRico', 'T3_US_Rice', 'T3_US_Rutgers', 'T3_US_SDSC',
+  'T3_US_TACC', 'T3_US_TAMU', 'T3_US_TTU', 'T3_US_UB', 'T3_US_UCD', 'T3_US_UCR', 'T3_US_UCSB',
+  'T3_US_UIowa', 'T3_US_UMD', 'T3_US_UMiss', 'T3_US_UTENN', 'T3_US_UVA', 'T3_US_Vanderbilt_EC2',
+  'T3_US_Wisconsin']
 
 datasetnames = {
 
@@ -99,12 +103,12 @@ config.Data.runRange            = runNum
 config.Data.lumiMask            = lumi
 config.Data.outLFNDirBase       = '/store/user/adiflori/'
 config.Data.publication         = False
-config.Data.ignoreLocality      = False
+config.Data.ignoreLocality      = True
 
 
 config.section_('Site')
 #config.Site.storageSite        = 'T2_CH_CERN'
 config.Site.storageSite         = 'T2_IT_Bari'
 #config.Site.blacklist          = ['T2_IN_TIFR','T2_US_Vanderbilt']
-config.Site.whitelist           = ['T2_*','T3_*']
+config.Site.whitelist           = sites
 config.Site.blacklist           = ['T1*', 'T3_US_UMiss']
