@@ -211,7 +211,7 @@ def GetMuPerLumiHisto(histo,hlt):
          print "ERROR %s for run %i"%(lumiout,irun)
       else:
          #print(lumiclean)
-         lumi =float(string.strip(lumiclean)) / 1.
+         lumi =float(string.strip(lumiclean)) / 1000.
 
          nmuperlumi = runcontent/lumi
          err=sqrt(runcontent)/lumi
@@ -242,7 +242,7 @@ if __name__ == '__main__':
   else:
       hlts = [""]
 
-  hfile = TFile( 'jpsiLumiNorm.root', 'RECREATE', 'ROOT file with histograms' )
+  hfile = TFile( 'rootfiles/jpsiLumiNormRunII.root', 'RECREATE', 'ROOT file with histograms' )
 
   for hlt in hlts:
       fileIn.cd()
@@ -251,27 +251,27 @@ if __name__ == '__main__':
       c1 = TCanvas("c1","c1",1200, 900)
       c1.SetLogy(1)
       printRunHisto(histo,'Nb. JPsi ')
-      c1.SaveAs("JPsivsrun%s.eps"%(hlt))
+      c1.SaveAs("plots/JPsivsrun%s.eps"%(hlt))
 
 
       c2 = TCanvas("c2","c2",1200, 900)
       c2.SetLogy(1)
       histo_rebin=ReBinRunHisto(histo,'JPsi_rebin' + hlt)
       printRunHisto(histo_rebin,'Nb. JPsi ')
-      c2.SaveAs("JPsivsrunrebin%s.eps"%(hlt))
+      c2.SaveAs("plots/JPsivsrunrebin%s.eps"%(hlt))
 
       testBrilEnv()
       histo_lumi=GetMuPerLumiHisto(histo,hlt)
       cl = TCanvas("cl","cl",1200, 900)
       cl.SetLogy(0)
-      printRunHisto(histo_lumi,'# JPsi (from X)/lumi (ub)' + hlt)
-      cl.SaveAs("JPsivsrun_lumi%s.eps"%(hlt))
+      printRunHisto(histo_lumi,'# JPsi (from X)/lumi (mb)' + hlt)
+      cl.SaveAs("plots/JPsivsrun_lumi%s.eps"%(hlt))
 
       clr = TCanvas("clr","clr",1200, 900)
       clr.SetLogy(0)
       histo_lumi_rebin=ReBinRunHisto(histo_lumi,'JPsilumi_rebin' + hlt)
-      printRunHisto(histo_lumi_rebin,'# JPsi (from X)/lumi (ub)')
-      clr.SaveAs("JPsivsrunrebin_lumi%s.eps"%(hlt))
+      printRunHisto(histo_lumi_rebin,'# JPsi (from X)/lumi (mb)')
+      clr.SaveAs("plots/JPsivsrunrebin_lumi%s.eps"%(hlt))
 
       hfile.cd()
       histo.Write()

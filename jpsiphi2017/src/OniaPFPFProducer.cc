@@ -44,6 +44,7 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
        for (std::vector<pat::PackedCandidate>::const_iterator trakCand = trak->begin(), trakend=trak->end(); trakCand!= trakend; ++trakCand){
 
          if(trakCand->charge()==0) continue;
+         if(trakCand->pt()<0.5) continue;
 	       if(fabs(trakCand->pdgId())!=211) continue;
 	       if(!(trakCand->trackHighPurity())) continue;
 
@@ -53,6 +54,7 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
          for (std::vector<pat::PackedCandidate>::const_iterator trakCand2 = trak->begin(); trakCand2!= trakend; ++trakCand2){
 
            if(trakCand2->charge()==0) continue;
+           if(trakCand2->pt()<0.5) continue;
   	       if(fabs(trakCand2->pdgId())!=211) continue;
   	       if(!(trakCand2->trackHighPurity())) continue;
 

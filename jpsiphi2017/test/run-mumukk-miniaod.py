@@ -156,7 +156,7 @@ process.JPsi2MuMuPAT = cms.EDProducer('FourOnia2MuMuPAT',
 process.JPsi2MuMuFilter = cms.EDProducer('DiMuonFilter',
       OniaTag             = cms.InputTag("JPsi2MuMuPAT"),
       singlemuonSelection = cms.string(""),
-      dimuonSelection     = cms.string("2.95 < mass && mass < 3.25 && userFloat('vProb') > 0.01"),
+      dimuonSelection     = cms.string("2.95 < mass && mass < 3.25 && userFloat('vProb') > 0.01 && pt > 2.0"),
       do_trigger_match    = cms.bool(False),
       HLTFilters          = filters
 )
@@ -165,8 +165,8 @@ process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
     Onia = cms.InputTag('JPsi2MuMuPAT'),
     PFCandidates = cms.InputTag('packedPFCandidates'),
     OniaMassCuts = cms.vdouble(2.95,3.25),      # J/psi mass window 3.096916 +/- 0.150
-    TrakTrakMassCuts = cms.vdouble(0.99,1.05),  # phi mass window 1.019461 +/- .015
-    OniaPFPFMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    TrakTrakMassCuts = cms.vdouble(1.0,1.04),  # phi mass window 1.019461 +/- .015
+    OniaPFPFMassCuts = cms.vdouble(4.0,5.8),            # b-hadron mass window
     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     OnlyBest  = cms.bool(False)
 )
@@ -174,7 +174,7 @@ process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
 process.PsiPhiFitter = cms.EDProducer('PsiPFPFKinematicFit',
     PsiPFPF     = cms.InputTag('PsiPhiProducer','OniaPFPFCandidates'),
     mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
-    OniaTrakTrakMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    OniaTrakTrakMassCuts = cms.vdouble(4.0,5.8),            # b-hadron mass window
     MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     product_name    = cms.string('PsiPhiCandidates')
 )
