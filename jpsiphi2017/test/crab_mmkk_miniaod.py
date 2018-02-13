@@ -10,6 +10,32 @@ config = Configuration()
 
 datasetbase = '/Charmonium' # '/Muonia' #
 
+sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ',
+ 'T2_CH_CERN', 'T2_CH_CERN_AI', 'T2_CH_CERN_HLT', 'T2_CH_CERN_Wigner',
+ 'T2_CH_CSCS', 'T2_CH_CSCS_HPC', 'T2_CN_Beijing', 'T2_DE_DESY', 'T2_DE_RWTH',
+ 'T2_EE_Estonia', 'T2_ES_CIEMAT', 'T2_ES_IFCA', 'T2_FI_HIP', 'T2_FR_CCIN2P3',
+ 'T2_FR_GRIF_IRFU', 'T2_FR_GRIF_LLR', 'T2_FR_IPHC', 'T2_GR_Ioannina', 'T2_HU_Budapest',
+ 'T2_IN_TIFR', 'T2_IT_Bari', 'T2_IT_Legnaro', 'T2_IT_Pisa', 'T2_IT_Rome', 'T2_KR_KISTI',
+ 'T2_KR_KNU', 'T2_MY_SIFIR', 'T2_MY_UPM_BIRUNI', 'T2_PK_NCP', 'T2_PL_Swierk', 'T2_PL_Warsaw',
+ 'T2_PT_NCG_Lisbon', 'T2_RU_IHEP', 'T2_RU_INR', 'T2_RU_ITEP', 'T2_RU_JINR', 'T2_RU_PNPI',
+ 'T2_RU_SINP', 'T2_TH_CUNSTDA', 'T2_TR_METU', 'T2_TW_NCHC', 'T2_UA_KIPT', 'T2_UK_London_Brunel',
+ 'T2_UK_London_IC', 'T2_UK_SGrid_Bristol','T2_UK_SGrid_RALPP', 'T2_US_Caltech', 'T2_US_Florida',
+ 'T2_US_MIT', 'T2_US_Nebraska', 'T2_US_Purdue', 'T2_US_UCSD', 'T2_US_Vanderbilt',
+ 'T2_US_Wisconsin',
+
+ 'T3_BG_UNI_SOFIA','T3_BY_NCPHEP', 'T3_CH_CERN_CAF', 'T3_CH_CERN_HelixNebula', 'T3_CH_CERN_OpenData',
+ 'T3_CH_CMSAtHome', 'T3_CH_PSI', 'T3_CH_Volunteer', 'T3_CN_PKU', 'T3_CO_Uniandes',
+ 'T3_ES_Oviedo', 'T3_FR_IPNL', 'T3_GR_Demokritos', 'T3_GR_IASA', 'T3_HR_IRB', 'T3_HU_Debrecen',
+ 'T3_IN_PUHEP', 'T3_IN_TIFRCloud', 'T3_IN_VBU', 'T3_IR_IPM',
+ 'T3_IT_Bologna', 'T3_IT_Firenze', 'T3_IT_MIB', 'T3_IT_Opportunistic', 'T3_IT_Perugia',
+ 'T3_IT_Trieste', 'T3_KR_KISTI', 'T3_KR_KNU', 'T3_KR_UOS', 'T3_MX_Cinvestav',
+ 'T3_RU_FIAN', 'T3_RU_MEPhI', 'T3_RU_SINP', 'T3_TH_CHULA', 'T3_TW_NCU', 'T3_TW_NTU_HEP',
+ 'T3_UK_GridPP_Cloud', 'T3_UK_London_QMUL', 'T3_UK_London_RHUL', 'T3_UK_SGrid_Oxford',
+ 'T3_UK_ScotGrid_GLA', 'T3_US_ANL', 'T3_US_BU', 'T3_US_Baylor', 'T3_US_Brown',
+ 'T3_US_Colorado', 'T3_US_Cornell', 'T3_US_FIT', 'T3_US_FIU', 'T3_US_FNALLPC',
+ 'T3_US_FSU', 'T3_US_HEPCloud', 'T3_US_JHU', 'T3_US_Kansas', 'T3_US_MIT', 'T3_US_NERSC',
+  'T3_US_NEU', 'T3_US_NotreDame', 'T3_US_OSG']
+
 datasetnames = {
 
 "F" :  datasetbase + '/Run2017F-PromptReco-v1/MINIAOD',
@@ -80,5 +106,5 @@ config.section_('Site')
 #config.Site.storageSite        = 'T2_CH_CERN'
 config.Site.storageSite         = 'T2_IT_Bari'
 #config.Site.blacklist          = ['T2_IN_TIFR','T2_US_Vanderbilt']
+config.Site.whitelist           = ['T2_*','T3_*']
 config.Site.blacklist           = ['T1*', 'T3_US_UMiss']
-#config.Site.whitelist           = ['T2_IT_*','T3_IT*']
