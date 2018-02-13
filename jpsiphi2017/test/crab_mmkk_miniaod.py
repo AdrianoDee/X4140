@@ -33,7 +33,7 @@ sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ'
  'T3_US_FSU', 'T3_US_J*', 'T3_US_Kansas', 'T3_US_MIT', 'T3_US_N*', 'T3_US_O*', 'T3_US_P*',
  'T3_US_R*', 'T3_US_S*',
   'T3_US_T*', 'T3_US_UCD', 'T3_US_UCR', 'T3_US_UCSB',
-  'T3_US_UIowa', 'T3_US_UMD', 'T3_US_UTENN', 'T3_US_UVA', 'T3_US_Vanderbilt_EC2',
+  'T3_US_UMD', 'T3_US_UTENN', 'T3_US_UVA', 'T3_US_Vanderbilt_EC2',
   'T3_US_Wisconsin']
 
 datasetnames = {
