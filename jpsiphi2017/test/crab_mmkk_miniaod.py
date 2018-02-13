@@ -27,7 +27,7 @@ sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ'
  'T3_ES_Oviedo', 'T3_FR_IPNL', 'T3_GR_IASA', 'T3_HU_Debrecen',
  'T3_IN_PUHEP', 'T3_IN_TIFRCloud',
  'T3_IT_*', 'T3_KR_*', 'T3_MX_*',
- 'T3_RU_*', 'T3_TH_*', 'T3_TW*',
+ 'T3_RU_*', 'T3_TW*',
  'T3_UK_*', 'T3_US_ANL', 'T3_US_BU', 'T3_US_Baylor', 'T3_US_Brown',
  'T3_US_Colorado', 'T3_US_Cornell', 'T3_US_FIT', 'T3_US_FIU', 'T3_US_FNALLPC',
  'T3_US_FSU', 'T3_US_HEPCloud', 'T3_US_JHU', 'T3_US_Kansas', 'T3_US_MIT', 'T3_US_NERSC',
