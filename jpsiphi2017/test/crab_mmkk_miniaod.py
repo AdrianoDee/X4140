@@ -30,10 +30,9 @@ sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ'
  'T3_RU_*', 'T3_TW*',
  'T3_UK_*', 'T3_US_Baylor',
  'T3_US_Colorado', 'T3_US_Cornell', 'T3_US_FIT', 'T3_US_FIU', 'T3_US_FNALLPC',
- 'T3_US_FSU', 'T3_US_J*', 'T3_US_Kansas', 'T3_US_MIT', 'T3_US_NERSC',
-  'T3_US_NEU', 'T3_US_NotreDame', 'T3_US_OSG', 'T3_US_OSU', 'T3_US_Princeton_ARM',
-  'T3_US_Princeton_ICSE', 'T3_US_PuertoRico', 'T3_US_Rice', 'T3_US_Rutgers', 'T3_US_SDSC',
-  'T3_US_TACC', 'T3_US_TAMU', 'T3_US_TTU', 'T3_US_UB', 'T3_US_UCD', 'T3_US_UCR', 'T3_US_UCSB',
+ 'T3_US_FSU', 'T3_US_J*', 'T3_US_Kansas', 'T3_US_MIT', 'T3_US_N*', 'T3_US_O*', 'T3_US_P*',
+ 'T3_US_R*', 'T3_US_S*',
+  'T3_US_T*', 'T3_US_UB', 'T3_US_UCD', 'T3_US_UCR', 'T3_US_UCSB',
   'T3_US_UIowa', 'T3_US_UMD', 'T3_US_UMiss', 'T3_US_UTENN', 'T3_US_UVA', 'T3_US_Vanderbilt_EC2',
   'T3_US_Wisconsin']
 
