@@ -172,7 +172,7 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
       MuMuTT.push_back((*theB).build((trak1->pseudoTrack()))); // K+
 
 
-    if(!trak2->hasTrackDetails())
+    if(!trak2->bestTrack())
       MuMuTT.push_back((*theB).build(*(trak2->bestTrack()))); // K+
     else
       MuMuTT.push_back((*theB).build((trak2->pseudoTrack()))); // K+
