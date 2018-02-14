@@ -1,5 +1,5 @@
-#ifndef HeavyFlavorAnalysis_FourOnia2KK_FourOnia2KKPAT_h
-#define HeavyFlavorAnalysis_FourOnia2KK_FourOnia2KKPAT_h
+#ifndef HeavyFlavorAnalysis_FourOnia_FourOniaPAT_h
+#define HeavyFlavorAnalysis_FourOnia_FourOniaPAT_h
 
 
 // system include files
@@ -22,27 +22,6 @@
 
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 
-#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
-#include "DataFormats/PatCandidates/interface/GenericParticle.h"
-
-#include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
-#include "TrackingTools/Records/interface/TransientTrackRecord.h"
-#include "TrackingTools/TransientTrack/interface/TransientTrack.h"
-#include "MagneticField/Engine/interface/MagneticField.h"
-#include "CommonTools/Statistics/interface/ChiSquaredProbability.h"
-
-#include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h"
-#include "RecoVertex/KinematicFit/interface/MassKinematicConstraint.h"
-#include "RecoVertex/KinematicFit/interface/KinematicParticleFitter.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/MultiTrackKinematicConstraint.h"
-#include "RecoVertex/KinematicFit/interface/KinematicConstrainedVertexFitter.h"
-#include "RecoVertex/KinematicFit/interface/TwoTrackMassKinematicConstraint.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticle.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
-#include "RecoVertex/KinematicFitPrimitives/interface/TransientTrackKinematicParticle.h"
-
-
 template<typename T>
 struct GreaterByVProb {
   bool operator()( const T & t1, const T & t2 ) const {
@@ -55,10 +34,10 @@ struct GreaterByVProb {
 // class decleration
 //
 
-class FourOnia2KKPAT : public edm::EDProducer {
+class FourOniaPAT : public edm::EDProducer {
  public:
-  explicit FourOnia2KKPAT(const edm::ParameterSet&);
-  ~FourOnia2KKPAT() override;
+  explicit FourOniaPAT(const edm::ParameterSet&);
+  ~FourOniaPAT() override;
 
  private:
   void beginJob() override ;
@@ -72,14 +51,14 @@ class FourOnia2KKPAT : public edm::EDProducer {
   // ----------member data ---------------------------
  private:
 
-  edm::EDGetTokenT<edm::View<pat::GenericParticle>> trakCollection_;
+  edm::EDGetTokenT<edm::View<pat::Muon>> muons_;
   edm::EDGetTokenT<reco::BeamSpot> thebeamspot_;
   edm::EDGetTokenT<reco::VertexCollection> thePVs_;
   edm::EDGetTokenT<reco::TrackCollection> revtxtrks_;
   edm::EDGetTokenT<reco::BeamSpot> revtxbs_;
   StringCutObjectSelector<pat::Muon> higherPuritySelection_;
   StringCutObjectSelector<pat::Muon> lowerPuritySelection_;
-  StringCutObjectSelector<reco::Candidate, true> dimuonSelection_;
+  StringCutObjectSelector<reco::Candidate, true> quadmuonSelection_;
   bool addCommonVertex_, addMuonlessPrimaryVertex_;
   bool resolveAmbiguity_;
   bool addMCTruth_;

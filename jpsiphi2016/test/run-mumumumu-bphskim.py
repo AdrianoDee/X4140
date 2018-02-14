@@ -21,6 +21,7 @@ process.TFileService = cms.Service("TFileService",fileName = cms.string(ouput_fi
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 
 process.load("mmkk.mmkk.slimmedMuonsTriggerMatcher2017_cfi")
+process.load("HeavyFlavorAnalysis.Onia2MuMu.onia2MuMuPAT_cfi")
 
 hltList = [
 #Phi
@@ -37,9 +38,7 @@ hltList = [
 'HLT_DoubleMu4_3_Jpsi_Displaced',
 'HLT_Dimuon20_Jpsi_Barrel_Seagulls',
 'HLT_Dimuon25_Jpsi',
-'HLT_Dimuon0_Jpsi',
-'HLT_Dimuon16_Jpsi', #v4.2 2016
-'HLT_Dimuon20_Jpsi' #v4.2 2016
+'HLT_Dimuon0_Jpsi'
 ]
 
 hltpaths = cms.vstring(hltList)
@@ -118,42 +117,9 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         throw = cms.bool(False)
                                         )
 
-process.oniaSelectedMuons = cms.EDFilter('PATMuonSelector',
-   src = cms.InputTag('slimmedMuonsWithTrigger'),
-   cut = cms.string(''),
-   filter = cms.bool(True)
-)
-
-process.FourOnia2MuMuPhi = cms.EDProducer('FourOnia2MuMuPAT',
-        muons                       = cms.InputTag('oniaSelectedMuons'),
-        primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
-        higherPuritySelection       = cms.string(""),
-        lowerPuritySelection        = cms.string(""),
-        dimuonSelection             = cms.string("0.6 < mass && mass < 1.2 && charge==0 "),
-        addCommonVertex             = cms.bool(True),
-        addMuonlessPrimaryVertex    = cms.bool(False),
-        addMCTruth                  = cms.bool(False),
-        resolvePileUpAmbiguity      = cms.bool(True),
-        HLTFilters                  = filters
-)
-
-process.FourOnia2MuMuJPsi = cms.EDProducer('FourOnia2MuMuPAT',
-        muons                       = cms.InputTag('oniaSelectedMuons'),
-        primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
-        higherPuritySelection       = cms.string(""),
-        lowerPuritySelection        = cms.string(""),
-        dimuonSelection             = cms.string("2.9 < mass && mass < 3.3 && charge==0 "),
-        addCommonVertex             = cms.bool(True),
-        addMuonlessPrimaryVertex    = cms.bool(False),
-        addMCTruth                  = cms.bool(False),
-        resolvePileUpAmbiguity      = cms.bool(True),
-        HLTFilters                  = filters
-)
 
 process.Onia2MuMuFilteredJpsi = cms.EDProducer('DiMuonFilter',
-      OniaTag             = cms.InputTag("FourOnia2MuMuJPsi"),
+      OniaTag             = cms.InputTag("onia2MuMuPAT"),
       singlemuonSelection = cms.string(""),
       dimuonSelection     = cms.string("2.9 < mass && mass < 3.3"),
       do_trigger_match    = cms.bool(False),
@@ -161,9 +127,9 @@ process.Onia2MuMuFilteredJpsi = cms.EDProducer('DiMuonFilter',
 )
 
 process.Onia2MuMuFilteredPhi = cms.EDProducer('DiMuonFilter',
-      OniaTag             = cms.InputTag("FourOnia2MuMuPhi"),
+      OniaTag             = cms.InputTag("onia2MuMuPAT"),
       singlemuonSelection = cms.string(""),
-      dimuonSelection     = cms.string("0.6 < mass && mass < 1.2"),
+      dimuonSelection     = cms.string("0.9 < mass && mass < 1.2"),
       do_trigger_match    = cms.bool(False),
       HLTFilters          = filters
 
@@ -181,85 +147,64 @@ process.DiMuonCounterPhi = cms.EDFilter('CandViewCountFilter',
     filter    = cms.bool(True)
 )
 
-process.xProducer = cms.EDProducer('FourOniaProducer',
-    phidimuons                  = cms.InputTag("FourOnia2MuMuPhi"),
-    jpsidimuons                 = cms.InputTag("FourOnia2MuMuJPsi"),
-    primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
-    beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
-    dzmax                       = cms.double(20.0),
-    triggerMatch                = cms.bool(False),
-    addCommonVertex             = cms.bool(True),
-    addMuonlessPrimaryVertex    = cms.bool(True),
-    resolvePileUpAmbiguity      = cms.bool(True),
-    quadmuonSelection           = cms.string("4.0 < mass && mass < 6.0 && charge==0")
+process.PsiPhiProducer = cms.EDProducer('PsiPhiFourMuonsProducer',
+    JPsiCollection = cms.InputTag('Onia2MuMuFilteredJpsi'),
+    PhiCollection = cms.InputTag('Onia2MuMuFilteredPhi'),
+    JPsiMassCuts = cms.vdouble(2.9,3.2),      # J/psi mass window 3.096916 +/- 0.150
+    PhiMassCuts = cms.vdouble(0.9,1.15),  # phi mass window 1.019461 +/- .015
+    FourOniaMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
 )
 
-process.BkgOnia2MuMuPhi = cms.EDProducer('FourOnia2MuMuPAT',
-        muons                       = cms.InputTag('oniaSelectedMuons'),
-        primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
-        higherPuritySelection       = cms.string(""),
-        lowerPuritySelection        = cms.string(""),
-        dimuonSelection             = cms.string("0.6 < mass && mass < 1.2 && charge != 0 "),
-        addCommonVertex             = cms.bool(True),
-        addMuonlessPrimaryVertex    = cms.bool(False),
-        addMCTruth                  = cms.bool(False),
-        resolvePileUpAmbiguity      = cms.bool(True),
-        HLTFilters                  = filters
+process.PsiPhiFitter = cms.EDProducer('PsiPhiFourMuKinematicFit',
+    JPsiPhiCollection     = cms.InputTag('PsiPhiProducer','PsiPhiFourMuonsCandidates'),
+    PhiConstraint = cms.double(1.019461),              # J/psi mass in GeV
+    JPsiConstraint = cms.double(3.096916),
+    FourOniaMassCuts = cms.vdouble(4.0,6.0),            # b-hadron mass window
+    product_name    = cms.string('PsiPhiCandidatesRefit')
 )
 
-process.BkgOnia2MuMuJPsi = cms.EDProducer('FourOnia2MuMuPAT',
-        muons                       = cms.InputTag('oniaSelectedMuons'),
-        primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
-        higherPuritySelection       = cms.string(""),
-        lowerPuritySelection        = cms.string(""),
-        dimuonSelection             = cms.string("2.9 < mass && mass < 3.3 && charge != 0 "),
-        addCommonVertex             = cms.bool(True),
-        addMuonlessPrimaryVertex    = cms.bool(False),
-        addMCTruth                  = cms.bool(False),
-        resolvePileUpAmbiguity      = cms.bool(True),
-        HLTFilters                  = filters
+process.rootuple = cms.EDAnalyzer('PsiPhiFourMuonsRootupler',
+    jpsiphi_cand = cms.InputTag('PsiPhiProducer','PsiPhiFourMuonsCandidates'),
+    jpsiphi_rf_cand = cms.InputTag("PsiPhiFitter","PsiPhiCandidatesRefit"),
+    beamSpotTag = cms.InputTag("offlineBeamSpot"),
+    primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+    TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+    isMC = cms.bool(False),
+    OnlyBest = cms.bool(False),
+    HLTs = hltpaths,
+    filters = filters
 )
-
-process.BkgProducer = cms.EDProducer('FourOniaProducer',
-    phidimuons                  = cms.InputTag("BkgOnia2MuMuPhi"),
-    jpsidimuons                 = cms.InputTag("BkgOnia2MuMuJPsi"),
-    primaryVertexTag            = cms.InputTag('offlineSlimmedPrimaryVertices'),
-    beamSpotTag                 = cms.InputTag('offlineBeamSpot'),
-    dzmax                       = cms.double(20.0),
-    triggerMatch                = cms.bool(False),
-    addCommonVertex             = cms.bool(True),
-    addMuonlessPrimaryVertex    = cms.bool(True),
-    resolvePileUpAmbiguity      = cms.bool(True),
-    quadmuonSelection           = cms.string("4.0 < mass && mass < 6.0")
-)
-
 
 process.xCandSequence = cms.Sequence(
                    process.triggerSelection *
-                   process.slimmedMuonsWithTriggerSequence *
-				   process.oniaSelectedMuons *
-                   process.FourOnia2MuMuPhi *
-                  # process.Onia2MuMuFilteredPhi *
-                  # process.DiMuonCounterPhi *
-				   process.FourOnia2MuMuJPsi *
-                   process.BkgOnia2MuMuPhi *
-                   process.BkgOnia2MuMuJPsi *
-                  # process.Onia2MuMuFilteredJpsi *
-                  # process.DiMuonCounterJPsi *
-                   process.xProducer*
-                   process.BkgProducer
+                   process.Onia2MuMuFilteredJpsi *
+                   process.Onia2MuMuFilteredPhi *
+                   process.PsiPhiProducer *
+                   process.PsiPhiFitter
 				   )
 
-process.rootuple = cms.EDAnalyzer('x4MuRootupler',
-                          phidimuons = cms.InputTag("FourOnia2MuMuPhi"),
-                          jpsidimuons = cms.InputTag("FourOnia2MuMuJPsi"),
-                          HLTs = hltpaths,
-			              x_cand = cms.InputTag("xProducer"),
-                          bkg_cand = cms.InputTag("BkgProducer"),
-                          primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
-                          TriggerResults  = cms.InputTag("TriggerResults", "", "HLT"),
-                          isMC = cms.bool(False)
-                         )
-process.p = cms.Path(process.xCandSequence * process.rootuple)
+process.rootupleJPsi = cms.EDAnalyzer('Onia2MuMuRootupler',
+                          dimuons = cms.InputTag("Onia2MuMuFilteredJpsi"),
+                          muons = cms.InputTag("slimmedMuons"),
+                          primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+                          TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+                          onia_pdgid = cms.uint32(443),
+                          onia_mass_cuts = cms.vdouble(2.8,3.3),
+                          isMC = cms.bool(False),
+                          OnlyBest = cms.bool(False),
+                          OnlyGen = cms.bool(False)
+                          )
+
+process.rootuplePhi = cms.EDAnalyzer('Onia2MuMuRootupler',
+                          dimuons = cms.InputTag("Onia2MuMuFilteredPhi"),
+                          muons = cms.InputTag("slimmedMuons"),
+                          primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+                          TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+                          onia_pdgid = cms.uint32(331),
+                          onia_mass_cuts = cms.vdouble(0.55,1.25),
+                          isMC = cms.bool(False),
+                          OnlyBest = cms.bool(False),
+                          OnlyGen = cms.bool(False)
+                          )
+
+process.p = cms.Path(process.xCandSequence * process.rootuple * process.rootupleJPsi * process.rootuplePhi)

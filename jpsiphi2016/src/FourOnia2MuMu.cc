@@ -9,16 +9,26 @@
 #include <DataFormats/HepMCCandidate/interface/GenParticle.h>
 #include <DataFormats/PatCandidates/interface/Muon.h>
 #include <DataFormats/VertexReco/interface/VertexFwd.h>
+#include "DataFormats/Math/interface/deltaR.h"
 
 //Headers for services and tools
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
+
 #include "RecoVertex/KalmanVertexFit/interface/KalmanVertexFitter.h"
 #include "RecoVertex/VertexTools/interface/VertexDistanceXY.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleFitter.h"
+#include "RecoVertex/KinematicFit/interface/MassKinematicConstraint.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/TransientTrackKinematicParticle.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h"
+
 #include "TMath.h"
 #include "Math/VectorUtil.h"
 #include "TVector3.h"
 #include "../interface/FourOniaVtxReProducer.h"
+#include "TLorentzVector.h"
 
 #include "MagneticField/Engine/interface/MagneticField.h"
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
@@ -69,51 +79,8 @@ UInt_t FourOnia2MuMuPAT::isTriggerMatched(pat::CompositeCandidate *diMuon_cand) 
     const pat::TriggerObjectStandAloneCollection mu1HLTMatches = muon1->triggerObjectMatchesByFilter(HLTFilters_[iTr]);
     const pat::TriggerObjectStandAloneCollection mu2HLTMatches = muon2->triggerObjectMatchesByFilter(HLTFilters_[iTr]);
     if (!mu1HLTMatches.empty() && !mu2HLTMatches.empty()) matched += (1<<iTr);
+    // if (!mu1HLTMatches.empty() && !mu2HLTMatches.empty()) std::cout << std::endl << HLTFilters_[iTr] << std::endl;
   }
-  // const pat::TriggerObjectStandAloneCollection muon1Collection = muon1->triggerObjectMatches();
-  // const pat::TriggerObjectStandAloneCollection muon2Collection = muon2->triggerObjectMatches();
-  //
-  //
-  // for ( size_t i = 0; i < muon1Collection.size(); ++i )
-  // {
-  //   std::cout << "Muon1 collection : " << muon1->triggerObjectMatch(i)->collection() << std::endl;
-  //
-  //   std::cout << "Filters" << std::endl;
-  //   for ( size_t j = 0; j < muon1->triggerObjectMatch(i)->filterLabels().size(); ++j )
-  //     std::cout << (muon1->triggerObjectMatch(i)->filterLabels())[j] << std::endl;
-  //
-  //   std::cout << "Paths" << std::endl;
-  //   for ( size_t j = 0; j < muon1->triggerObjectMatch(i)->pathNames().size(); ++j )
-  //     std::cout << (muon1->triggerObjectMatch(i)->pathNames())[j] << std::endl;
-  //
-  //   std::cout << "Algos" << std::endl;
-  //   for ( size_t j = 0; j < muon1->triggerObjectMatch(i)->algorithmNames().size(); ++j )
-  //     std::cout << (muon1->triggerObjectMatch(i)->algorithmNames())[j] << std::endl;
-  //
-  //   std::cout << "Conditions" << std::endl;
-  //   for ( size_t j = 0; j < muon1->triggerObjectMatch(i)->conditionNames().size(); ++j )
-  //     std::cout << (muon1->triggerObjectMatch(i)->conditionNames())[j] << std::endl;
-  //
-  //   //std::cout << (muon1->triggerObjectMatch(i)->hasL3Filter())<< std::endl;
-  //
-  // }
-  //
-  // for ( size_t i = 0; i < muon2Collection.size(); ++i )
-  // {
-  //   std::cout << "Muon2 collection : " << muon2->triggerObjectMatch(i)->collection() << std::endl;
-  //
-  //   std::cout << "Filters" << std::endl;
-  //   for ( size_t j = 0; j < muon2->triggerObjectMatch(i)->filterLabels().size(); ++j )
-  //     std::cout << (muon2->triggerObjectMatch(i)->filterLabels())[j] << std::endl;
-  //   std::cout << "Paths" << std::endl;
-  //   for ( size_t j = 0; j < muon2->triggerObjectMatch(i)->pathNames().size(); ++j )
-  //     std::cout << (muon2->triggerObjectMatch(i)->pathNames())[j] << std::endl;
-  // }
-  //
-  //
-  //
-  // std::cout << "Triggers matched : " << matched << std::endl;
-  // std::cout << "Sizes : " << muon1Collection.size() << " - " << muon2Collection.size() << std::endl;
 
   return matched;
 }
@@ -127,13 +94,13 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   using namespace std;
   using namespace reco;
   typedef Candidate::LorentzVector LorentzVector;
-
+  // std::cout<<"TwoMuMu - "<<std::endl;
   vector<double> muMasses;
   muMasses.push_back( 0.1056583715 );
   muMasses.push_back( 0.1056583715 );
 
   std::unique_ptr<pat::CompositeCandidateCollection> oniaOutput(new pat::CompositeCandidateCollection);
-  //std::cout<<"Four muonia producer"<<std::endl;
+
   Vertex thePrimaryV;
   Vertex theBeamSpotV;
 
@@ -163,76 +130,106 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   KalmanVertexFitter vtxFitter(true);
   TrackCollection muonLess;
 
-  // JPsi candidates only from muons
+  ParticleMass muon_mass = 0.10565837; //pdg mass
+  //ParticleMass psi_mass = 3.096916;
+  float muon_sigma = muon_mass*1.e-6;
+
+  // MuMu candidates only from muons
   for(View<pat::Muon>::const_iterator it = muons->begin(), itend = muons->end(); it != itend; ++it){
     // both must pass low quality
     if(!lowerPuritySelection_(*it)) continue;
     //std::cout << "First muon quality flag" << std::endl;
     for(View<pat::Muon>::const_iterator it2 = it+1; it2 != itend;++it2){
+
+      if(it == it2) continue;
       // both must pass low quality
       if(!lowerPuritySelection_(*it2)) continue;
       //std::cout << "Second muon quality flag" << std::endl;
       // one must pass tight quality
       if (!(higherPuritySelection_(*it) || higherPuritySelection_(*it2))) continue;
-      //std::cout << "High quality flags" << std::endl;
+
+      // ---- fit vertex using Tracker tracks (if they have tracks) ----
+      if (!(it->track().isNonnull() && it2->track().isNonnull())) continue;
+
       pat::CompositeCandidate mumucand;
       vector<TransientVertex> pvs;
 
       // ---- no explicit order defined ----
-      mumucand.addDaughter(*it, "muon1");
-      mumucand.addDaughter(*it2,"muon2");
+      if(it->charge() > 0)
+      {
+        mumucand.addDaughter(*it, "muon1");
+        mumucand.addDaughter(*it2,"muon2");
+      } else
+      {
+        mumucand.addDaughter(*it, "muon2");
+        mumucand.addDaughter(*it2,"muon1");
+      }
+
 
       // ---- define and set candidate's 4momentum  ----
       LorentzVector mumu = it->p4() + it2->p4();
+      TLorentzVector mu1, mu2,mumuP4;
+      mu1.SetXYZM(it->track()->px(),it->track()->py(),it->track()->pz(),muon_mass);
+      mu2.SetXYZM(it2->track()->px(),it2->track()->py(),it2->track()->pz(),muon_mass);
+      // LorentzVector mumu;
+
+      mumuP4=mu1+mu2;
       mumucand.setP4(mumu);
       mumucand.setCharge(it->charge()+it2->charge());
 
+      float deltaRMuMu = reco::deltaR2(it->eta(),it->phi(),it2->eta(),it2->phi());
+      mumucand.addUserFloat("deltaR",deltaRMuMu);
+      mumucand.addUserFloat("mumuP4",mumuP4.M());
       // ---- apply the dimuon cut ----
-      //std::cout << "Dimuon mass : " << mumu.M() << " - " << mumucand.mass() << std::endl;
+
       if(!dimuonSelection_(mumucand)) continue;
-      //std::cout << "Dimuon selection passed !" << std::endl;
-      // ---- fit vertex using Tracker tracks (if they have tracks) ----
-      if (it->track().isNonnull() && it2->track().isNonnull()) {
-        //std::cout << "Tracker tracks: they exist !" << std::endl;
-        //build the dimuon secondary vertex
-        vector<TransientTrack> t_tks;
-        t_tks.push_back(theTTBuilder->build(*it->track()));  // pass the reco::Track, not  the reco::TrackRef (which can be transient)
-        t_tks.push_back(theTTBuilder->build(*it2->track())); // otherwise the vertex will have transient refs inside.
-        TransientVertex myVertex = vtxFitter.vertex(t_tks);
 
-        CachingVertex<5> VtxForInvMass = vtxFitter.vertex( t_tks );
 
-        Measurement1D MassWErr(mumu.M(),-9999.);
-        if ( field->nominalValue() > 0 ) {
+      vector<TransientTrack> muon_ttks;
+      muon_ttks.push_back(theTTBuilder->build(*it->track()));  // pass the reco::Track, not  the reco::TrackRef (which can be transient)
+      muon_ttks.push_back(theTTBuilder->build(*it2->track())); // otherwise the vertex will have transient refs inside.
+
+      //Vertex Fit W/O mass constrain
+
+      TransientVertex mumuVertex = vtxFitter.vertex(muon_ttks);
+      CachingVertex<5> VtxForInvMass = vtxFitter.vertex( muon_ttks );
+
+      Measurement1D MassWErr(mumu.M(),-9999.);
+      if ( field->nominalValue() > 0 ) {
           MassWErr = massCalculator.invariantMass( VtxForInvMass, muMasses );
-        } else {
-          myVertex = TransientVertex();                      // with no arguments it is invalid
+      } else {
+          mumuVertex = TransientVertex();                      // with no arguments it is invalid
         }
 
-        mumucand.addUserFloat("MassErr",MassWErr.error());
+      mumucand.addUserFloat("MassErr",MassWErr.error());
 
-        if (myVertex.isValid()) {
-          float vChi2 = myVertex.totalChiSquared();
-          float vNDF  = myVertex.degreesOfFreedom();
+
+      if (mumuVertex.isValid()) {
+
+          float vChi2 = mumuVertex.totalChiSquared();
+          float vNDF  = mumuVertex.degreesOfFreedom();
           float vProb(TMath::Prob(vChi2,(int)vNDF));
 
           mumucand.addUserFloat("vNChi2",vChi2/vNDF);
           mumucand.addUserFloat("vProb",vProb);
 
-          TVector3 vtx;
-          TVector3 pvtx;
+          TVector3 vtx,vtx3D;
+          TVector3 pvtx,pvtx3D;
           VertexDistanceXY vdistXY;
 
-          vtx.SetXYZ(myVertex.position().x(),myVertex.position().y(),0);
+          vtx.SetXYZ(mumuVertex.position().x(),mumuVertex.position().y(),0);
+          vtx3D.SetXYZ(mumuVertex.position().x(),mumuVertex.position().y(),mumuVertex.position().z());
           TVector3 pperp(mumu.px(), mumu.py(), 0);
+          TVector3 pperp3D(mumu.px(), mumu.py(), mumu.pz());
           AlgebraicVector3 vpperp(pperp.x(),pperp.y(),0);
+          AlgebraicVector3 vpperp3D(pperp.x(),pperp.y(),pperp.z());
 
           if (resolveAmbiguity_) {
 
             float minDz = 999999.;
             TwoTrackMinimumDistance ttmd;
             bool status = ttmd.calculate( GlobalTrajectoryParameters(
-              GlobalPoint(myVertex.position().x(), myVertex.position().y(), myVertex.position().z()),
+              GlobalPoint(mumuVertex.position().x(), mumuVertex.position().y(), mumuVertex.position().z()),
               GlobalVector(mumucand.px(),mumucand.py(),mumucand.pz()),TrackCharge(0),&(*magneticField)),
               GlobalTrajectoryParameters(
                 GlobalPoint(bs.position().x(), bs.position().y(), bs.position().z()),
@@ -253,6 +250,7 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
               muonLess.clear();
               muonLess.reserve(thePrimaryV.tracksSize());
+
               if( addMuonlessPrimaryVertex_  && thePrimaryV.tracksSize()>2) {
                 // Primary vertex matched to the dimuon, now refit it removing the two muons
                 FourOniaVtxReProducer revertex(priVtxs, iEvent);
@@ -276,7 +274,8 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                       // Need to go back to the original tracks before taking the key
                       std::vector<reco::Track>::const_iterator itRefittedTrack = thePrimaryV.refittedTracks().begin();
                       std::vector<reco::Track>::const_iterator refittedTracksEnd = thePrimaryV.refittedTracks().end();
-                      for( ; itRefittedTrack != refittedTracksEnd; ++itRefittedTrack ) {
+                      for( ; itRefittedTrack != refittedTracksEnd; ++itRefittedTrack )
+                      {
                         if( thePrimaryV.originalTrack(*itRefittedTrack).key() == rmu1->track().key() ) continue;
                         if( thePrimaryV.originalTrack(*itRefittedTrack).key() == rmu2->track().key() ) continue;
                         // vertexTracksKeys.push_back(thePrimaryV.originalTrack(*itRefittedTrack).key());
@@ -330,15 +329,15 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                     sumPTPV += track.pt();
                   }
                 }
-              } catch (std::exception & err) {std::cout << " muon Selection%G�%@failed " << std::endl; return ; }
+              } catch (std::exception & err) {std::cout << " muon Selection failed " << std::endl; return ; }
 
               mumucand.addUserInt("countTksOfPV", countTksOfPV);
               mumucand.addUserFloat("vertexWeight", (float) vertexWeight);
               mumucand.addUserFloat("sumPTPV", (float) sumPTPV);
 
               ///DCA
-              TrajectoryStateClosestToPoint mu1TS = t_tks[0].impactPointTSCP();
-              TrajectoryStateClosestToPoint mu2TS = t_tks[1].impactPointTSCP();
+              TrajectoryStateClosestToPoint mu1TS = muon_ttks[0].impactPointTSCP();
+              TrajectoryStateClosestToPoint mu2TS = muon_ttks[1].impactPointTSCP();
               float dca = 1E20;
               if (mu1TS.isValid() && mu2TS.isValid()) {
                 ClosestApproachInRPhi cApp;
@@ -354,49 +353,120 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserData("PVwithmuons",Vertex(theOriginalPV));
 
               // lifetime using PV
+              float cosAlpha, cosAlpha3D, ppdlPV, ppdlErrPV, l_xyz, l_xy, lErr_xyz, lErr_xy;
+
+              //2D
               pvtx.SetXYZ(thePrimaryV.position().x(),thePrimaryV.position().y(),0);
               TVector3 vdiff = vtx - pvtx;
-              double cosAlpha = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
-              Measurement1D distXY = vdistXY.distance(Vertex(myVertex), thePrimaryV);
-              //double ctauPV = distXY.value()*cosAlpha*3.09688/pperp.Perp();
-              double ctauPV = distXY.value()*cosAlpha * mumucand.mass()/pperp.Perp();
-              GlobalError v1e = (Vertex(myVertex)).error();
+              cosAlpha = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
+
+              Measurement1D distXY = vdistXY.distance(Vertex(mumuVertex), thePrimaryV);
+              ppdlPV = distXY.value()*cosAlpha * mumucand.mass()/pperp.Perp();
+
+              GlobalError v1e = (Vertex(mumuVertex)).error();
               GlobalError v2e = thePrimaryV.error();
               AlgebraicSymMatrix33 vXYe = v1e.matrix()+ v2e.matrix();
-              //double ctauErrPV = sqrt(vXYe.similarity(vpperp))*3.09688/(pperp.Perp2());
-              double ctauErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*mumucand.mass()/(pperp.Perp2());
+              ppdlErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*mumucand.mass()/(pperp.Perp2());
 
-              mumucand.addUserFloat("ppdlPV",ctauPV);
-              mumucand.addUserFloat("ppdlErrPV",ctauErrPV);
+              AlgebraicVector3 vDiff;
+              vDiff[0] = vdiff.x(); vDiff[1] = vdiff.y(); vDiff[2] = 0 ;
+              l_xy = vdiff.Perp();
+              lErr_xy = sqrt(ROOT::Math::Similarity(vDiff,vXYe)) / vdiff.Perp();
+
+              /// 3D
+              pvtx3D.SetXYZ(thePrimaryV.position().x(), thePrimaryV.position().y(), thePrimaryV.position().z());
+              TVector3 vdiff3D = vtx3D - pvtx3D;
+              cosAlpha3D = vdiff3D.Dot(pperp3D)/(vdiff3D.Mag()*vdiff3D.Mag());
+              l_xyz = vdiff3D.Mag();
+
+              AlgebraicVector3 vDiff3D;
+              vDiff3D[0] = vdiff3D.x(); vDiff3D[1] = vdiff3D.y(); vDiff3D[2] = vdiff3D.z() ;
+              lErr_xyz = sqrt(ROOT::Math::Similarity(vDiff3D,vXYe)) / vdiff3D.Mag();
+
+              mumucand.addUserFloat("ppdlPV",ppdlPV);
+              mumucand.addUserFloat("ppdlErrPV",ppdlErrPV);
               mumucand.addUserFloat("cosAlpha",cosAlpha);
+              mumucand.addUserFloat("cosAlpha3D",cosAlpha3D);
+
+              mumucand.addUserFloat("l_xy",l_xy);
+              mumucand.addUserFloat("lErr_xy",lErr_xy);
+
+              mumucand.addUserFloat("l_xyz",l_xyz);
+              mumucand.addUserFloat("lErr_xyz",lErr_xyz);
 
               // lifetime using BS
+              float cosAlphaBS, cosAlphaBS3D, ppdlBS, ppdlErrBS, l_xyBS, lErr_xyBS, l_xyzBS, lErr_xyzBS;
+
+              //2D
               pvtx.SetXYZ(theBeamSpotV.position().x(),theBeamSpotV.position().y(),0);
               vdiff = vtx - pvtx;
-              cosAlpha = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
-              distXY = vdistXY.distance(Vertex(myVertex), theBeamSpotV);
-              //double ctauBS = distXY.value()*cosAlpha*3.09688/pperp.Perp();
-              double ctauBS = distXY.value()*cosAlpha*mumucand.mass()/pperp.Perp();
-              GlobalError v1eB = (Vertex(myVertex)).error();
+              cosAlphaBS = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
+              distXY = vdistXY.distance(Vertex(mumuVertex), theBeamSpotV);
+              //double ppdlBS = distXY.value()*cosAlpha*3.09688/pperp.Perp();
+
+              ppdlBS = distXY.value()*cosAlpha*mumucand.mass()/pperp.Perp();
+
+              GlobalError v1eB = (Vertex(mumuVertex)).error();
               GlobalError v2eB = theBeamSpotV.error();
               AlgebraicSymMatrix33 vXYeB = v1eB.matrix()+ v2eB.matrix();
-              //double ctauErrBS = sqrt(vXYeB.similarity(vpperp))*3.09688/(pperp.Perp2());
-              double ctauErrBS = sqrt(ROOT::Math::Similarity(vpperp,vXYeB))*mumucand.mass()/(pperp.Perp2());
+              //double ppdlErrBS = sqrt(vXYeB.similarity(vpperp))*3.09688/(pperp.Perp2());
+              ppdlErrBS = sqrt(ROOT::Math::Similarity(vpperp,vXYeB))*mumucand.mass()/(pperp.Perp2());
 
-              mumucand.addUserFloat("ppdlBS",ctauBS);
-              mumucand.addUserFloat("ppdlErrBS",ctauErrBS);
+              vDiff[0] = vdiff.x(); vDiff[1] = vdiff.y(); vDiff[2] = 0 ;
+              l_xyBS = vdiff.Perp();
+              lErr_xyBS = sqrt(ROOT::Math::Similarity(vDiff,vXYe)) / vdiff.Perp();
 
-              if (addCommonVertex_)
-              mumucand.addUserData("commonVertex",Vertex(myVertex));
+              /// 3D
+              pvtx3D.SetXYZ(theBeamSpotV.position().x(), theBeamSpotV.position().y(), theBeamSpotV.position().z());
+              vdiff3D = vtx3D - pvtx3D;
+              cosAlphaBS3D = vdiff3D.Dot(pperp3D)/(vdiff3D.Mag()*vdiff3D.Mag());
+              l_xyzBS = vdiff3D.Mag();
+              vDiff3D[0] = vdiff3D.x(); vDiff3D[1] = vdiff3D.y(); vDiff3D[2] = vdiff3D.z() ;
+              lErr_xyzBS = sqrt(ROOT::Math::Similarity(vDiff3D,vXYe)) / vdiff3D.Mag();
+
+
+              mumucand.addUserFloat("ppdlBS",ppdlBS);
+              mumucand.addUserFloat("ppdlErrBS",ppdlErrBS);
+              mumucand.addUserFloat("cosAlphaBS",cosAlphaBS);
+              mumucand.addUserFloat("cosAlphaBS3D",cosAlphaBS3D);
+
+              mumucand.addUserFloat("l_xyBS",l_xyBS);
+              mumucand.addUserFloat("lErr_xyBS",lErr_xyBS);
+
+              mumucand.addUserFloat("l_xyzBS",l_xyzBS);
+              mumucand.addUserFloat("lErr_xyzBS",lErr_xyzBS);
+
+              mumucand.addUserData("commonVertex",Vertex(mumuVertex));
 
             } else {
+
+              continue;
+              
               mumucand.addUserFloat("vNChi2",-1);
               mumucand.addUserFloat("vProb", -1);
+
               mumucand.addUserFloat("ppdlPV",-100);
               mumucand.addUserFloat("ppdlErrPV",-100);
               mumucand.addUserFloat("cosAlpha",-100);
+              mumucand.addUserFloat("cosAlpha3D",-100);
+
+              mumucand.addUserFloat("l_xy",-100);
+              mumucand.addUserFloat("lErr_xy",-100);
+
+              mumucand.addUserFloat("l_xyz",-100);
+              mumucand.addUserFloat("lErr_xyz",-100);
+
               mumucand.addUserFloat("ppdlBS",-100);
               mumucand.addUserFloat("ppdlErrBS",-100);
+              mumucand.addUserFloat("cosAlphaBS",-100);
+              mumucand.addUserFloat("cosAlphaBS3D",-100);
+
+              mumucand.addUserFloat("l_xyBS",-100);
+              mumucand.addUserFloat("lErr_xyBS",-100);
+
+              mumucand.addUserFloat("l_xyzBS",-100);
+              mumucand.addUserFloat("lErr_xyzBS",-100);
+
               mumucand.addUserFloat("DCA", -1 );
 
               if (addCommonVertex_) {
@@ -409,8 +479,38 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               }
 
             }
-          } else
-            continue;
+
+            //Muon mass Vertex Refit
+            float refittedMass = -1.0, mumuVtxCL = -1.0;
+
+            KinematicParticleFactoryFromTransientTrack pFactory;
+            vector<RefCountedKinematicParticle> muonParticles;
+
+            float kinChi = 0.;
+        	  float kinNdf = 0.;
+
+        	  muonParticles.push_back(pFactory.particle(muon_ttks[0],muon_mass,kinChi,kinNdf,muon_sigma));
+        	  muonParticles.push_back(pFactory.particle(muon_ttks[1],muon_mass,kinChi,kinNdf,muon_sigma));
+
+            KinematicParticleVertexFitter kFitter;
+          	RefCountedKinematicTree mumuVertexFitTree;
+        	  mumuVertexFitTree = kFitter.fit(muonParticles);
+
+            if (mumuVertexFitTree->isValid())
+            {
+              mumuVertexFitTree->movePointerToTheTop();
+              RefCountedKinematicVertex mumu_KV = mumuVertexFitTree->currentDecayVertex();
+              if (mumu_KV->vertexIsValid())
+              {
+                RefCountedKinematicParticle mumu_vFit = mumuVertexFitTree->currentParticle();
+                refittedMass = mumu_vFit->currentState().mass();
+
+                mumuVtxCL = TMath::Prob((double)mumu_KV->chiSquared(),int(rint(mumu_KV->degreesOfFreedom())));
+              }
+            }
+
+            mumucand.addUserFloat("refittedMass", refittedMass);
+            mumucand.addUserFloat("mumuVtxCL", mumuVtxCL);
 
           // ---- MC Truth, if enabled ----
           if (addMCTruth_) {
@@ -457,8 +557,6 @@ FourOnia2MuMuPAT::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               mumucand.addUserFloat("ppdlTrue",-99.);
             }
           }
-
-
 
 
           // ---- Push back output ----

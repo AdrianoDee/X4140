@@ -1,7 +1,7 @@
 import sys
 import os
 
-jsonFile="Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt"
+jsonFile="Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON_MuonPhys.txt"
 
 from WMCore.Configuration import Configuration
 config = Configuration()
@@ -11,9 +11,9 @@ config = Configuration()
 datasetbase = '/Charmonium' # '/Muonia' #
 
 sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ',
- 'T2_CH_CERN', 'T2_CH_CERN_AI', 'T2_CH_CERN_HLT', 'T2_CH_CSCS', 'T2_CH_CSCS_HPC',
- 'T2_CN_Beijing', 'T2_DE_DESY', 'T2_DE_RWTH', 'T2_EE_Estonia', 'T2_ES_CIEMAT',
- 'T2_ES_IFCA', 'T2_FI_HIP', 'T2_FR_CCIN2P3',
+ 'T2_CH_CERN', 'T2_CH_CERN_AI', 'T2_CH_CERN_HLT',
+ 'T2_CH_CSCS', 'T2_CH_CSCS_HPC', 'T2_CN_Beijing', 'T2_DE_DESY', 'T2_DE_RWTH',
+ 'T2_EE_Estonia', 'T2_ES_CIEMAT', 'T2_ES_IFCA', 'T2_FI_HIP', 'T2_FR_CCIN2P3',
  'T2_FR_GRIF_IRFU', 'T2_FR_GRIF_LLR', 'T2_FR_IPHC', 'T2_GR_Ioannina', 'T2_HU_Budapest',
  'T2_IN_TIFR', 'T2_IT_Bari', 'T2_IT_Legnaro', 'T2_IT_Pisa', 'T2_IT_Rome', 'T2_KR_KISTI',
  'T2_KR_KNU', 'T2_MY_UPM_BIRUNI', 'T2_PK_NCP', 'T2_PL_Swierk', 'T2_PL_Warsaw',
@@ -25,27 +25,24 @@ sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ'
 
  'T3_CH_PSI', 'T3_CN_PKU', 'T3_CO_Uniandes',
  'T3_ES_Oviedo', 'T3_FR_IPNL', 'T3_GR_IASA', 'T3_HU_Debrecen',
- 'T3_IN_PUHEP', 'T3_IN_TIFRCloud', 'T3_IT_*', 'T3_KR_*', 'T3_MX_*',
- 'T3_RU_*', 'T3_TW*', 'T3_UK_*', 'T3_US_Baylor', 'T3_US_Colorado',
- 'T3_US_Cornell', 'T3_US_FIT', 'T3_US_FIU', 'T3_US_FNALLPC',
- 'T3_US_FSU', 'T3_US_J*', 'T3_US_Kansas', 'T3_US_MIT', 'T3_US_N*',
- 'T3_US_O*', 'T3_US_P*', 'T3_US_R*', 'T3_US_S*', 'T3_US_T*', 'T3_US_UCD',
- 'T3_US_UCR', 'T3_US_UCSB', 'T3_US_UMD']
-
+ 'T3_IN_PUHEP', 'T3_IN_TIFRCloud','T3_IT_*', 'T3_KR_*', 'T3_MX_*', 'T3_RU_*',
+ #'T3_TW*', #Taiwan gives some troubles with file fetching
+ 'T3_UK_*', 'T3_US_Baylor','T3_US_Colorado', 'T3_US_Cornell',
+ 'T3_US_FIT', 'T3_US_FIU', 'T3_US_FNALLPC', 'T3_US_FSU', 'T3_US_J*',
+ 'T3_US_Kansas', 'T3_US_MIT', 'T3_US_N*', 'T3_US_O*', 'T3_US_P*',
+ 'T3_US_R*', 'T3_US_S*', 'T3_US_T*', 'T3_US_UCD', 'T3_US_UCR', 'T3_US_UCSB',
+ 'T3_US_UMD']
 
 datasetnames = {
 
-"B1" :  datasetbase + "/Charmonium/Run2016B-PromptReco-v1/MINIAOD",
-"B2" :  datasetbase + "/Charmonium/Run2016B-PromptReco-v2/MINIAOD",
-"C" :  datasetbase + "/Charmonium/Run2016C-PromptReco-v2/MINIAOD",
-"D" :  datasetbase + "/Charmonium/Run2016D-PromptReco-v2/MINIAOD",
-"E" :  datasetbase + "/Charmonium/Run2016E-PromptReco-v2/MINIAOD",
-"F" :  datasetbase + "/Charmonium/Run2016F-PromptReco-v1/MINIAOD",
-"G" :  datasetbase + "/Charmonium/Run2016G-PromptReco-v1/MINIAOD",
-"H1" :  datasetbase + "/Charmonium/Run2016H-PromptReco-v1/MINIAOD",
-"H2" :  datasetbase + "/Charmonium/Run2016H-PromptReco-v2/MINIAOD",
-"H3" :  datasetbase + "/Charmonium/Run2016H-PromptReco-v3/MINIAOD"
-
+"F" :  datasetbase + '/Run2017F-PromptReco-v1/MINIAOD',
+"B1" : datasetbase + '/Run2017B-PromptReco-v1/MINIAOD',
+"B2" : datasetbase + '/Run2017B-PromptReco-v2/MINIAOD',
+"C1" : datasetbase + '/Run2017C-PromptReco-v1/MINIAOD',
+"C2" : datasetbase + '/Run2017C-PromptReco-v2/MINIAOD',
+"C3" : datasetbase + '/Run2017C-PromptReco-v3/MINIAOD',
+"D" : datasetbase + '/Run2017D-PromptReco-v1/MINIAOD',
+"E" : datasetbase + '/Run2017E-PromptReco-v1/MINIAOD'
 }
 
 
@@ -67,7 +64,7 @@ timestamp = datetime.datetime.now().strftime("_%Y%m%d_%H%M%S")
 
 dataset = filter(None, datasetName.split('/'))
 
-jobdir = 'miniaod_2016_MMKK_' + run
+jobdir = 'miniaod_X4140_MMKK_' + run
 
 if not os.path.exists(jobdir):
     os.makedirs(jobdir)
@@ -81,7 +78,7 @@ config.General.requestName      = 'mmkk_miniaod_' + dataset[0]+'_'+dataset[1]+'_
 config.General.transferLogs     = False
 
 config.section_('JobType')
-config.JobType.psetName         = '/lustre/home/adrianodif/CMSSW_9_2_13/src/mmkk/mmkk/test/run-mumukk-miniaod_2016.py'
+config.JobType.psetName         = '/lustre/home/adrianodif/CMSSW_9_2_13/src/mmkk/mmkk/test/run-mumukk-miniaod.py'
 config.JobType.pluginName       = 'Analysis'
 config.JobType.maxMemoryMB      = 2500
 config.JobType.maxJobRuntimeMin = 2750

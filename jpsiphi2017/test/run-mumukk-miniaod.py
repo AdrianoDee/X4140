@@ -44,6 +44,7 @@ hltList = [
 # 'HLT_Dimuon0_Jpsi'
 ]
 
+#2016 tag 80X_dataRun2_2016SeptRepro_v7
 hltpaths = cms.vstring(hltList)
 
 hltpathsV = cms.vstring([h + '_v*' for h in hltList])

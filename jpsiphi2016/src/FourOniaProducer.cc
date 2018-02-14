@@ -13,6 +13,7 @@ addMuonlessPrimaryVertex_(iConfig.getParameter<bool>("addMuonlessPrimaryVertex")
 resolveAmbiguity_(iConfig.getParameter<bool>("resolvePileUpAmbiguity")),
 // addMCTruth_(iConfig.getParameter<bool>("addMCTruth")),
 triggerMatch_(iConfig.getParameter<bool>("triggerMatch"))
+//doCombinatorial(iConfig.existsAs<bool>("doCombinatorial") ? iConfig.getParameter<bool>("doCombinatorial") : false)
 {
   revtxtrks_ = consumes<reco::TrackCollection>((edm::InputTag)"generalTracks"); //if that is not true, we will raise an exception
   revtxbs_ = consumes<reco::BeamSpot>((edm::InputTag)"offlineBeamSpot");
@@ -87,10 +88,20 @@ void FourOniaProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
       if (( triggerMatch_ ) && (  !jpsiCand->userInt("isTriggerMatched") ) )
       continue;
       //std::cout << "Jps muons trigger matched" << std::endl;
-      if(isOverlappedMuons(&(*phiCand),&(*jpsiCand)))
+      if(areOverlappedMuons(&(*phiCand),&(*jpsiCand)))
       continue;
-      //std::cout << "Not overlapping 4 muons" << std::endl;
-      pat::CompositeCandidate xCand = makeCandidate(*phiCand, *jpsiCand);
+
+      int pMatch = 0, jMatch = 0;
+      float pDeltaR = -1.0, jDeltaR = -1.0;
+
+      pMatch = phiCand->userInt("isTriggerMatched");
+      jMatch = jpsiCand->userInt("isTriggerMatched");
+
+      // std::cout << phiCand->userInt("isTriggerMatched") << std::endl;
+
+      pat::CompositeCandidate xCand;
+
+      xCand = makeCandidate(*phiCand, *jpsiCand);
 
       if(!quadmuonSelection_(xCand)) continue;
 
@@ -98,6 +109,22 @@ void FourOniaProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
       && ((dynamic_cast<const pat::Muon*>((*jpsiCand).daughter("muon2") )->track()).isNonnull())
       && ((dynamic_cast<const pat::Muon*>((*phiCand).daughter("muon1") )->track()).isNonnull())
       && ((dynamic_cast<const pat::Muon*>((*phiCand).daughter("muon2") )->track()).isNonnull())){
+
+        xCand.addUserInt("phi_isTriggerMatched",pMatch);
+        xCand.addUserInt("jpsi_isTriggerMatched",jMatch);
+
+        jDeltaR = reco::deltaR2((dynamic_cast<const pat::Muon*>((*jpsiCand).daughter("muon1") )->track())->eta(),
+            (dynamic_cast<const pat::Muon*>((*jpsiCand).daughter("muon1") )->track())->phi(),
+            (dynamic_cast<const pat::Muon*>((*jpsiCand).daughter("muon2") )->track())->eta(),
+            (dynamic_cast<const pat::Muon*>((*jpsiCand).daughter("muon2") )->track())->phi());
+
+        pDeltaR = reco::deltaR2((dynamic_cast<const pat::Muon*>((*phiCand).daughter("muon1") )->track())->eta(),
+            (dynamic_cast<const pat::Muon*>((*phiCand).daughter("muon1") )->track())->phi(),
+            (dynamic_cast<const pat::Muon*>((*phiCand).daughter("muon2") )->track())->eta(),
+            (dynamic_cast<const pat::Muon*>((*phiCand).daughter("muon2") )->track())->phi());
+
+        xCand.addUserFloat("phi_deltaR",pDeltaR);
+        xCand.addUserFloat("jpsi_deltaR",jDeltaR);
 
         vector<TransientVertex> pvs;
 
@@ -128,13 +155,15 @@ void FourOniaProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
           xCand.addUserFloat("vNChi2",vChi2/vNDF);
           xCand.addUserFloat("vProb",vProb);
 
-          TVector3 vtx;
-          TVector3 pvtx;
+          TVector3 vtx, vtx3D;
+          TVector3 pvtx, pvtx3D;
           VertexDistanceXY vdistXY;
 
           vtx.SetXYZ(myVertex.position().x(),myVertex.position().y(),0);
           TVector3 pperp(xCand.px(), xCand.py(), 0);
+          TVector3 pperp3D(xCand.px(), xCand.py(), xCand.pz());
           AlgebraicVector3 vpperp(pperp.x(),pperp.y(),0);
+          AlgebraicVector3 vpperp3D(pperp.x(),pperp.y(),pperp.z());
 
           if (resolveAmbiguity_) {
 
@@ -267,21 +296,48 @@ void FourOniaProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
             xCand.addUserData("PVwithmuons",Vertex(theOriginalPV));
 
             // lifetime using PV
+
+            float cosAlpha, cosAlpha3D, ctauPV, ctauErrPV, l_xyz, l_xy, lErr_xyz, lErr_xy;
+
             pvtx.SetXYZ(theOriginalPV.position().x(),theOriginalPV.position().y(),0);
             TVector3 vdiff = vtx - pvtx;
-            double cosAlpha = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
+            cosAlpha = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
+
             Measurement1D distXY = vdistXY.distance(Vertex(myVertex), theOriginalPV);
             //double ctauPV = distXY.value()*cosAlpha*3.09688/pperp.Perp();
-            double ctauPV = distXY.value()*cosAlpha * xCand.mass()/pperp.Perp();
+            ctauPV = distXY.value()*cosAlpha * xCand.mass()/pperp.Perp();
+
             GlobalError v1e = (Vertex(myVertex)).error();
             GlobalError v2e = theOriginalPV.error();
             AlgebraicSymMatrix33 vXYe = v1e.matrix()+ v2e.matrix();
             //double ctauErrPV = sqrt(vXYe.similarity(vpperp))*3.09688/(pperp.Perp2());
-            double ctauErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*xCand.mass()/(pperp.Perp2());
+            ctauErrPV = sqrt(ROOT::Math::Similarity(vpperp,vXYe))*xCand.mass()/(pperp.Perp2());
+
+            AlgebraicVector3 vDiff;
+            vDiff[0] = vdiff.x(); vDiff[1] = vdiff.y(); vDiff[2] = 0 ;
+            l_xy = vdiff.Perp();
+            lErr_xy = sqrt(ROOT::Math::Similarity(vDiff,vXYe)) / vdiff.Perp();
+
+            /// 3D
+            pvtx3D.SetXYZ(thePrimaryV.position().x(), thePrimaryV.position().y(), thePrimaryV.position().z());
+            TVector3 vdiff3D = vtx3D - pvtx3D;
+            cosAlpha3D = vdiff3D.Dot(pperp3D)/(vdiff3D.Mag()*vdiff3D.Mag());
+            l_xyz = vdiff3D.Mag();
+
+            AlgebraicVector3 vDiff3D;
+            vDiff3D[0] = vdiff3D.x(); vDiff3D[1] = vdiff3D.y(); vDiff3D[2] = vdiff3D.z() ;
+            lErr_xyz = sqrt(ROOT::Math::Similarity(vDiff3D,vXYe)) / vdiff3D.Mag();
 
             xCand.addUserFloat("ctauPV",ctauPV);
             xCand.addUserFloat("ctauErrPV",ctauErrPV);
             xCand.addUserFloat("cosAlpha",cosAlpha);
+            xCand.addUserFloat("cosAlpha3D",cosAlpha3D);
+
+            xCand.addUserFloat("l_xy",l_xy);
+            xCand.addUserFloat("lErr_xy",lErr_xy);
+
+            xCand.addUserFloat("l_xyz",l_xyz);
+            xCand.addUserFloat("lErr_xyz",lErr_xyz);
 
             if (addMuonlessPrimaryVertex_){
               pvtx.SetXYZ(thePrimaryV.position().x(),thePrimaryV.position().y(),0);
@@ -309,20 +365,46 @@ void FourOniaProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
             }
 
             // lifetime using BS
+            float cosAlphaBS, cosAlphaBS3D, ctauBS, ctauErrBS, l_xyBS, lErr_xyBS, l_xyzBS, lErr_xyzBS;
+
             pvtx.SetXYZ(theBeamSpotV.position().x(),theBeamSpotV.position().y(),0);
             vdiff = vtx - pvtx;
-            cosAlpha = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
+            cosAlphaBS = vdiff.Dot(pperp)/(vdiff.Perp()*pperp.Perp());
             distXY = vdistXY.distance(Vertex(myVertex), theBeamSpotV);
             //double ctauBS = distXY.value()*cosAlpha*3.09688/pperp.Perp();
-            double ctauBS = distXY.value()*cosAlpha*xCand.mass()/pperp.Perp();
+
+            ctauBS = distXY.value()*cosAlpha*xCand.mass()/pperp.Perp();
+
             GlobalError v1eB = (Vertex(myVertex)).error();
             GlobalError v2eB = theBeamSpotV.error();
             AlgebraicSymMatrix33 vXYeB = v1eB.matrix()+ v2eB.matrix();
             //double ctauErrBS = sqrt(vXYeB.similarity(vpperp))*3.09688/(pperp.Perp2());
-            double ctauErrBS = sqrt(ROOT::Math::Similarity(vpperp,vXYeB))*xCand.mass()/(pperp.Perp2());
+            ctauErrBS = sqrt(ROOT::Math::Similarity(vpperp,vXYeB))*xCand.mass()/(pperp.Perp2());
+
+            vDiff[0] = vdiff.x(); vDiff[1] = vdiff.y(); vDiff[2] = 0 ;
+            l_xyBS = vdiff.Perp();
+            lErr_xyBS = sqrt(ROOT::Math::Similarity(vDiff,vXYe)) / vdiff.Perp();
+
+            /// 3D
+            pvtx3D.SetXYZ(theBeamSpotV.position().x(), theBeamSpotV.position().y(), theBeamSpotV.position().z());
+            vdiff3D = vtx3D - pvtx3D;
+            cosAlphaBS3D = vdiff3D.Dot(pperp3D)/(vdiff3D.Mag()*vdiff3D.Mag());
+            l_xyzBS = vdiff3D.Mag();
+            vDiff3D[0] = vdiff3D.x(); vDiff3D[1] = vdiff3D.y(); vDiff3D[2] = vdiff3D.z() ;
+            lErr_xyzBS = sqrt(ROOT::Math::Similarity(vDiff3D,vXYe)) / vdiff3D.Mag();
 
             xCand.addUserFloat("ctauBS",ctauBS);
             xCand.addUserFloat("ctauErrBS",ctauErrBS);
+
+            xCand.addUserFloat("cosAlphaBS",cosAlphaBS);
+            xCand.addUserFloat("cosAlphaBS3D",cosAlphaBS3D);
+
+            xCand.addUserFloat("l_xyBS",l_xyBS);
+            xCand.addUserFloat("lErr_xyBS",lErr_xyBS);
+
+            xCand.addUserFloat("l_xyzBS",l_xyzBS);
+            xCand.addUserFloat("lErr_xyzBS",lErr_xyzBS);
+
             xCand.addUserData("commonVertex",Vertex(myVertex));
 
           } else {
@@ -330,9 +412,10 @@ void FourOniaProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
             xCand.addUserFloat("vProb", -1);
             xCand.addUserFloat("ctauPV",-100);
             xCand.addUserFloat("ctauErrPV",-100);
-            xCand.addUserFloat("cosAlpha",-100);
+
             xCand.addUserFloat("ctauBS",-100);
             xCand.addUserFloat("ctauErrBS",-100);
+
             xCand.addUserInt("countTksOfPV", -1);
             xCand.addUserFloat("vertexWeight", -100.);
             xCand.addUserFloat("sumPTPV", -100.);
@@ -345,6 +428,23 @@ void FourOniaProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
               xCand.addUserFloat("ctauErrPVMuLess",-100);
               xCand.addUserFloat("cosAlphaMuLess",-100);
             }
+
+            xCand.addUserFloat("cosAlpha",-100);
+            xCand.addUserFloat("cosAlpha3D",-100);
+            xCand.addUserFloat("cosAlphaBS",-100);
+            xCand.addUserFloat("cosAlphaBS3D",-100);
+
+            xCand.addUserFloat("l_xy",-100);
+            xCand.addUserFloat("lErr_xy",-100);
+
+            xCand.addUserFloat("l_xyz",-100);
+            xCand.addUserFloat("lErr_xyz",-100);
+
+            xCand.addUserFloat("l_xyBS",-100);
+            xCand.addUserFloat("lErr_xyBS",-100);
+
+            xCand.addUserFloat("l_xyzBS",-100);
+            xCand.addUserFloat("lErr_xyzBS",-100);
             xCand.addUserData("PVwithmuons",Vertex());
           }
 
@@ -421,7 +521,7 @@ void FourOniaProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
   //   return matched;
   // }
 
-  bool FourOniaProducer::isOverlappedMuons(const pat::CompositeCandidate *phi,const pat::CompositeCandidate *jpsi) {
+  bool FourOniaProducer::areOverlappedMuons(const pat::CompositeCandidate *phi,const pat::CompositeCandidate *jpsi) {
 
     bool same = false;
 
