@@ -373,13 +373,8 @@ void PsiPFPFRootupler::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       muonp_rf_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
       muonn_rf_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
 
-      reco::Candidate::LorentzVector kP = phi_cand_rf->daughter("trak1")->p4();
-      reco::Candidate::LorentzVector kM = phi_cand_rf->daughter("trak2")->p4();
-
-      if (phi_cand_rf->daughter("trak1")->charge() < 0) {
-         kP = phi_cand_rf->daughter("trak2")->p4();
-         kM = phi_cand_rf->daughter("trak1")->p4();
-      }
+      reco::Candidate::LorentzVector kP = phi_cand_rf->daughter("trakP")->p4();
+      reco::Candidate::LorentzVector kM = phi_cand_rf->daughter("trakN")->p4();
 
       kaonp_rf_p4.SetPtEtaPhiM(kP.pt(), kP.eta(), kP.phi(), kP.mass());
       kaonn_rf_p4.SetPtEtaPhiM(kM.pt(), kM.eta(), kM.phi(), kM.mass());
@@ -421,9 +416,8 @@ void PsiPFPFRootupler::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       muonp_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
       muonn_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
 
-      kP = phi_cand->daughter("trak1")->p4();
-      kM = phi_cand->daughter("trak2")->p4();
-
+      kP = phi_cand->daughter("trakP")->p4();
+      kM = phi_cand->daughter("trakN")->p4();
 
       kaonp_p4.SetPtEtaPhiM(kP.pt(), kP.eta(), kP.phi(), kP.mass());
       kaonn_p4.SetPtEtaPhiM(kM.pt(), kM.eta(), kM.phi(), kM.mass());

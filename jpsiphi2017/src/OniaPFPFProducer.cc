@@ -41,29 +41,27 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
        const pat::Muon *pmu2 = dynamic_cast<const pat::Muon*>(oniaCand->daughter("muon2"));
 
 // loop on track candidates, make OniaT candidate, positive charge
-       for (std::vector<pat::PackedCandidate>::const_iterator trakCand = trak->begin(), trakend=trak->end(); trakCand!= trakend; ++trakCand){
+       for (std::vector<pat::PackedCandidate>::const_iterator posTrack = trak->begin(), trakend=trak->end(); posTrack!= trakend; ++posTrack){
 
-         if(trakCand->charge()==0) continue;
-         if(trakCand->pt()<0.5) continue;
-	       if(fabs(trakCand->pdgId())!=211) continue;
-	       if(!(trakCand->trackHighPurity())) continue;
+         if(posTrack->charge()==0) continue;
+         if(posTrack->pt()<0.5) continue;
+	       if(fabs(posTrack->pdgId())!=211) continue;
+	       if(!(posTrack->trackHighPurity())) continue;
 
-         if ( IsTheSame(*trakCand,*pmu1) || IsTheSame(*trakCand,*pmu2)) continue;
+         if ( IsTheSame(*posTrack,*pmu1) || IsTheSame(*posTrack,*pmu2) || posTrack->charge() < 0 ) continue;
 
 // loop over second track candidate, negative charge
-         for (std::vector<pat::PackedCandidate>::const_iterator trakCand2 = trak->begin(); trakCand2!= trakend; ++trakCand2){
+         for (std::vector<pat::PackedCandidate>::const_iterator negTrack = trak->begin(); negTrack!= trakend; ++negTrack){
 
-           if(trakCand2->charge()==0) continue;
-           if(trakCand2->pt()<0.5) continue;
-  	       if(fabs(trakCand2->pdgId())!=211) continue;
-  	       if(!(trakCand2->trackHighPurity())) continue;
+           if(negTrack->charge()==0) continue;
+           if(negTrack->pt()<0.5) continue;
+  	       if(fabs(negTrack->pdgId())!=211) continue;
+  	       if(!(negTrack->trackHighPurity())) continue;
 
-           if (trakCand2 == trakCand) continue;
-           if ( IsTheSame(*trakCand2,*pmu1) || IsTheSame(*trakCand2,*pmu2)) continue;
+           if (negTrack == posTrack) continue;
+           if ( IsTheSame(*negTrack,*pmu1) || IsTheSame(*negTrack,*pmu2) || negTrack->charge() > 0 ) continue;
 
-           if(trakCand2->charge() * trakCand->charge() > 0) continue;
-
-           pat::CompositeCandidate TTCand = makeTTCandidate(*trakCand, *trakCand2);
+           pat::CompositeCandidate TTCand = makeTTCandidate(*posTrack, *negTrack);
 
            if ( TTCand.mass() < TrakTrakMassMax_ && TTCand.mass() > TrakTrakMassMin_ ) {
 
@@ -128,21 +126,21 @@ const pat::CompositeCandidate OniaPFPFProducer::makeOniaTTCandidate(
 }
 
 const pat::CompositeCandidate OniaPFPFProducer::makeTTCandidate(
-                                          const pat::PackedCandidate& trak1,
-                                          const pat::PackedCandidate& trak2
+                                          const pat::PackedCandidate& trakP,
+                                          const pat::PackedCandidate& trakN
                                          ){
 
   pat::CompositeCandidate TTCand;
-  TTCand.addDaughter(trak1,"trak1");
-  TTCand.addDaughter(trak2,"trak2");
-  TTCand.setCharge(trak1.charge()+trak2.charge());
+  TTCand.addDaughter(trakP,"trakP");
+  TTCand.addDaughter(trakN,"trakN");
+  TTCand.setCharge(trakP.charge()+trakN.charge());
 
   double m_kaon1 = MassTraks_[0];
-  math::XYZVector mom_kaon1 = trak1.momentum();
+  math::XYZVector mom_kaon1 = trakP.momentum();
   double e_kaon1 = sqrt(m_kaon1*m_kaon1 + mom_kaon1.Mag2());
   math::XYZTLorentzVector p4_kaon1 = math::XYZTLorentzVector(mom_kaon1.X(),mom_kaon1.Y(),mom_kaon1.Z(),e_kaon1);
   double m_kaon2 = MassTraks_[1];
-  math::XYZVector mom_kaon2 = trak2.momentum();
+  math::XYZVector mom_kaon2 = trakN.momentum();
   double e_kaon2 = sqrt(m_kaon2*m_kaon2 + mom_kaon2.Mag2());
   math::XYZTLorentzVector p4_kaon2 = math::XYZTLorentzVector(mom_kaon2.X(),mom_kaon2.Y(),mom_kaon2.Z(),e_kaon2);
   reco::Candidate::LorentzVector vTT = p4_kaon1 + p4_kaon2;

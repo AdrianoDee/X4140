@@ -156,8 +156,8 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     std::vector <reco::Track> JpsiTk;
 
-    const pat::PackedCandidate *trak1 = dynamic_cast<const pat::PackedCandidate*>(ditrakC->daughter("trak1"));
-    const pat::PackedCandidate *trak2 = dynamic_cast<const pat::PackedCandidate*>(ditrakC->daughter("trak2"));
+    const pat::PackedCandidate *trakP = dynamic_cast<const pat::PackedCandidate*>(ditrakC->daughter("trakP"));
+    const pat::PackedCandidate *trakN = dynamic_cast<const pat::PackedCandidate*>(ditrakC->daughter("trakN"));
 
     JpsiTk.push_back(*( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon1") ) )->innerTrack());
     JpsiTk.push_back(*( dynamic_cast<const pat::Muon*>(oniat->daughter("onia")->daughter("muon2") ) )->innerTrack());
@@ -166,20 +166,20 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     MuMuTT.push_back((*theB).build(&JpsiTk[0]));
     MuMuTT.push_back((*theB).build(&JpsiTk[1]));
 
-    if(!trak1->hasTrackDetails())
+    if(!trakP->hasTrackDetails())
       continue;
-    else if(trak1->bestTrack())
-      MuMuTT.push_back((*theB).build(*(trak1->bestTrack()))); // K+
+    else if(trakP->bestTrack())
+      MuMuTT.push_back((*theB).build(*(trakP->bestTrack()))); // K+
     else
-      MuMuTT.push_back((*theB).build((trak1->pseudoTrack()))); // K+
+      MuMuTT.push_back((*theB).build((trakP->pseudoTrack()))); // K+
 
 
-    if(!trak2->hasTrackDetails())
+    if(!trakN->hasTrackDetails())
       continue;
-    else if(trak2->bestTrack())
-      MuMuTT.push_back((*theB).build(*(trak2->bestTrack()))); // K+
+    else if(trakN->bestTrack())
+      MuMuTT.push_back((*theB).build(*(trakN->bestTrack()))); // K+
     else
-      MuMuTT.push_back((*theB).build((trak2->pseudoTrack()))); // K+
+      MuMuTT.push_back((*theB).build((trakN->pseudoTrack()))); // K+
 
     const reco::Vertex thePrimaryV = *dimuonC->userData<reco::Vertex>("PVwithmuons");
 
@@ -187,16 +187,16 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     const ParticleMass muonMass(0.1056583);
     float muonSigma = muonMass*1E-6;
-    const ParticleMass kaonMass1(MassTraks_[0]);
-    float kaonSigma1 = kaonMass1*1E-6;
-    const ParticleMass kaonMass2(MassTraks_[1]);
-    float kaonSigma2 = kaonMass2*1E-6;
+    const ParticleMass trakMass1(MassTraks_[0]);
+    float trakSigma1 = trakMass1*1E-6;
+    const ParticleMass trakMass2(MassTraks_[1]);
+    float trakSigma2 = trakMass2*1E-6;
 
     std::vector<RefCountedKinematicParticle> allPsiTDaughters;
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[0], muonMass, float(0), float(0), muonSigma));
     allPsiTDaughters.push_back(pFactory.particle (MuMuTT[1], muonMass, float(0), float(0), muonSigma));
-    allPsiTDaughters.push_back(pFactory.particle (MuMuTT[2], kaonMass1, float(0), float(0), kaonSigma1));
-    allPsiTDaughters.push_back(pFactory.particle (MuMuTT[3], kaonMass2, float(0), float(0), kaonSigma2));
+    allPsiTDaughters.push_back(pFactory.particle (MuMuTT[2], trakMass1, float(0), float(0), trakSigma1));
+    allPsiTDaughters.push_back(pFactory.particle (MuMuTT[3], trakMass2, float(0), float(0), trakSigma2));
 
     KinematicConstrainedVertexFitter constVertexFitter;
     MultiTrackKinematicConstraint *onia_mtc = new  TwoTrackMassKinematicConstraint(mass_);
@@ -318,8 +318,8 @@ void PsiPFPFKinematicFit::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
 // Define psi from two muons
             pat::CompositeCandidate phi;
-            phi.addDaughter(patTk,"trak1");
-            phi.addDaughter(patTk2,"trak2");
+            phi.addDaughter(patTk,"trakP");
+            phi.addDaughter(patTk2,"trakN");
             phi.setP4(patTk.p4()+patTk2.p4());
 
 	          patPsiT.addDaughter(psi,"onia");
