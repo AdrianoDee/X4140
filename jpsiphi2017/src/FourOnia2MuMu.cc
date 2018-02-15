@@ -82,6 +82,16 @@ UInt_t FourOnia2MuMuPAT::isTriggerMatched(pat::CompositeCandidate *diMuon_cand) 
     if (!mu1HLTMatches.empty() && !mu2HLTMatches.empty()) std::cout << std::endl << HLTFilters_[iTr] << std::endl;
   }
 
+  auto tObjs = muon1->triggerObjectMatches();
+
+  for(auto hO : tObjs)
+  {
+    auto filtStrings = hO.filterLabels();
+    for(auto f : filtStrings)
+      std::cout << f << std::endl;
+  }
+  std::vector< std::string > filterLabels_
+
   return matched;
 }
 
