@@ -1,7 +1,6 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1F.h>
-#include <TH2F.h>
 #include <TDirectory.h>
 #include <iostream>
 #include <bitset>
@@ -304,6 +303,9 @@ int drawXXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iP
 
   std::vector<TH1F*> xHists;
 
+  TH2F* mpts = new TH1F("mpts","mpts",1000,0.0,20.0,1000,0.0,20.0);
+  TH2F* mpts = new TH1F("mpts","mpts",1000,0.0,20.0,1000,0.0,20.0);
+
   for (int i = 0; i < 13; i++)
   xHists.push_back(new TH1F((hltsName[i] + "_x").data(),(hltsName[i] + "_x").data(),600,3.9,6.1));
 
@@ -453,8 +455,8 @@ int drawXTree(std::string path = "/Users/adrianodiflorio/Documents/Git/X4140/iPy
   TH1F* phiMHig_ptHist = new TH1F("phiMHig_ptHist","phiMHig_ptHist",1000,0.0,100.0);
   TH1F* phiMLow_ptHist = new TH1F("phiMLow_ptHist","phiMLow_ptHist",1000,0.0,100.0);
 
-  TH2F* phiPts = new TH2F("phiPts","phiPts",1000,0.0,100.0,1000,0.0,100.0);
-  TH2F* jpsPts = new TH2F("jpsPts","jpsPts",1000,0.0,100.0,1000,0.0,100.0);
+  TH2F* phiPts = new TH1F("phiPts","phiPts",1000,0.0,100.0,1000,0.0,100.0);
+  TH2F* jpsPts = new TH1F("jpsPts","jpsPts",1000,0.0,100.0,1000,0.0,100.0);
 
   TH1F* dRJpsiPhi = new TH1F("dRJpsiPhi","dRJpsiPhi",1000,-10.0,10.0);
 
@@ -1195,17 +1197,12 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
 
   TH1F* dRJpsiPhi = new TH1F("dRJpsiPhi","dRJpsiPhi",1000,-10.0,10.0);
 
-  TH2F* mpts = new TH2F("mpts","mpts",1000,0.0,20.0,1000,0.0,20.0);
-  TH2F* kpts = new TH2F("kpts","kpts",1000,0.0,20.0,1000,0.0,20.0);
-
   std::vector<TH1F*> phiHists;
   std::vector<TH1F*> jpsiHists;
   std::vector<TH1F*> xHists;
   std::vector<TH1F*> ptJHists;
   std::vector<TH1F*> xHistsDeltaM;
 
-  std::vector<TH2F*> psiMuonsPts;
-  std::vector<TH2F*> phiKaonsPts;
 
   for (int i = 0; i < noHlts; i++)
   {
@@ -1214,8 +1211,6 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
     xHists.push_back(new TH1F((hltsName[i] + "_x").data(),(hltsName[i] + "_x").data(),xBin,xmin,xmax));
     ptJHists.push_back(new TH1F((hltsName[i] + "_jpsi_pt").data(),(hltsName[i] + "_jpsi_pt").data(),1000,0.0,100.0));
     xHistsDeltaM.push_back(new TH1F((hltsName[i] + "_x_deltam").data(),(hltsName[i] + "_x_deltam").data(),xBin,xmin,xmax));
-    psiMuonsPts.push_back(new TH2F((hltsName[i] + "_mpts").data(),(hltsName[i] + "_mpts").data(),1000,0.0,20.0,1000,0.0,20.0));
-    phiKaonsPts.push_back(new TH2F((hltsName[i] + "_kpts").data(),(hltsName[i] + "_kpts").data(),1000,0.0,20.0,1000,0.0,20.0));
   }
 
   // std::string hltsName[13] = {
@@ -1298,7 +1293,7 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
       // if (tB.test(testingTrigger) && run > 305388 && ctau/ctauErr > 3.0 && phimass && std::max(kaonn_p4->Pt(),kaonp_p4->Pt())>1.2 && -std::max(-kaonn_p4->Pt(),-kaonp_p4->Pt())>1.0 && jP4->Pt() > 4.0)
       // if (tB.test(testingTrigger) && run > 305388 && ctau/ctauErr > 3.0 && phimass && kaonn_p4->Pt() >1.0 && kaonp_p4->Pt()>1.0)
       // if (tB.test(testingTrigger) && ctau/ctauErr < 2.0 && phimass && vProb > 0.2 && cosA > 0.997 && deltaR < 2.0  && jpsimass)
-      if (tB.test(testingTrigger) && ctau/ctauErr > 3.0 && jP4->Pt() > 7.0 && phimass)
+      if (tB.test(testingTrigger) && run > 305388 && ctau/ctauErr > 3.0 && jP4->Pt() > 7.0 && phimass)
       {
 
         test = true;
@@ -1308,8 +1303,6 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
         ptJHists[testingTrigger]->Fill(jP4->Pt());
         xHists[testingTrigger]->Fill(xM);
         xHistsDeltaM[testingTrigger]->Fill(xDeltaM);
-        psiMuonsPts[testingTrigger]->Fill(-std::max(-muonp_p4->Pt(),-muonn_p4->Pt()),std::max(muonp_p4->Pt(),muonn_p4->Pt()));
-        phiKaonsPts[testingTrigger]->Fill(-std::max(-kaonn_p4->Pt(),-kaonp_p4->Pt()),std::max(kaonn_p4->Pt(),kaonp_p4->Pt()));
       }
     }
     // if(cosA > 0.995 && phiKass && jpsimass && vProb>0.02 && xyl/xylErr > 2.0)
@@ -1334,11 +1327,6 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
 
       phiKP_ptHist->Fill(kaonp_p4->Pt());
       phiKM_ptHist->Fill(kaonn_p4->Pt());
-
-      kpts->Fill(-std::max(-muonp_p4->Pt(),-muonn_p4->Pt()),std::max(muonp_p4->Pt(),muonn_p4->Pt()));
-      mpts->Fill(-std::max(-kaonp_p4->Pt(),-kaonn_p4->Pt()), std::max(kaonp_p4->Pt(),kaonn_p4->Pt()));
-
-
     }
   }
 
@@ -1355,8 +1343,6 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
   phiKLow_ptHist->Write();
   phiKP_ptHist->Write();
   phiKM_ptHist->Write();
-  kpts->Write();
-  mpts->Write();
   //newtree->Draw("phi_M","","same");
   // }
   phiHist->SetMinimum(1.0);
@@ -1380,8 +1366,6 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
     phiHists[i]->Write();
     ptJHists[i]->Write();
     xHistsDeltaM[i]->Write();
-    psiMuonsPts[i]->Write();
-    phiKaonsPts[i]->Write();
   }
 
   leg->Draw();
