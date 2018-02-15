@@ -107,7 +107,7 @@ filters = cms.vstring(
                                 #'hltDisplacedmumuVtxProducerDimuon0Jpsi',
                                 # 'hltDisplacedmumuFilterDimuon0Jpsi'
                                 )
-                                
+
 process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         triggerConditions = cms.vstring(hltpathsV),
                                         hltResults = cms.InputTag( "TriggerResults", "", "HLT" ),
@@ -204,7 +204,7 @@ process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
 #                           )
 
 process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
-                          dimuons = cms.InputTag("onia2MuMuPAT"),
+                          dimuons = cms.InputTag("JPsi2MuMuFilter"),
                           muons = cms.InputTag("replaceme"),
                           primaryVertices = cms.InputTag("offlinePrimaryVertices"),
                           TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
