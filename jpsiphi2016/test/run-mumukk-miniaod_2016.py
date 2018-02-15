@@ -57,15 +57,6 @@ filters = cms.vstring(#HLT_DoubleMu4_JpsiTrk_Displaced_v4
                       'hltDisplacedmumuFilterDimuon10JpsiBarrel'
                                 )
 
-# process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
-# process.CandidateSelectedTracks = cms.EDProducer("ConcreteChargedCandidateProducer",
-#                 src=cms.InputTag("oniaSelectedTracks"),
-#                 particleType=cms.string('K+')
-#                 )
-#
-# from PhysicsTools.PatAlgos.producersLayer1.genericParticleProducer_cfi import patGenericParticles
-# process.patSelectedTracks = patGenericParticles.clone(src=cms.InputTag("CandidateSelectedTracks"))
-
 process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         triggerConditions = cms.vstring(hltpathsV),
                                         hltResults = cms.InputTag( "TriggerResults", "", "HLT" ),

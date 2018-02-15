@@ -35,17 +35,15 @@ sites = ['T2_AT_Vienna', 'T2_BE_IIHE', 'T2_BE_UCL', 'T2_BR_SPRACE', 'T2_BR_UERJ'
 
 datasetnames = {
 
-"B1" :  datasetbase + "/Charmonium/Run2016B-PromptReco-v1/MINIAOD",
-"B2" :  datasetbase + "/Charmonium/Run2016B-PromptReco-v2/MINIAOD",
-"C" :  datasetbase + "/Charmonium/Run2016C-PromptReco-v2/MINIAOD",
-"D" :  datasetbase + "/Charmonium/Run2016D-PromptReco-v2/MINIAOD",
-"E" :  datasetbase + "/Charmonium/Run2016E-PromptReco-v2/MINIAOD",
-"F" :  datasetbase + "/Charmonium/Run2016F-PromptReco-v1/MINIAOD",
-"G" :  datasetbase + "/Charmonium/Run2016G-PromptReco-v1/MINIAOD",
-"H1" :  datasetbase + "/Charmonium/Run2016H-PromptReco-v1/MINIAOD",
-"H2" :  datasetbase + "/Charmonium/Run2016H-PromptReco-v2/MINIAOD",
-"H3" :  datasetbase + "/Charmonium/Run2016H-PromptReco-v3/MINIAOD"
-
+"B1" :  datasetbase + "/Run2016B-03Feb2017_ver1-v1/MINIAOD",
+"B2" :  datasetbase + "/Run2016B-03Feb2017_ver2-v2/MINIAOD",
+"C" :  datasetbase + "/Run2016C-03Feb2017-v1/MINIAOD",
+"D" :  datasetbase + "/Run2016D-03Feb2017-v1/MINIAOD",
+"E" :  datasetbase + "/Run2016E-03Feb2017-v1/MINIAOD",
+"F" :  datasetbase + "/Run2016F-03Feb2017-v1/MINIAOD",
+"G" :  datasetbase + "/Run2016G-03Feb2017-v1/MINIAOD",
+"H1" :  datasetbase + "/Run2016H-03Feb2017_ver2-v1/MINIAOD",
+"H2" :  datasetbase + "/Run2016H-03Feb2017_ver3-v1/MINIAOD"
 }
 
 

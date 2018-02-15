@@ -1195,8 +1195,8 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
 
   TH1F* dRJpsiPhi = new TH1F("dRJpsiPhi","dRJpsiPhi",1000,-10.0,10.0);
 
-  TH2F* mpts = new TH2F("mpts","mpts",1000,0.0,20.0,1000,0.0,20.0);
-  TH2F* kpts = new TH2F("kpts","kpts",1000,0.0,20.0,1000,0.0,20.0);
+  TH2F* mpts = new TH2F("mpts","mpts",1000,0.0,20.0,1000,0.0,100.0);
+  TH2F* kpts = new TH2F("kpts","kpts",1000,0.0,20.0,1000,0.0,100.0);
 
   std::vector<TH1F*> phiHists;
   std::vector<TH1F*> jpsiHists;
@@ -1214,8 +1214,8 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
     xHists.push_back(new TH1F((hltsName[i] + "_x").data(),(hltsName[i] + "_x").data(),xBin,xmin,xmax));
     ptJHists.push_back(new TH1F((hltsName[i] + "_jpsi_pt").data(),(hltsName[i] + "_jpsi_pt").data(),1000,0.0,100.0));
     xHistsDeltaM.push_back(new TH1F((hltsName[i] + "_x_deltam").data(),(hltsName[i] + "_x_deltam").data(),xBin,xmin,xmax));
-    psiMuonsPts.push_back(new TH2F((hltsName[i] + "_mpts").data(),(hltsName[i] + "_mpts").data(),1000,0.0,20.0,1000,0.0,20.0));
-    phiKaonsPts.push_back(new TH2F((hltsName[i] + "_kpts").data(),(hltsName[i] + "_kpts").data(),1000,0.0,20.0,1000,0.0,20.0));
+    psiMuonsPts.push_back(new TH2F((hltsName[i] + "_mpts").data(),(hltsName[i] + "_mpts").data(),1000,0.0,100.0,1000,0.0,100.0));
+    phiKaonsPts.push_back(new TH2F((hltsName[i] + "_kpts").data(),(hltsName[i] + "_kpts").data(),1000,0.0,100.0,1000,0.0,100.0));
   }
 
   // std::string hltsName[13] = {
@@ -1298,7 +1298,7 @@ int drawMMKKTree(std::string path, std::string filename, std::string treename)
       // if (tB.test(testingTrigger) && run > 305388 && ctau/ctauErr > 3.0 && phimass && std::max(kaonn_p4->Pt(),kaonp_p4->Pt())>1.2 && -std::max(-kaonn_p4->Pt(),-kaonp_p4->Pt())>1.0 && jP4->Pt() > 4.0)
       // if (tB.test(testingTrigger) && run > 305388 && ctau/ctauErr > 3.0 && phimass && kaonn_p4->Pt() >1.0 && kaonp_p4->Pt()>1.0)
       // if (tB.test(testingTrigger) && ctau/ctauErr < 2.0 && phimass && vProb > 0.2 && cosA > 0.997 && deltaR < 2.0  && jpsimass)
-      if (tB.test(testingTrigger) && ctau/ctauErr > 3.0 && jP4->Pt() > 7.0 && phimass)
+      if (tB.test(testingTrigger))
       {
 
         test = true;
