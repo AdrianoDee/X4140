@@ -90,7 +90,6 @@ UInt_t FourOnia2MuMuPAT::isTriggerMatched(pat::CompositeCandidate *diMuon_cand) 
     for(auto f : filtStrings)
       std::cout << f << std::endl;
   }
-  std::vector< std::string > filterLabels_
 
   return matched;
 }
