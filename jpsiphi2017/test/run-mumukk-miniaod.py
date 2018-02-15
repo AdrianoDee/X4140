@@ -28,12 +28,7 @@ process.TFileService = cms.Service("TFileService",
 
 hltList = [
 #Phi
-'HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi',
-# 'HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi',
-# 'HLT_Mu20_TkMu0_Phi',
-# 'HLT_Dimuon14_Phi_Barrel_Seagulls',
-# 'HLT_Mu25_TkMu0_Phi',
-# 'HLT_Dimuon24_Phi_noCorrL1',
+ 'HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi',
 #JPsi
 'HLT_DoubleMu4_JpsiTrkTrk_Displaced',
 'HLT_DoubleMu4_JpsiTrk_Displaced',
@@ -41,7 +36,6 @@ hltList = [
 'HLT_DoubleMu4_3_Jpsi_Displaced',
 'HLT_Dimuon20_Jpsi_Barrel_Seagulls',
 'HLT_Dimuon25_Jpsi',
-# 'HLT_Dimuon0_Jpsi'
 ]
 
 #2016 tag 80X_dataRun2_2016SeptRepro_v7
