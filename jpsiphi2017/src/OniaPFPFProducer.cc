@@ -48,7 +48,7 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
 	       if(fabs(trakCand->pdgId())!=211) continue;
 	       if(!(trakCand->trackHighPurity())) continue;
 
-         if ( IsTheSame(*trakCand,*pmu1) || IsTheSame(*trakCand,*pmu2) || trakCand->charge() < 0 ) continue;
+         if ( IsTheSame(*trakCand,*pmu1) || IsTheSame(*trakCand,*pmu2)) continue;
 
 // loop over second track candidate, negative charge
          for (std::vector<pat::PackedCandidate>::const_iterator trakCand2 = trak->begin(); trakCand2!= trakend; ++trakCand2){
@@ -59,7 +59,10 @@ void OniaPFPFProducer::produce(edm::Event& event, const edm::EventSetup& esetup)
   	       if(!(trakCand2->trackHighPurity())) continue;
 
            if (trakCand2 == trakCand) continue;
-           if ( IsTheSame(*trakCand2,*pmu1) || IsTheSame(*trakCand2,*pmu2) || trakCand2->charge() > 0 ) continue;
+           if ( IsTheSame(*trakCand2,*pmu1) || IsTheSame(*trakCand2,*pmu2)) continue;
+
+           if(trakCand2->charge() * trakCand->charge() > 0) continue;
+
            pat::CompositeCandidate TTCand = makeTTCandidate(*trakCand, *trakCand2);
 
            if ( TTCand.mass() < TrakTrakMassMax_ && TTCand.mass() > TrakTrakMassMin_ ) {
