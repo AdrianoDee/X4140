@@ -152,18 +152,18 @@ process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
 #                           OnlyGen = cms.bool(False)
 #                           )
 
-# process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
-#                           dimuons = cms.InputTag("onia2MuMuPAT"),
-#                           muons = cms.InputTag("replaceme"),
-#                           primaryVertices = cms.InputTag("offlinePrimaryVertices"),
-#                           TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
-#                           onia_pdgid = cms.uint32(443),
-#                           onia_mass_cuts = cms.vdouble(2.5,3.5),
-#                           isMC = cms.bool(False),
-#                           OnlyBest = cms.bool(False),
-#                           OnlyGen = cms.bool(False),
-#                           HLTs = hltpaths
-#                           )
+process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
+                          dimuons = cms.InputTag("JPsi2MuMuFilter"),
+                          muons = cms.InputTag("replaceme"),
+                          primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+                          TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+                          onia_pdgid = cms.uint32(443),
+                          onia_mass_cuts = cms.vdouble(2.5,3.5),
+                          isMC = cms.bool(False),
+                          OnlyBest = cms.bool(False),
+                          OnlyGen = cms.bool(False),
+                          HLTs = hltpaths
+                          )
 
 process.p = cms.Path(process.triggerSelection *
                      process.oniaSelectedMuons *
@@ -171,5 +171,5 @@ process.p = cms.Path(process.triggerSelection *
                      process.JPsi2MuMuFilter*
                      process.PsiPhiProducer *
                      process.PsiPhiFitter *
-                     process.rootuple)
-                     # * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
+                     process.rootuple *
+                     process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
