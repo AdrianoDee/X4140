@@ -24,7 +24,7 @@ slimmedPFCandsTriggerMatchers = cms.Sequence(
       PATPFCandsTriggerMatchHLT
 )
 
-slimmedPFTriggerMatchersTags = [
+slimmedPFCandsTriggerMatchersTags = [
     cms.InputTag('PATPFCandsTriggerMatchHLT'),
 ]
 
@@ -33,11 +33,11 @@ slimmedPFCandsWithTrigger = cms.EDProducer( "PATTriggerMatchEmbedder",
     src     = cms.InputTag(  "packedPFCandidates" ),
     matches = cms.VInputTag()
 )
-slimmedPFCandsWithTrigger.matches += slimmedPFTriggerMatchersTags
+slimmedPFCandsWithTrigger.matches += slimmedPFCandsTriggerMatchersTags
 
 ### Run the whole trigger Sequence
 slimmedPFCandsWithTriggerSequence = cms.Sequence(
     unpackedPatTrigger *
-    slimmedPFTriggerMatchers *
+    slimmedPFCandsTriggerMatchers *
     slimmedPFCandsWithTrigger
 )
