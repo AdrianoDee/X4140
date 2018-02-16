@@ -21,7 +21,6 @@ process.TFileService = cms.Service("TFileService",fileName = cms.string(ouput_fi
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 
 process.load("mmkk.mmkk.slimmedMuonsTriggerMatcher2017_cfi")
-process.load("mmkk.mmkk.slimmedTracksTriggerMatcher2017_cfi")
 
 hltList = [
 #Phi
@@ -239,7 +238,6 @@ process.BkgProducer = cms.EDProducer('FourOniaProducer',
 
 process.xCandSequence = cms.Sequence(
                    process.triggerSelection *
-                   proces.slimmedPFCandsWithTriggerSequence *
                    process.slimmedMuonsWithTriggerSequence *
 				   process.oniaSelectedMuons *
                    process.FourOnia2MuMuPhi *

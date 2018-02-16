@@ -27,6 +27,7 @@ process.TFileService = cms.Service("TFileService",
 )
 
 process.load("mmkk.mmkk.slimmedMuonsTriggerMatcher2017_cfi")
+process.load("mmkk.mmkk.slimmedTracksTriggerMatcher2017_cfi")
 
 hltList = [
 #Phi
@@ -229,6 +230,7 @@ process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
 
 process.p = cms.Path(process.triggerSelection *
                      process.slimmedMuonsWithTriggerSequence *
+                     proces.slimmedPFCandsWithTriggerSequence *
                      process.oniaSelectedMuons *
                      process.JPsi2MuMuPAT *
                      process.JPsi2MuMuFilter*
