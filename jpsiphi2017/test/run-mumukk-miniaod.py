@@ -26,6 +26,8 @@ process.TFileService = cms.Service("TFileService",
         fileName = cms.string('rootuple-PsiTrakTrakRootupler.root'),
 )
 
+process.load("mmkk.mmkk.slimmedMuonsTriggerMatcher2017_cfi")
+
 hltList = [
 #Phi
  'HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi',
@@ -125,7 +127,7 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         )
 
 process.oniaSelectedMuons = cms.EDFilter('PATMuonSelector',
-   src = cms.InputTag('slimmedMuons'),
+   src = cms.InputTag('slimmedMuonsWithTrigger'),
    cut = cms.string('muonID(\"TMOneStationTight\")'
                     ' && abs(innerTrack.dxy) < 0.3'
                     ' && abs(innerTrack.dz)  < 20.'
@@ -226,6 +228,7 @@ process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
                           )
 
 process.p = cms.Path(process.triggerSelection *
+                     process.slimmedMuonsWithTriggerSequence *
                      process.oniaSelectedMuons *
                      process.JPsi2MuMuPAT *
                      process.JPsi2MuMuFilter*

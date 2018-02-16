@@ -75,7 +75,7 @@ UInt_t FourOnia2MuMuPAT::isTriggerMatched(pat::CompositeCandidate *diMuon_cand) 
 
   // if matched a given trigger, set the bit, in the same order as listed
   for (unsigned int iTr = 0; iTr<HLTFilters_.size(); iTr++ ) {
-    std::cout << HLTFilters_[iTr] << std::endl;
+    // std::cout << HLTFilters_[iTr] << std::endl;
     const pat::TriggerObjectStandAloneCollection mu1HLTMatches = muon1->triggerObjectMatchesByFilter(HLTFilters_[iTr]);
     const pat::TriggerObjectStandAloneCollection mu2HLTMatches = muon2->triggerObjectMatchesByFilter(HLTFilters_[iTr]);
     if (!mu1HLTMatches.empty() && !mu2HLTMatches.empty()) matched += (1<<iTr);
@@ -84,11 +84,13 @@ UInt_t FourOnia2MuMuPAT::isTriggerMatched(pat::CompositeCandidate *diMuon_cand) 
 
   auto tObjs = muon1->triggerObjectMatches();
 
+  if(tObjs.size()==0) std::cout<<"No matched object"<<std::endl;
   for(auto hO : tObjs)
   {
+    std::cout << "Object from "<< hO.collection() << "with matching filters : " <<std::endl;
     auto filtStrings = hO.filterLabels();
     for(auto f : filtStrings)
-      std::cout << f << std::endl;
+      std::cout << f << "from " <<std::endl;
   }
 
   return matched;
