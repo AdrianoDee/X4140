@@ -90,7 +90,7 @@ UInt_t FourOnia2MuMuPAT::isTriggerMatched(pat::CompositeCandidate *diMuon_cand) 
     std::cout << "Object from "<< hO.collection() << "with matching filters : " <<std::endl;
     auto filtStrings = hO.filterLabels();
     for(auto f : filtStrings)
-      std::cout << f << "from " <<std::endl;
+      std::cout << f << std::endl;
   }
 
   return matched;
