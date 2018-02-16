@@ -69,6 +69,11 @@ class FourOnia2MuMuPAT : public edm::EDProducer {
 
 };
 
+namespace pat
+{
+  typedef PATTriggerMatchEmbedder< CompositeCandidate > PATTriggerMatchPFEmbedder;
+}
+
 //
 // constants, enums and typedefs
 //
@@ -81,5 +86,5 @@ class FourOnia2MuMuPAT : public edm::EDProducer {
 //
 // constructors and destructor
 //
-
+DEFINE_FWK_MODULE( PATTriggerMatchPFEmbedder );
 #endif

@@ -30,7 +30,7 @@ slimmedPFCandsTriggerMatchersTags = [
 ]
 
 ### Embed them
-slimmedPFCandsWithTrigger = cms.EDProducer( "PATTriggerMatchEmbedder",
+slimmedPFCandsWithTrigger = cms.EDProducer( "PATTriggerMatchPFEmbedder",
     src     = cms.InputTag(  "packedPFCandidates" ),
     matches = cms.VInputTag()
 )
