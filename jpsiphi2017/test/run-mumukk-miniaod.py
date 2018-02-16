@@ -230,7 +230,7 @@ process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
 
 process.p = cms.Path(process.triggerSelection *
                      process.slimmedMuonsWithTriggerSequence *
-                     proces.slimmedPFCandsWithTriggerSequence *
+                     process.slimmedPFCandsWithTriggerSequence *
                      process.oniaSelectedMuons *
                      process.JPsi2MuMuPAT *
                      process.JPsi2MuMuFilter*
