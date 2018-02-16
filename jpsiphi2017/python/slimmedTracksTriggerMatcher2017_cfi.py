@@ -38,7 +38,7 @@ slimmedPFCandsWithTrigger.matches += slimmedPFCandsTriggerMatchersTags
 
 ### Run the whole trigger Sequence
 slimmedPFCandsWithTriggerSequence = cms.Sequence(
-    unpackedPatTrigger *
+    unpackedPatTriggerPF *
     slimmedPFCandsTriggerMatchers *
     slimmedPFCandsWithTrigger
 )
