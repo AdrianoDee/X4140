@@ -9,7 +9,6 @@ process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 process.load("SimTracker.TrackerHitAssociation.tpClusterProducer_cfi")
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '92X_dataRun2_Prompt_v11')
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True))
 
@@ -28,7 +27,12 @@ process.TFileService = cms.Service("TFileService",
 
 hltList = [
 #Phi
- 'HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi',
+'HLT_DoubleMu2_Jpsi_DoubleTkMu0_Phi',
+# 'HLT_DoubleMu2_Jpsi_DoubleTrk1_Phi',
+# 'HLT_Mu20_TkMu0_Phi',
+# 'HLT_Dimuon14_Phi_Barrel_Seagulls',
+# 'HLT_Mu25_TkMu0_Phi',
+# 'HLT_Dimuon24_Phi_noCorrL1',
 #JPsi
 'HLT_DoubleMu4_JpsiTrkTrk_Displaced',
 'HLT_DoubleMu4_JpsiTrk_Displaced',
@@ -36,10 +40,10 @@ hltList = [
 'HLT_DoubleMu4_3_Jpsi_Displaced',
 'HLT_Dimuon20_Jpsi_Barrel_Seagulls',
 'HLT_Dimuon25_Jpsi',
+# 'HLT_Dimuon0_Jpsi'
 ]
 
 #2016 tag 80X_dataRun2_2016SeptRepro_v7
-
 hltpaths = cms.vstring(hltList)
 
 hltpathsV = cms.vstring([h + '_v*' for h in hltList])
@@ -108,6 +112,15 @@ filters = cms.vstring(
                                 # 'hltDisplacedmumuFilterDimuon0Jpsi'
                                 )
 
+# process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+# process.CandidateSelectedTracks = cms.EDProducer("ConcreteChargedCandidateProducer",
+#                 src=cms.InputTag("oniaSelectedTracks"),
+#                 particleType=cms.string('K+')
+#                 )
+#
+# from PhysicsTools.PatAlgos.producersLayer1.genericParticleProducer_cfi import patGenericParticles
+# process.patSelectedTracks = patGenericParticles.clone(src=cms.InputTag("CandidateSelectedTracks"))
+
 process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         triggerConditions = cms.vstring(hltpathsV),
                                         hltResults = cms.InputTag( "TriggerResults", "", "HLT" ),
@@ -154,7 +167,7 @@ process.PsiPhiProducer = cms.EDProducer('OniaPFPFProducer',
     OniaMassCuts = cms.vdouble(2.95,3.25),      # J/psi mass window 3.096916 +/- 0.150
     TrakTrakMassCuts = cms.vdouble(1.0,1.04),  # phi mass window 1.019461 +/- .015
     OniaPFPFMassCuts = cms.vdouble(4.0,5.8),            # b-hadron mass window
-    MassTraks = cms.vdouble(0.13957061,0.493677),         # traks masses
+    MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     OnlyBest  = cms.bool(False)
 )
 
@@ -162,7 +175,7 @@ process.PsiPhiFitter = cms.EDProducer('PsiPFPFKinematicFit',
     PsiPFPF     = cms.InputTag('PsiPhiProducer','OniaPFPFCandidates'),
     mass_constraint = cms.double(3.096916),              # J/psi mass in GeV
     OniaTrakTrakMassCuts = cms.vdouble(4.0,5.8),            # b-hadron mass window
-    MassTraks = cms.vdouble(0.13957061,0.493677),         # traks masses
+    MassTraks = cms.vdouble(0.493677,0.493677),         # traks masses
     product_name    = cms.string('PsiPhiCandidates')
 )
 
@@ -203,18 +216,18 @@ process.rootuple = cms.EDAnalyzer('PsiPFPFRootupler',
 #                           OnlyGen = cms.bool(False)
 #                           )
 
-process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
-                          dimuons = cms.InputTag("JPsi2MuMuFilter"),
-                          muons = cms.InputTag("replaceme"),
-                          primaryVertices = cms.InputTag("offlinePrimaryVertices"),
-                          TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
-                          onia_pdgid = cms.uint32(443),
-                          onia_mass_cuts = cms.vdouble(2.5,3.5),
-                          isMC = cms.bool(False),
-                          OnlyBest = cms.bool(False),
-                          OnlyGen = cms.bool(False),
-                          HLTs = hltpaths
-                          )
+# process.rootupleMuMu = cms.EDAnalyzer('Onia2MuMuRootupler',
+#                           dimuons = cms.InputTag("onia2MuMuPAT"),
+#                           muons = cms.InputTag("replaceme"),
+#                           primaryVertices = cms.InputTag("offlinePrimaryVertices"),
+#                           TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
+#                           onia_pdgid = cms.uint32(443),
+#                           onia_mass_cuts = cms.vdouble(2.5,3.5),
+#                           isMC = cms.bool(False),
+#                           OnlyBest = cms.bool(False),
+#                           OnlyGen = cms.bool(False),
+#                           HLTs = hltpaths
+#                           )
 
 process.p = cms.Path(process.triggerSelection *
                      process.oniaSelectedMuons *
@@ -222,7 +235,5 @@ process.p = cms.Path(process.triggerSelection *
                      process.JPsi2MuMuFilter*
                      process.PsiPhiProducer *
                      process.PsiPhiFitter *
-                     process.rootuple *
-                     process.rootupleMuMu )
-
-# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)
+                     process.rootuple)
+                     # * process.rootupleMuMu)# * process.Phi2KKPAT * process.patSelectedTracks *process.rootupleKK)

@@ -32,7 +32,7 @@ PrimaryVertexProducer::PrimaryVertexProducer(const edm::ParameterSet& conf)
   }else if (trackSelectionAlgorithm=="filterWithThreshold"){
     theTrackFilter= new HITrackFilterForPVFinding(conf.getParameter<edm::ParameterSet>("TkFilterParameters"));
   }else{
-    throw VertexException("PrimaryVertexProducerAlgorithm: unknown track selection algorithm: " + trackSelectionAlgorithm);  
+    throw VertexException("PrimaryVertexProducerAlgorithm: unknown track selection algorithm: " + trackSelectionAlgorithm);
   }
 
 
@@ -52,7 +52,7 @@ PrimaryVertexProducer::PrimaryVertexProducer(const edm::ParameterSet& conf)
 
 
   else{
-    throw VertexException("PrimaryVertexProducerAlgorithm: unknown clustering algorithm: " + clusteringAlgorithm);  
+    throw VertexException("PrimaryVertexProducerAlgorithm: unknown clustering algorithm: " + clusteringAlgorithm);
   }
 
 
@@ -61,7 +61,7 @@ PrimaryVertexProducer::PrimaryVertexProducer(const edm::ParameterSet& conf)
     std::vector<edm::ParameterSet> vertexCollections =conf.getParameter< std::vector<edm::ParameterSet> >("vertexCollections");
 
     for( std::vector< edm::ParameterSet >::const_iterator algoconf = vertexCollections.begin(); algoconf != vertexCollections.end(); algoconf++){
-      
+
       algo algorithm;
       std::string fitterAlgorithm = algoconf->getParameter<std::string>("algorithm");
       if (fitterAlgorithm=="KalmanVertexFitter") {
@@ -69,14 +69,14 @@ PrimaryVertexProducer::PrimaryVertexProducer(const edm::ParameterSet& conf)
       } else if( fitterAlgorithm=="AdaptiveVertexFitter") {
 	algorithm.fitter= new AdaptiveVertexFitter();
       } else {
-	throw VertexException("PrimaryVertexProducerAlgorithm: unknown algorithm: " + fitterAlgorithm);  
+	throw VertexException("PrimaryVertexProducerAlgorithm: unknown algorithm: " + fitterAlgorithm);
       }
       algorithm.label = algoconf->getParameter<std::string>("label");
       algorithm.minNdof = algoconf->getParameter<double>("minNdof");
       algorithm.useBeamConstraint=algoconf->getParameter<bool>("useBeamConstraint");
       algorithm.vertexSelector=new VertexCompatibleWithBeam(VertexDistanceXY(), algoconf->getParameter<double>("maxDistanceToBeam"));
       algorithms.push_back(algorithm);
-      
+
       produces<reco::VertexCollection>(algorithm.label);
     }
   }else{
@@ -89,18 +89,18 @@ PrimaryVertexProducer::PrimaryVertexProducer(const edm::ParameterSet& conf)
     } else if( fitterAlgorithm=="AdaptiveVertexFitter") {
       algorithm.fitter= new AdaptiveVertexFitter();
     } else {
-      throw VertexException("PrimaryVertexProducerAlgorithm: unknown algorithm: " + fitterAlgorithm);  
+      throw VertexException("PrimaryVertexProducerAlgorithm: unknown algorithm: " + fitterAlgorithm);
     }
     algorithm.label = "";
     algorithm.minNdof = conf.getParameter<double>("minNdof");
     algorithm.useBeamConstraint=conf.getParameter<bool>("useBeamConstraint");
-    
+
     algorithm.vertexSelector=new VertexCompatibleWithBeam(VertexDistanceXY(), conf.getParameter<edm::ParameterSet>("PVSelParameters").getParameter<double>("maxDistanceToBeam"));
 
     algorithms.push_back(algorithm);
     produces<reco::VertexCollection>(algorithm.label);
   }
- 
+
 
 }
 
@@ -131,7 +131,7 @@ PrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
   bool validBS = true;
   VertexState beamVertexState(beamSpot);
-  if ( (beamVertexState.error().cxx() <= 0.) || 
+  if ( (beamVertexState.error().cxx() <= 0.) ||
        (beamVertexState.error().cyy() <= 0.) ||
        (beamVertexState.error().czz() <= 0.) ) {
     validBS = false;
@@ -176,15 +176,15 @@ PrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 	   = clusters.begin(); iclus != clusters.end(); iclus++) {
 
 
-      TransientVertex v; 
+      TransientVertex v;
       if( algorithm->useBeamConstraint && validBS &&((*iclus).size()>1) ){
-	
+
 	v = algorithm->fitter->vertex(*iclus, beamSpot);
-	
+
       }else if( !(algorithm->useBeamConstraint) && ((*iclus).size()>1) ) {
-      
-	v = algorithm->fitter->vertex(*iclus); 
-	
+
+	v = algorithm->fitter->vertex(*iclus);
+
       }// else: no fit ==> v.isValid()=False
 
 
@@ -193,8 +193,8 @@ PrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 	else std::cout <<"Invalid fitted vertex\n";
       }
 
-      if (v.isValid() 
-	    && (v.degreesOfFreedom()>=algorithm->minNdof) 
+      if (v.isValid()
+	    && (v.degreesOfFreedom()>=algorithm->minNdof)
 	  && (!validBS || (*(algorithm->vertexSelector))(v,beamVertexState))
 	  ) pvs.push_back(v);
     }// end of cluster loop
@@ -205,7 +205,7 @@ PrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
 
-    
+
 
     // sort vertices by pt**2  vertex (aka signal vertex tagging)
     if(pvs.size()>1){
@@ -223,7 +223,7 @@ PrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
     if (vColl.empty()) {
       GlobalError bse(beamSpot.rotatedCovariance3D());
-      if ( (bse.cxx() <= 0.) || 
+      if ( (bse.cxx() <= 0.) ||
 	   (bse.cyy() <= 0.) ||
 	   (bse.czz() <= 0.) ) {
 	AlgebraicSymMatrix33 we;
@@ -235,7 +235,7 @@ PrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 	  std::cout << "Will put Vertex derived from dummy-fake BeamSpot into Event.\n";
 	}
       } else {
-	vColl.push_back(reco::Vertex(beamSpot.position(), 
+	vColl.push_back(reco::Vertex(beamSpot.position(),
 				     beamSpot.rotatedCovariance3D(),0.,0.,0));
 	if(fVerbose){
 	  std::cout <<"RecoVertex/PrimaryVertexProducer: "
@@ -246,27 +246,27 @@ PrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
     if(fVerbose){
       int ivtx=0;
-      for(reco::VertexCollection::const_iterator v=vColl.begin(); 
+      for(reco::VertexCollection::const_iterator v=vColl.begin();
 	  v!=vColl.end(); ++v){
-	std::cout << "recvtx "<< ivtx++ 
+	std::cout << "recvtx "<< ivtx++
 		  << "#trk " << std::setw(3) << v->tracksSize()
-		  << " chi2 " << std::setw(4) << v->chi2() 
-		  << " ndof " << std::setw(3) << v->ndof() 
-		  << " x "  << std::setw(6) << v->position().x() 
+		  << " chi2 " << std::setw(4) << v->chi2()
+		  << " ndof " << std::setw(3) << v->ndof()
+		  << " x "  << std::setw(6) << v->position().x()
 		  << " dx " << std::setw(6) << v->xError()
-		  << " y "  << std::setw(6) << v->position().y() 
+		  << " y "  << std::setw(6) << v->position().y()
 		  << " dy " << std::setw(6) << v->yError()
-		  << " z "  << std::setw(6) << v->position().z() 
+		  << " z "  << std::setw(6) << v->position().z()
 		  << " dz " << std::setw(6) << v->zError()
 		  << std::endl;
       }
     }
 
-  
+
     *result = vColl;
-    iEvent.put(result, algorithm->label); 
+    iEvent.put(result, algorithm->label);
   }
-  
+
 }
 
 

@@ -20,12 +20,11 @@ class VertexReProducer {
         /// This is the real constructor to be used
         VertexReProducer(const edm::Handle<reco::VertexCollection> &configFromOriginalVertexCollection, const edm::Event &iEvent ) ;
         /// This is only for testing
-        VertexReProducer(const edm::ParameterSet &configByHand) { configure(configByHand); } 
+        VertexReProducer(const edm::ParameterSet &configByHand) { configure(configByHand); }
 
         /// Make the vertices
         std::vector<TransientVertex> makeVertices(const reco::TrackCollection &tracks, const reco::BeamSpot &bs, const edm::EventSetup &iSetup) const;
-	// added by Leo
-	std::vector<TransientVertex> makeVertices(const std::vector<reco::TransientTrack> &tracks, const reco::BeamSpot &bs, const edm::EventSetup &iSetup) const; 
+  	    std::vector<TransientVertex> makeVertices(const std::vector<reco::TransientTrack> &tracks, const reco::BeamSpot &bs, const edm::EventSetup &iSetup) const; 
 
         /// Get the configuration used in the VertexProducer
         const edm::ParameterSet & inputConfig()   const { return config_; }
